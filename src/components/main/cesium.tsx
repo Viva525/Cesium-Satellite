@@ -152,32 +152,30 @@ const CesiumComponent: React.FC<{}> = () => {
     <>
     <style>
       {
-        `
-        .cesium-button {
-          display: inline-block;
-          position: relative;
+        `.cesium-button {
           background: #303336;
           border: 1px solid #444;
           color: #edffff;
           fill: #edffff;
           border-radius: 4px;
           padding: 5px 12px;
-          margin: 2px 3px;
+          margin: 10px 10px;
           cursor: pointer;
           overflow: hidden;
           -moz-user-select: none;
           -webkit-user-select: none;
           -ms-user-select: none;
           user-select: none;
+          z-index:999;
+        }
+        #toolbar{
+          position:absolute;
         }
       `
       }
     </style>
       <div id="toolbar"></div>
-      <div id="cesiumContainer"></div>
-      <div id="loadingOverlay">
-        <h1>Loading...</h1>
-      </div>
+      <div id="cesiumContainer" style={{height:'100%', width:'100%'}}></div>
     </>
   );
 };
