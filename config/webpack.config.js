@@ -1,4 +1,9 @@
 'use strict';
+//cesium配置
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const cesiumSource = 'node_modules/cesium/Source';
+const cesiumWorkers = '../Build/Cesium/Workers';
+const fileFolder = 'src';
 
 const fs = require('fs');
 const path = require('path');
@@ -204,6 +209,8 @@ module.exports = function (webpackEnv) {
     output: {
       // The build folder.
       path: paths.appBuild,
+      // cesium配置
+      sourcePrefix: '',
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
       // There will be one main bundle, and one file per asynchronous chunk.
@@ -228,6 +235,10 @@ module.exports = function (webpackEnv) {
               .replace(/\\/g, '/')
         : isEnvDevelopment &&
           (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+    },
+    amd: {
+      // Enable webpack-friendly use of require in Cesium
+      toUrlUndefined: true,
     },
     cache: {
       type: 'filesystem',
@@ -310,9 +321,11 @@ module.exports = function (webpackEnv) {
         .map(ext => `.${ext}`)
         .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
+        
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
+        cesium: path.resolve(cesiumSource),
         // Allows for better profiling with ReactDevTools
         ...(isEnvProductionProfile && {
           'react-dom$': 'react-dom/profiling',
@@ -326,14 +339,14 @@ module.exports = function (webpackEnv) {
         // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
         // please link the files into your node_modules/ and let module-resolution kick in.
         // Make sure your source files are compiled, as they will not be processed in any way.
-        new ModuleScopePlugin(paths.appSrc, [
-          paths.appPackageJson,
-          reactRefreshRuntimeEntry,
-          reactRefreshWebpackPluginRuntimeEntry,
-          babelRuntimeEntry,
-          babelRuntimeEntryHelpers,
-          babelRuntimeRegenerator,
-        ]),
+        // new ModuleScopePlugin(paths.appSrc, [
+        //   paths.appPackageJson,
+        //   reactRefreshRuntimeEntry,
+        //   reactRefreshWebpackPluginRuntimeEntry,
+        //   babelRuntimeEntry,
+        //   babelRuntimeEntryHelpers,
+        //   babelRuntimeRegenerator,
+        // ]),
       ],
     },
     module: {
@@ -746,6 +759,28 @@ module.exports = function (webpackEnv) {
               }),
             },
           },
+        }),
+        new CopyWebpackPlugin({
+          patterns: [
+            { from: path.join(cesiumSource, cesiumWorkers), to: 'Workers' },
+            { from: path.join(cesiumSource, 'Assets'), to: 'Assets' },
+            { from: path.join(cesiumSource, 'Widgets'), to: 'Widgets' },
+            // { from: path.join(fileFolder, 'data'), to: 'Data' }//无文件时先注释
+          ]
+        }),
+        // Makes some environment variables available to the JS code, for example:
+        // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.
+        // It is absolutely essential that NODE_ENV is set to production
+        // during a production build.
+        // Otherwise React will be compiled in the very slow development mode.
+        new webpack.DefinePlugin({
+          // env.stringified,
+          CESIUM_BASE_URL: JSON.stringify(''),
+        }),
+        // react v17+
+        new webpack.DefinePlugin({
+          // env.stringified,
+          CESIUM_BASE_URL: JSON.stringify('/'),
         }),
     ].filter(Boolean),
     // Turn off performance processing because we utilize
