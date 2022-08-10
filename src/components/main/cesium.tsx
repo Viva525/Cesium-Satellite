@@ -16,7 +16,43 @@ const CesiumComponent: React.FC<{}> = () => {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
       const viewer = new CM.Viewer("cesiumContainer", {
         shouldAnimate: true,
+        // 去掉地球表面的大气效果黑圈问题
+        skyAtmosphere: false,   // 关闭地球光环
+        orderIndependentTranslucency: false,
+        contextOptions: {
+            webgl: {
+                alpha: true,
+            }
+        },
       });
+      // 尝试提高分辨率
+      viewer._cesiumWidget._supportsImageRenderingPixelated = CM.FeatureDetection.supportsImageRenderingPixelated();
+      viewer._cesiumWidget._forceResize = true;
+      if (CM.FeatureDetection.supportsImageRenderingPixelated()) {
+          var vtxf_dpr = window.devicePixelRatio;
+          // 适度降低分辨率
+          while (vtxf_dpr >= 2.0) {
+              vtxf_dpr /= 2.0;
+          }
+          //alert(dpr);
+          viewer.resolutionScale = vtxf_dpr;
+      }
+
+      // 去掉黑色星空背景
+      viewer.scene.skyBox.show = false;
+      viewer.scene.backgroundColor = new CM.Color(0.0, 0.0, 0.0, 0.0);
+      // viewer.scene.skyBox.destroy();
+      // viewer.scene.skyBox = undefined;
+      // viewer.scene.sun.destroy();
+      // viewer.scene.sun = undefined;
+      // viewer.scene.moon.destroy();
+      // viewer.scene.moon = undefined;
+      // viewer.scene.skyAtmosphere.destroy();
+      // viewer.scene.skyAtmosphere = undefined;
+      // viewer.scene.backgroundColor = new CM.Color(255,255,255, 0);
+
+
+      // 生成轨迹线
       let defaultAction: (() => void) | undefined;
 
       let Sandcastle = {
@@ -193,11 +229,16 @@ const CesiumComponent: React.FC<{}> = () => {
         #toolbar{
           position:absolute;
         }
+
+        #cesiumContainer{
+          background-repeat:no-repeat ;
+          background-size: cover;
+        }
       `
       }
     </style>
       <div id="toolbar"></div>
-      <div id="cesiumContainer" style={{height:'100%', width:'100%'}}></div>
+      <div id="cesiumContainer" style={{height:'100%', width:'100%', backgroundImage:"url(./images/star.jpg)"}}></div>
     </>
   );
 };
