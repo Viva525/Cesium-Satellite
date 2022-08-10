@@ -137,12 +137,34 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         console.log(111);
-
-        viewer.dataSources.add(
-          // CM.CzmlDataSource.load("D:/Project/SatVis/Cesium-Satellite/src/data/simple.czml")
-          CM.CzmlDataSource.load("./data/simple.czml")
-        );
-
+        // 读取轨迹数据
+        let dronePromis = CM.CzmlDataSource.load("./data/simple.czml");
+        // 加载实体
+        let drone;
+        dronePromis.then((dataSource: any)=>{
+          viewer.dataSources.add(dronePromis);
+          // 通过ID选择需要轨迹的实体
+          drone = dataSource.entities.getById('Satellite/ISS');
+          // 添加和配置运动实体的模型
+          drone.model = {
+            // 引入模型
+            uri: './Satellite.gltf',
+            // 配置模型大小的最小值
+            minimumPixelSize:128,
+            //配置模型大小的最大值
+            maximumScale:1000,
+            //配置模型轮廓的颜色
+            silhouetteColor:CM.Color.WHITE,
+            //配置轮廓的大小
+            silhouetteSize:2,
+          }
+           //设置方向,根据实体的位置来配置方向
+            drone.orientation = new CM.VelocityOrientationProperty(drone.position);
+            //设置模型初始的位置
+            drone.viewFrom = new CM.Cartesian3(0, -30, 30);
+            //设置查看器，让模型动起来
+            viewer.clock.shouldAnimate = true;
+        });
         viewer.camera.flyHome(0);
       });
     }
