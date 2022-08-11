@@ -308,22 +308,15 @@
     "name":"AGI",
     "availability":"2012-03-15T10:00:00Z/2012-03-16T10:00:00Z",
     "description":"<!--HTML-->\r\n<p>\r\nAnalytical Graphics, Inc. (AGI) develops commercial modeling and analysis software used by more than 40,000 global space, defense and intelligence professionals. AGI founded Cesium to meet the need for a cross-platform virtual globe with dynamic-data visualization. AGI continues to invest heavily in Cesium's development and facilitate the growth of the user and contributor community.\r\n</p>",
-    "billboard":{
-      "eyeOffset":{
-        "cartesian":[
-          0,0,0
-        ]
-      },
-      "horizontalOrigin":"CENTER",
-      "image":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACvSURBVDhPrZDRDcMgDAU9GqN0lIzijw6SUbJJygUeNQgSqepJTyHG91LVVpwDdfxM3T9TSl1EXZvDwii471fivK73cBFFQNTT/d2KoGpfGOpSIkhUpgUMxq9DFEsWv4IXhlyCnhBFnZcFEEuYqbiUlNwWgMTdrZ3JbQFoEVG53rd8ztG9aPJMnBUQf/VFraBJeWnLS0RfjbKyLJA8FkT5seDYS1Qwyv8t0B/5C2ZmH2/eTGNNBgMmAAAAAElFTkSuQmCC",
-      "pixelOffset":{
-        "cartesian2":[
-          0,0
-        ]
-      },
-      "scale":1.5,
-      "show":true,
-      "verticalOrigin":"CENTER"
+    "point": {
+        "color": {
+            "rgba": [255, 255, 255, 255]
+        },
+        "outlineColor": {
+            "rgba": [255, 0, 0, 255]
+        },
+        "outlineWidth": 4,
+        "pixelSize": 10
     },
     "label":{
       "fillColor":{
@@ -1348,22 +1341,15 @@
     "name":"ISS",
     "availability":"2012-03-15T10:00:00Z/2012-03-16T10:00:00Z",
     "description":"<!--HTML-->\r\n<p>The International Space Station (ISS) is a space station, or a habitable artificial satellite in low Earth orbit. It is a modular structure whose first component was launched in 1998. Now the largest artificial body in orbit, it can often be seen at the appropriate time with the naked eye from Earth. The ISS consists of pressurised modules, external trusses, solar arrays and other components. ISS components have been launched by American Space Shuttles as well as Russian Proton and Soyuz rockets. In 1984 the ESA was invited to participate in Space Station Freedom. In 1993, after the USSR ended, the United States and Russia merged Mir-2 and Freedom together.\r\nThe ISS serves as a microgravity and space environment research laboratory in which crew members conduct experiments in biology, human biology, physics, astronomy, meteorology and other fields. The station is suited for the testing of spacecraft systems and equipment required for missions to the Moon and Mars.</p>\r\n\r\n<p>Since the arrival of Expedition 1 on 2 November 2000, the station has been continuously occupied for 13 years and 86 days, the longest continuous human presence in space. (In 2010, the station surpassed the previous record of almost 10 years (or 3,634 days) held by Mir.) The station is serviced by a variety of visiting spacecraft: Soyuz, Progress, the Automated Transfer Vehicle, the H-II Transfer Vehicle, Dragon, and Cygnus. It has been visited by astronauts and cosmonauts from 15 different nations.</p>\r\n\r\n<p>After the U.S. Space Shuttle program ended in 2011, Soyuz rockets became the only provider of transport for astronauts at the International Space Station.\r\nThe ISS programme is a joint project among five participating space agencies: NASA, Roskosmos, JAXA, ESA, and CSA. The ownership and use of the space station is established by intergovernmental treaties and agreements. The station is divided into two sections, the Russian Orbital Segment (ROS) and the United States Orbital Segment (USOS), which is shared by many nations. The ISS maintains an orbit with an altitude of between 330 km (205 mi) and 435 km (270 mi) by means of reboost manoeuvres using the engines of the Zvezda module or visiting spacecraft. It completes 15.410 orbits per day. The ISS is funded until 2024, and may operate until 2028. The Russian Federal Space Agency, Roskosmos (RKA) has proposed using the ISS to commission modules for a new space station, called OPSEK, before the remainder of the ISS is deorbited. ISS is the ninth space station to be inhabited by crews, following the Soviet and later Russian Salyut, Almaz, and Mir stations, and Skylab from the US.</p>",
-    "billboard":{
-      "eyeOffset":{
-        "cartesian":[
-          0,0,0
-        ]
-      },
-      "horizontalOrigin":"CENTER",
-      
-      "pixelOffset":{
-        "cartesian2":[
-          0,0
-        ]
-      },
-      "scale":1.5,
-      "show":true,
-      "verticalOrigin":"CENTER"
+    "point": {
+        "color": {
+            "rgba": [255, 255, 255, 255]
+        },
+        "outlineColor": {
+            "rgba": [255, 0, 0, 255]
+        },
+        "outlineWidth": 4,
+        "pixelSize": 10
     },
     "label":{
       "fillColor":{

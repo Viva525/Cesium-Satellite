@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 //@ts-ignore
-import * as CM from "cesium/Cesium";
+import * as CM from 'cesium/Cesium';
 // import "../../css/button.css";
 
 const CesiumComponent: React.FC<{}> = () => {
@@ -13,29 +13,30 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
-      const viewer = new CM.Viewer("cesiumContainer", {
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY';
+      const viewer = new CM.Viewer('cesiumContainer', {
         shouldAnimate: true,
         // 去掉地球表面的大气效果黑圈问题
-        skyAtmosphere: false,   // 关闭地球光环
+        skyAtmosphere: false, // 关闭地球光环
         orderIndependentTranslucency: false,
         contextOptions: {
-            webgl: {
-                alpha: true,
-            }
+          webgl: {
+            alpha: true,
+          },
         },
       });
       // 尝试提高分辨率
-      viewer._cesiumWidget._supportsImageRenderingPixelated = CM.FeatureDetection.supportsImageRenderingPixelated();
+      viewer._cesiumWidget._supportsImageRenderingPixelated =
+        CM.FeatureDetection.supportsImageRenderingPixelated();
       viewer._cesiumWidget._forceResize = true;
       if (CM.FeatureDetection.supportsImageRenderingPixelated()) {
-          var vtxf_dpr = window.devicePixelRatio;
-          // 适度降低分辨率
-          while (vtxf_dpr >= 2.0) {
-              vtxf_dpr /= 2.0;
-          }
-          //alert(dpr);
-          viewer.resolutionScale = vtxf_dpr;
+        var vtxf_dpr = window.devicePixelRatio;
+        // 适度降低分辨率
+        while (vtxf_dpr >= 2.0) {
+          vtxf_dpr /= 2.0;
+        }
+        //alert(dpr);
+        viewer.resolutionScale = vtxf_dpr;
       }
 
       // 去掉黑色星空背景
@@ -50,7 +51,6 @@ const CesiumComponent: React.FC<{}> = () => {
       // viewer.scene.skyAtmosphere.destroy();
       // viewer.scene.skyAtmosphere = undefined;
       // viewer.scene.backgroundColor = new CM.Color(255,255,255, 0);
-
 
       // 生成轨迹线
       let defaultAction: (() => void) | undefined;
@@ -72,7 +72,7 @@ const CesiumComponent: React.FC<{}> = () => {
 
           document.body.className = document.body.className.replace(
             /(?:\s|^)sandcastle-loading(?:\s|$)/,
-            " "
+            ' '
           );
         },
         addToggleButton: function (
@@ -83,17 +83,17 @@ const CesiumComponent: React.FC<{}> = () => {
         ) {
           //@ts-ignore
           Sandcastle.declare(onchange);
-          const input = document.createElement("input");
+          const input = document.createElement('input');
           input.checked = checked;
-          input.type = "checkbox";
-          input.style.pointerEvents = "none";
-          const label = document.createElement("label");
+          input.type = 'checkbox';
+          input.style.pointerEvents = 'none';
+          const label = document.createElement('label');
           label.appendChild(input);
           label.appendChild(document.createTextNode(text));
-          label.style.pointerEvents = "none";
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "cesium-button";
+          label.style.pointerEvents = 'none';
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'cesium-button';
           button.appendChild(label);
 
           button.onclick = function () {
@@ -105,7 +105,7 @@ const CesiumComponent: React.FC<{}> = () => {
           };
 
           //@ts-ignore
-          document.getElementById(toolbarID || "toolbar").appendChild(button);
+          document.getElementById(toolbarID || 'toolbar').appendChild(button);
         },
         addToolbarButton: function (
           text: string | null,
@@ -114,9 +114,9 @@ const CesiumComponent: React.FC<{}> = () => {
         ) {
           //@ts-ignore
           Sandcastle.declare(onclick);
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "cesium-button";
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'cesium-button';
           button.onclick = function () {
             Sandcastle.reset();
             //@ts-ignore
@@ -125,7 +125,7 @@ const CesiumComponent: React.FC<{}> = () => {
           };
           button.textContent = text;
           //@ts-ignore
-          document.getElementById(toolbarID || "toolbar").appendChild(button);
+          document.getElementById(toolbarID || 'toolbar').appendChild(button);
         },
         addDefaultToolbarButton: function (
           text: string | null,
@@ -145,24 +145,24 @@ const CesiumComponent: React.FC<{}> = () => {
           defaultAction = options[0].onselect;
         },
         addToolbarMenu: function (options: string | any[], toolbarID: any) {
-          const menu = document.createElement("select");
-          menu.className = "cesium-button";
+          const menu = document.createElement('select');
+          menu.className = 'cesium-button';
           menu.onchange = function () {
             Sandcastle.reset();
             const item = options[menu.selectedIndex];
-            if (item && typeof item.onselect === "function") {
+            if (item && typeof item.onselect === 'function') {
               item.onselect();
             }
           };
           //@ts-ignore
-          document.getElementById(toolbarID || "toolbar").appendChild(menu);
+          document.getElementById(toolbarID || 'toolbar').appendChild(menu);
 
-          if (!defaultAction && typeof options[0].onselect === "function") {
+          if (!defaultAction && typeof options[0].onselect === 'function') {
             defaultAction = options[0].onselect;
           }
 
           for (let i = 0, len = options.length; i < len; ++i) {
-            const option = document.createElement("option");
+            const option = document.createElement('option');
             option.textContent = options[i].text;
             option.value = options[i].value;
             menu.appendChild(option);
@@ -171,35 +171,51 @@ const CesiumComponent: React.FC<{}> = () => {
         reset: function () {},
       };
       //@ts-ignore
-      Sandcastle.addDefaultToolbarButton("Satellites", function () {
-        console.log(111);
+      Sandcastle.addDefaultToolbarButton('Satellites', function () {
         // 读取轨迹数据
-        let dronePromis = CM.CzmlDataSource.load("./data/simple.czml");
+        let dronePromis = CM.CzmlDataSource.load('./data/starlink-300.czml');
         // 加载实体
         let drone;
-        dronePromis.then((dataSource: any)=>{
+        dronePromis.then((dataSource: any) => {
           viewer.dataSources.add(dronePromis);
           // 通过ID选择需要轨迹的实体
-          drone = dataSource.entities.getById('Satellite/ISS');
+          drone = dataSource.entities.getById('Satellite/STARLINK-24');
+          console.log(dataSource.entities._entities._array[0]);
+          dataSource.entities._entities._array.forEach((ele: any) => {
+            ele.removeProperty('billboard');
+            // ele._point = {
+            //   color: {
+            //     rgba: [255, 255, 255, 255],
+            //   },
+            //   outlineColor: {
+            //     rgba: [255, 0, 0, 255],
+            //   },
+            //   outlineWidth: 4,
+            //   pixelSize: 10,
+            // };
+          });
+
           // 添加和配置运动实体的模型
           drone.model = {
             // 引入模型
             uri: './Satellite.gltf',
             // 配置模型大小的最小值
-            minimumPixelSize:128,
+            minimumPixelSize: 128,
             //配置模型大小的最大值
-            maximumScale:1000,
+            maximumScale: 1000,
             //配置模型轮廓的颜色
-            silhouetteColor:CM.Color.WHITE,
+            silhouetteColor: CM.Color.WHITE,
             //配置轮廓的大小
-            silhouetteSize:2,
-          }
-           //设置方向,根据实体的位置来配置方向
-            drone.orientation = new CM.VelocityOrientationProperty(drone.position);
-            //设置模型初始的位置
-            drone.viewFrom = new CM.Cartesian3(0, -30, 30);
-            //设置查看器，让模型动起来
-            viewer.clock.shouldAnimate = true;
+            silhouetteSize: 2,
+          };
+          //设置方向,根据实体的位置来配置方向
+          drone.orientation = new CM.VelocityOrientationProperty(
+            drone.position
+          );
+          //设置模型初始的位置
+          drone.viewFrom = new CM.Cartesian3(0, -30, 30);
+          //设置查看器，让模型动起来
+          viewer.clock.shouldAnimate = true;
         });
         viewer.camera.flyHome(0);
       });
@@ -208,9 +224,8 @@ const CesiumComponent: React.FC<{}> = () => {
 
   return (
     <>
-    <style>
-      {
-        `.cesium-button {
+      <style>
+        {`.cesium-button {
           background: #303336;
           border: 1px solid #444;
           color: #edffff;
@@ -234,14 +249,19 @@ const CesiumComponent: React.FC<{}> = () => {
           background-repeat:no-repeat ;
           background-size: cover;
         }
-      `
-      }
-    </style>
-      <div id="toolbar"></div>
-      <div id="cesiumContainer" style={{height:'100%', width:'100%', backgroundImage:"url(./images/star.jpg)"}}></div>
+      `}
+      </style>
+      <div id='toolbar'></div>
+      <div
+        id='cesiumContainer'
+        style={{
+          height: '100%',
+          width: '100%',
+          backgroundImage: 'url(./images/star.jpg)',
+        }}
+      ></div>
     </>
   );
 };
-
 
 export default CesiumComponent;
