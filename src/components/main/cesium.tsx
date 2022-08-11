@@ -40,8 +40,8 @@ const CesiumComponent: React.FC<{}> = () => {
       }
 
       // 去掉黑色星空背景
-      viewer.scene.skyBox.show = false;
-      viewer.scene.backgroundColor = new CM.Color(0.0, 0.0, 0.0, 0.0);
+      // viewer.scene.skyBox.show = false;
+      // viewer.scene.backgroundColor = new CM.Color(0.0, 0.0, 0.0, 0.0);
 
       // 生成轨迹线
       let defaultAction: (() => void) | undefined;
@@ -174,36 +174,36 @@ const CesiumComponent: React.FC<{}> = () => {
           console.log(dataSource.entities);
 
           dataSource.entities._entities._array.forEach((ele: any) => {
+            ele.billboard = undefined;
             // 1. 改成点
-            // ele.billboard = undefined;
-            // ele.point = {
-            //   show: true,
-            //   color: CM.Color.WHITE,
-            //   // outlineWidth: 4,
-            //   pixelSize: 5,
-            // };
-
-            // 2. 添加和配置运动实体的模型
-            ele.model = {
-              // 引入模型
-              uri: "./Satellite.gltf",
-              // 配置模型大小的最小值
-              minimumPixelSize: 20,
-              //配置模型大小的最大值
-              maximumScale: 20,
-              //配置模型轮廓的颜色
-              silhouetteColor: CM.Color.WHITE,
-              //配置轮廓的大小
-              silhouetteSize: 1,
+            ele.point = {
+              show: true,
+              color: CM.Color.WHITE,
+              // outlineWidth: 4,
+              pixelSize: 5,
             };
-            //设置方向,根据实体的位置来配置方向
-            ele.orientation = new CM.VelocityOrientationProperty(ele.position);
-            //设置模型初始的位置
-            ele.viewFrom = new CM.Cartesian3(0, -30, 30);
-            //设置查看器，让模型动起来
-            viewer.clock.shouldAnimate = true;
 
-            // 配置样式与路径
+            // // 2. 添加和配置运动实体的模型
+            // ele.model = {
+            //   // 引入模型
+            //   uri: "./Satellite.gltf",
+            //   // 配置模型大小的最小值
+            //   minimumPixelSize: 50,
+            //   //配置模型大小的最大值
+            //   maximumScale: 50,
+            //   //配置模型轮廓的颜色
+            //   silhouetteColor: CM.Color.WHITE,
+            //   //配置轮廓的大小
+            //   silhouetteSize: 1,
+            // };
+            // //设置方向,根据实体的位置来配置方向
+            // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
+            // //设置模型初始的位置
+            // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
+            // //设置查看器，让模型动起来
+            // viewer.clock.shouldAnimate = true;
+
+            // 3. 配置样式与路径
             if (ele.label != undefined) {
               ele.label.show = false;
             }
@@ -281,10 +281,10 @@ const CesiumComponent: React.FC<{}> = () => {
           position:absolute;
         }
 
-        #cesiumContainer{
-          background-repeat:no-repeat ;
-          background-size: cover;
-        }
+        // #cesiumContainer{
+        //   background-repeat:no-repeat ;
+        //   background-size: cover;
+        // }
       `}
       </style>
       <div id="toolbar"></div>
@@ -293,7 +293,7 @@ const CesiumComponent: React.FC<{}> = () => {
         style={{
           height: "100%",
           width: "100%",
-          backgroundImage: "url(./images/star.jpg)",
+          // backgroundImage: "url(./images/star.jpg)",
         }}
       ></div>
     </>
