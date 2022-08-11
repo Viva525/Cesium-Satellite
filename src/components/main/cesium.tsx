@@ -173,7 +173,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton('Satellites', function () {
         // 读取轨迹数据
-        let dronePromis = CM.CzmlDataSource.load('./data/starlink-300.czml');
+        let dronePromis = CM.CzmlDataSource.load('./data/simple.czml');
         // 加载实体
         let drone;
         dronePromis.then((dataSource: any) => {
@@ -181,18 +181,20 @@ const CesiumComponent: React.FC<{}> = () => {
           // 通过ID选择需要轨迹的实体
           drone = dataSource.entities.getById('Satellite/STARLINK-24');
           console.log(dataSource.entities._entities._array[0]);
+          console.log(dataSource.entities)
           dataSource.entities._entities._array.forEach((ele: any) => {
-            ele.removeProperty('billboard');
-            // ele._point = {
-            //   color: {
-            //     rgba: [255, 255, 255, 255],
-            //   },
-            //   outlineColor: {
-            //     rgba: [255, 0, 0, 255],
-            //   },
-            //   outlineWidth: 4,
-            //   pixelSize: 10,
-            // };
+            ele.billboard = undefined;
+            ele.point = {
+              show: true,
+              color: {
+                rgba: [255, 255, 255, 255],
+              },
+              outlineColor: {
+                rgba: [255, 0, 0, 255],
+              },
+              outlineWidth: 4,
+              pixelSize: 10,
+            };
           });
 
           // 添加和配置运动实体的模型
