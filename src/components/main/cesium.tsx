@@ -245,6 +245,7 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
       drawDistanceLine(viewer);
+      measureArea(viewer)
     }
   }, [init]);
 
@@ -375,6 +376,12 @@ const drawDistanceLine = (viewer: any) => {
     return (distance/1000).toFixed(2);
   }
 }
+
+
+const measureArea = (viewer: any) => {
+  
+}
+
 
   return (
     <>
