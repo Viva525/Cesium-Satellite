@@ -160,18 +160,19 @@ const CesiumComponent: React.FC<{}> = () => {
         },
         reset: function () {},
       };
+
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-2720.czml");
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
         // 加载实体
         let drone;
         dronePromise.then((dataSource: any) => {
           viewer.dataSources.add(dronePromise);
           // 通过ID选择需要轨迹的实体
           drone = dataSource.entities.getById("Satellite/ISS");
-          console.log(dataSource.entities._entities._array[0]);
-          console.log(dataSource.entities);
+          // console.log(dataSource.entities._entities._array[0]);
+          // console.log(dataSource.entities);
 
           dataSource.entities._entities._array.forEach((ele: any) => {
             // 1. 改成点
@@ -212,27 +213,15 @@ const CesiumComponent: React.FC<{}> = () => {
               ele.path.show = false; // 设置路径不可看
               ele.path.material.color = CM.Color.WHITE;
             }
+
+            // 4. 集站附近绘制网格
+            var baseStationRadius = 50
+            if(ele.id === 'Facility/AGI'){
+              let wgsPosition = GetWGS84FromDKR(ele.position.cartesian)
+              console.log(wgsPosition);
+              
+            }
           });
-          // drone.model = {
-          //   // 引入模型
-          //   uri: './Satellite.gltf',
-          //   // 配置模型大小的最小值
-          //   minimumPixelSize: 128,
-          //   //配置模型大小的最大值
-          //   maximumScale: 1000,
-          //   //配置模型轮廓的颜色
-          //   silhouetteColor: CM.Color.WHITE,
-          //   //配置轮廓的大小
-          //   silhouetteSize: 2,
-          // };
-          // //设置方向,根据实体的位置来配置方向
-          // drone.orientation = new CM.VelocityOrientationProperty(
-          //   drone.position
-          // );
-          // //设置模型初始的位置
-          // drone.viewFrom = new CM.Cartesian3(0, -30, 30);
-          // //设置查看器，让模型动起来
-          // viewer.clock.shouldAnimate = true;
         });
         viewer.camera.flyHome(0);
       });
@@ -255,6 +244,20 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
+
+      // 笛卡尔转经纬度
+      function GetWGS84FromDKR(coor: any)
+      {
+        let cartographic = CM.Cartographic.fromCartesian(coor);
+        let x=CM.Math.toDegrees(cartographic.longitude);
+        let y=CM.Math.toDegrees(cartographic.latitude);
+        let wgs84={
+          x:x,
+          y:y,
+        };
+        return wgs84;
+      }
+
     }
   }, [init]);
 
