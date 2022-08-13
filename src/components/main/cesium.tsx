@@ -250,6 +250,15 @@ const CesiumComponent: React.FC<{}> = () => {
 
   // 绘制线条测量距离
 const drawDistanceLine = (viewer: any) => {
+  // 笛卡尔坐标系转经纬度
+  const GetWGS84FromDKR = (coor: any) => {
+    let cartographic = CM.Cartographic.fromCartesian(coor);
+    let x=CM.Math.toDegrees(cartographic.longitude);
+    let y=CM.Math.toDegrees(cartographic.latitude);
+    let wgs84=`(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
+    return wgs84;
+  }
+
   viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
     CM.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
   );
@@ -259,52 +268,35 @@ const drawDistanceLine = (viewer: any) => {
   );
   var positions: any[] = [];
   var poly: any = null;
-  // var tooltip = document.getElementById("toolTip");
   var distance: string | null = '0';
   var cartesian = null;
   var floatingPoint;
-  // tooltip.style.display = "block";
 
   handler.setInputAction(function (movement: { endPosition: any; }) {
-    // tooltip.style.left = movement.endPosition.x + 3 + "px";
-    // tooltip.style.top = movement.endPosition.y - 25 + "px";
-    // tooltip.innerHTML = '<p>单击开始，右击结束</p>';
-    // cartesian = viewer.scene.pickPosition(movement.endPosition);
     let ray = viewer.camera.getPickRay(movement.endPosition);
     cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-    //cartesian = viewer.scene.camera.pickEllipsoid(movement.endPosition, viewer.scene.globe.ellipsoid);
     if (positions.length >= 2) {
       if (!CM.defined(poly)) {
         //@ts-ignore
         poly = new PolyLinePrimitive(positions);
       } else {
         positions.pop();
-        // cartesian.y += (1 + Math.random());
         positions.push(cartesian);
       }
       distance = getSpaceDistance(positions);
-      // console.log("distance: " + distance);
-      // tooltip.innerHTML='<p>'+distance+'米</p>';
     }
   }, CM.ScreenSpaceEventType.MOUSE_MOVE);
 
   handler.setInputAction(function (movement: { position: any; }) {
-    // tooltip.style.display = "none";
-    // cartesian = viewer.scene.camera.pickEllipsoid(movement.position, viewer.scene.globe.ellipsoid);
-    // cartesian = viewer.scene.pickPosition(movement.position);
     let ray = viewer.camera.getPickRay(movement.position);
     cartesian = viewer.scene.globe.pick(ray, viewer.scene);
     if (positions.length == 0) {
       positions.push(cartesian.clone());
     }
     positions.push(cartesian);
-    //在三维场景中添加Label
-    //   var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
-    var textDisance = distance + '米';
-    // console.log(textDisance + ",lng:" + cartographic.longitude/Math.PI*180.0);
+    var textDisance = distance + ' km';
     floatingPoint = viewer.entities.add({
-      name: '空间直线距离',
-      // position: Cesium.Cartesian3.fromDegrees(cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180,cartographic.height),
+      name: `${GetWGS84FromDKR(positions[positions.length - 1])}`,
       position: positions[positions.length - 1],
       point: {
         pixelSize: 5,
@@ -325,12 +317,9 @@ const drawDistanceLine = (viewer: any) => {
   }, CM.ScreenSpaceEventType.LEFT_CLICK);
 
   handler.setInputAction(function () {
-    handler.destroy(); //关闭事件句柄
-    positions.pop(); //最后一个点无效
-    // viewer.entities.remove(floatingPoint);
-    // tooltip.style.display = "none";
+    handler.destroy();  // 关闭事件句柄
+    positions.pop();  // 最后一个点无效
   }, CM.ScreenSpaceEventType.RIGHT_CLICK);
-
   var PolyLinePrimitive = (function () {
     function _(this: any, positions: any) {
       this.options = {
@@ -346,7 +335,6 @@ const drawDistanceLine = (viewer: any) => {
       this.positions = positions;
       this._init();
     }
-
     _.prototype._init = function () {
       var _self = this;
       var _update = function () {
@@ -359,7 +347,6 @@ const drawDistanceLine = (viewer: any) => {
       );
       viewer.entities.add(this.options);
     };
-
     return _;
   })();
 
@@ -385,7 +372,7 @@ const drawDistanceLine = (viewer: any) => {
       );
       distance = distance + s;
     }
-    return distance.toFixed(2);
+    return (distance/1000).toFixed(2);
   }
 }
 
