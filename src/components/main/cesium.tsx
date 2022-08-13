@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 //@ts-ignore
-import * as CM from "cesium/Cesium";
-// import "../../css/button.css";
+import * as CM from 'cesium/Cesium';
 
 const CesiumComponent: React.FC<{}> = () => {
   const [init, setInit] = useState<boolean>(false);
-
+  const [isDraw, setIsDraw] = useState<boolean>(false);
   useEffect(() => {
     setInit(true);
   }, []);
@@ -13,8 +12,8 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
-      const viewer = new CM.Viewer("cesiumContainer", {
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY';
+      const viewer = new CM.Viewer('cesiumContainer', {
         shouldAnimate: true,
         // 去掉地球表面的大气效果黑圈问题
         skyAtmosphere: false, // 关闭地球光环
@@ -62,7 +61,7 @@ const CesiumComponent: React.FC<{}> = () => {
 
           document.body.className = document.body.className.replace(
             /(?:\s|^)sandcastle-loading(?:\s|$)/,
-            " "
+            ' '
           );
         },
         // addToggleButton: function (
@@ -104,9 +103,9 @@ const CesiumComponent: React.FC<{}> = () => {
         ) {
           //@ts-ignore
           Sandcastle.declare(onclick);
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "cesium-button";
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'cesium-button';
           button.onclick = function () {
             Sandcastle.reset();
             //@ts-ignore
@@ -115,7 +114,7 @@ const CesiumComponent: React.FC<{}> = () => {
           };
           button.textContent = text;
           //@ts-ignore
-          document.getElementById(toolbarID || "toolbar").appendChild(button);
+          document.getElementById(toolbarID || 'toolbar').appendChild(button);
         },
         addDefaultToolbarButton: function (
           text: string | null,
@@ -135,42 +134,42 @@ const CesiumComponent: React.FC<{}> = () => {
           defaultAction = options[0].onselect;
         },
         addToolbarMenu: function (options: string | any[], toolbarID: any) {
-          const menu = document.createElement("select");
-          menu.className = "cesium-button";
+          const menu = document.createElement('select');
+          menu.className = 'cesium-button';
           menu.onchange = function () {
             Sandcastle.reset();
             const item = options[menu.selectedIndex];
-            if (item && typeof item.onselect === "function") {
+            if (item && typeof item.onselect === 'function') {
               item.onselect();
             }
           };
           //@ts-ignore
-          document.getElementById(toolbarID || "toolbar").appendChild(menu);
+          document.getElementById(toolbarID || 'toolbar').appendChild(menu);
 
-          if (!defaultAction && typeof options[0].onselect === "function") {
+          if (!defaultAction && typeof options[0].onselect === 'function') {
             defaultAction = options[0].onselect;
           }
 
           for (let i = 0, len = options.length; i < len; ++i) {
-            const option = document.createElement("option");
+            const option = document.createElement('option');
             option.textContent = options[i].text;
             option.value = options[i].value;
             menu.appendChild(option);
           }
         },
-        reset: function () {}, 
+        reset: function () {},
       };
 
       //@ts-ignore
-      Sandcastle.addDefaultToolbarButton("Satellites", function () {
+      Sandcastle.addDefaultToolbarButton('Satellites', function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
+        let dronePromise = CM.CzmlDataSource.load('./data/starlink-3.czml');
         // 加载实体
         let drone;
         dronePromise.then((dataSource: any) => {
           viewer.dataSources.add(dronePromise);
           // 通过ID选择需要轨迹的实体
-          drone = dataSource.entities.getById("Satellite/ISS");
+          drone = dataSource.entities.getById('Satellite/ISS');
           // console.log(dataSource.entities._entities._array[0]);
           // console.log(dataSource.entities);
 
@@ -219,7 +218,7 @@ const CesiumComponent: React.FC<{}> = () => {
             // if(ele.id === 'Facility/AGI'){
             //   let wgsPosition = GetWGS84FromDKR(ele.position.cartesian)
             //   console.log(wgsPosition);
-              
+
             // }
           });
         });
@@ -249,132 +248,132 @@ const CesiumComponent: React.FC<{}> = () => {
   }, [init]);
 
   // 绘制线条测量距离
-const drawDistanceLine = (viewer: any) => {
-  // 笛卡尔坐标系转经纬度
-  const GetWGS84FromDKR = (coor: any) => {
-    let cartographic = CM.Cartographic.fromCartesian(coor);
-    let x=CM.Math.toDegrees(cartographic.longitude);
-    let y=CM.Math.toDegrees(cartographic.latitude);
-    let wgs84=`(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
-    return wgs84;
-  }
-
-  viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
-    CM.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
-  );
-
-  let handler = new CM.ScreenSpaceEventHandler(
-    viewer.scene._imageryLayerCollection
-  );
-  var positions: any[] = [];
-  var poly: any = null;
-  var distance: string | null = '0';
-  var cartesian = null;
-  var floatingPoint;
-
-  handler.setInputAction(function (movement: { endPosition: any; }) {
-    let ray = viewer.camera.getPickRay(movement.endPosition);
-    cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-    if (positions.length >= 2) {
-      if (!CM.defined(poly)) {
-        //@ts-ignore
-        poly = new PolyLinePrimitive(positions);
-      } else {
-        positions.pop();
-        positions.push(cartesian);
-      }
-      distance = getSpaceDistance(positions);
-    }
-  }, CM.ScreenSpaceEventType.MOUSE_MOVE);
-
-  handler.setInputAction(function (movement: { position: any; }) {
-    let ray = viewer.camera.getPickRay(movement.position);
-    cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-    if (positions.length == 0) {
-      positions.push(cartesian.clone());
-    }
-    positions.push(cartesian);
-    var textDisance = distance + ' km';
-    floatingPoint = viewer.entities.add({
-      name: `${GetWGS84FromDKR(positions[positions.length - 1])}`,
-      position: positions[positions.length - 1],
-      point: {
-        pixelSize: 5,
-        color: CM.Color.RED,
-        outlineColor: CM.Color.WHITE,
-        outlineWidth: 2,
-      },
-      label: {
-        text: textDisance,
-        font: '18px sans-serif',
-        fillColor: CM.Color.GOLD,
-        style: CM.LabelStyle.FILL_AND_OUTLINE,
-        outlineWidth: 2,
-        verticalOrigin: CM.VerticalOrigin.BOTTOM,
-        pixelOffset: new CM.Cartesian2(20, -20),
-      },
-    });
-  }, CM.ScreenSpaceEventType.LEFT_CLICK);
-
-  handler.setInputAction(function () {
-    handler.destroy();  // 关闭事件句柄
-    positions.pop();  // 最后一个点无效
-  }, CM.ScreenSpaceEventType.RIGHT_CLICK);
-  var PolyLinePrimitive = (function () {
-    function _(this: any, positions: any) {
-      this.options = {
-        name: '直线',
-        polyline: {
-          show: true,
-          positions: [],
-          material: CM.Color.CHARTREUSE,
-          width: 10,
-          clampToGround: true,
-        },
-      };
-      this.positions = positions;
-      this._init();
-    }
-    _.prototype._init = function () {
-      var _self = this;
-      var _update = function () {
-        return _self.positions;
-      };
-      //实时更新polyline.positions
-      this.options.polyline.positions = new CM.CallbackProperty(
-        _update,
-        false
-      );
-      viewer.entities.add(this.options);
+  const drawDistanceLine = (viewer: any) => {
+    // 笛卡尔坐标系转经纬度
+    const GetWGS84FromDKR = (coor: any) => {
+      let cartographic = CM.Cartographic.fromCartesian(coor);
+      let x = CM.Math.toDegrees(cartographic.longitude);
+      let y = CM.Math.toDegrees(cartographic.latitude);
+      let wgs84 = `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
+      return wgs84;
     };
-    return _;
-  })();
 
-  //空间两点距离计算函数
-  function getSpaceDistance(positions: string | any[]) {
-    var distance = 0;
-    for (var i = 0; i < positions.length - 1; i++) {
-      var point1cartographic = CM.Cartographic.fromCartesian(
-        positions[i]
-      );
-      var point2cartographic = CM.Cartographic.fromCartesian(
-        positions[i + 1]
-      );
-      /**根据经纬度计算出距离**/
-      var geodesic = new CM.EllipsoidGeodesic();
-      geodesic.setEndPoints(point1cartographic, point2cartographic);
-      var s = geodesic.surfaceDistance;
-      //console.log(Math.sqrt(Math.pow(distance, 2) + Math.pow(endheight, 2)));
-      //返回两点之间的距离
-      s = Math.sqrt(
-        Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
-      );
-      distance = distance + s;
+    viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
+      CM.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+    );
+
+    let handler = new CM.ScreenSpaceEventHandler(
+      viewer.scene._imageryLayerCollection
+    );
+    var positions: any[] = [];
+    var poly: any = null;
+    var distance: string | null = '0';
+    var cartesian = null;
+    var floatingPoint;
+
+    handler.setInputAction(function (movement: { endPosition: any }) {
+      let ray = viewer.camera.getPickRay(movement.endPosition);
+      cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+      if (positions.length >= 2) {
+        if (!CM.defined(poly)) {
+          //@ts-ignore
+          poly = new PolyLinePrimitive(positions);
+        } else {
+          positions.pop();
+          positions.push(cartesian);
+        }
+        distance = getSpaceDistance(positions);
+      }
+    }, CM.ScreenSpaceEventType.MOUSE_MOVE);
+
+    handler.setInputAction(function (movement: { position: any }) {
+      debugger;
+      if (isDraw) {
+        let ray = viewer.camera.getPickRay(movement.position);
+        cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+        if (positions.length == 0) {
+          positions.push(cartesian.clone());
+        }
+        positions.push(cartesian);
+        var textDisance = distance + ' km';
+        floatingPoint = viewer.entities.add({
+          name: `${GetWGS84FromDKR(positions[positions.length - 1])}`,
+          position: positions[positions.length - 1],
+          point: {
+            pixelSize: 5,
+            color: CM.Color.RED,
+            outlineColor: CM.Color.WHITE,
+            outlineWidth: 2,
+          },
+          label: {
+            text: textDisance,
+            font: '18px sans-serif',
+            fillColor: CM.Color.GOLD,
+            style: CM.LabelStyle.FILL_AND_OUTLINE,
+            outlineWidth: 2,
+            verticalOrigin: CM.VerticalOrigin.BOTTOM,
+            pixelOffset: new CM.Cartesian2(20, -20),
+          },
+        });
+      }
+    }, CM.ScreenSpaceEventType.LEFT_CLICK);
+
+    handler.setInputAction(function () {
+      handler.destroy(); // 关闭事件句柄
+      positions.pop(); // 最后一个点无效
+    }, CM.ScreenSpaceEventType.RIGHT_CLICK);
+    var PolyLinePrimitive = (function () {
+      function _(this: any, positions: any) {
+        this.options = {
+          name: '直线',
+          polyline: {
+            show: true,
+            positions: [],
+            material: CM.Color.CHARTREUSE,
+            width: 10,
+            clampToGround: true,
+          },
+        };
+        this.positions = positions;
+        this._init();
+      }
+      _.prototype._init = function () {
+        var _self = this;
+        var _update = function () {
+          return _self.positions;
+        };
+        //实时更新polyline.positions
+        this.options.polyline.positions = new CM.CallbackProperty(
+          _update,
+          false
+        );
+        viewer.entities.add(this.options);
+      };
+      return _;
+    })();
+
+    //空间两点距离计算函数
+    function getSpaceDistance(positions: string | any[]) {
+      var distance = 0;
+      for (var i = 0; i < positions.length - 1; i++) {
+        var point1cartographic = CM.Cartographic.fromCartesian(positions[i]);
+        var point2cartographic = CM.Cartographic.fromCartesian(
+          positions[i + 1]
+        );
+        /**根据经纬度计算出距离**/
+        var geodesic = new CM.EllipsoidGeodesic();
+        geodesic.setEndPoints(point1cartographic, point2cartographic);
+        var s = geodesic.surfaceDistance;
+        //返回两点之间的距离
+        s = Math.sqrt(
+          Math.pow(s, 2) +
+            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        );
+        distance = distance + s;
+      }
+      return (distance / 1000).toFixed(2);
     }
-    return (distance/1000).toFixed(2);
-  }
-}
+  };
 
   return (
     <>
@@ -405,12 +404,19 @@ const drawDistanceLine = (viewer: any) => {
         // }
       `}
       </style>
-      <div id="toolbar"></div>
+      <div id='toolbar'>
+        <button type='button' id='MeasureDis' onClick={()=>{
+          //debugger;
+          setIsDraw(!isDraw);
+        }} className='cesium-button'>
+          MeasureDistance
+        </button>
+      </div>
       <div
-        id="cesiumContainer"
+        id='cesiumContainer'
         style={{
-          height: "100%",
-          width: "100%",
+          height: '100%',
+          width: '100%',
           // backgroundImage: "url(./images/star.jpg)",
         }}
       ></div>
