@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 //@ts-ignore
 import * as CM from "cesium/Cesium";
-import { assert } from "console";import * as echarts from 'echarts';
-
+import { assert } from "console";
+import * as echarts from 'echarts';
 
 //@ts-ignore
 let viewer: any;
@@ -32,15 +32,14 @@ const CesiumComponent: React.FC<{}> = () => {
   const [count, setCount] = useState<any>(undefined);
   const [gradient, setGradient] = useState<any>(undefined);
   const [time, setTime] = useState<any>(undefined);
-
   const [satellitePostionData, setSatellitePostionData] = useState<number[]>([])
   const [nowSystemDate, setNowSystemDate] = useState<string[]>([])
   const [isPostion, setIsPostion] = useState<boolean>(false);
   const chartRef = useRef(null)
+
   useEffect(() => {
     setInit(true);
   }, []);
-
   useEffect(() => {
     if (isDrawPolygon) {
       //@ts-ignore
@@ -59,7 +58,6 @@ const CesiumComponent: React.FC<{}> = () => {
       }
     }
   }, [isDrawPolygon]);
-
   useEffect(() => {
     if (isDrawLine) {
       //@ts-ignore
@@ -80,7 +78,6 @@ const CesiumComponent: React.FC<{}> = () => {
       }
     }
   }, [isDrawLine]);
-
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
@@ -109,14 +106,8 @@ const CesiumComponent: React.FC<{}> = () => {
         //alert(dpr);
         viewer.resolutionScale = vtxf_dpr;
       }
-
-      // 去掉黑色星空背景
-      // viewer.scene.skyBox.show = false;
-      // viewer.scene.backgroundColor = new CM.Color(0.0, 0.0, 0.0, 0.0);
-
       // 生成轨迹线
       let defaultAction: (() => void) | undefined;
-
       let Sandcastle = {
         // bucket: bucket,
         declare: function () { },
@@ -130,44 +121,11 @@ const CesiumComponent: React.FC<{}> = () => {
             defaultAction();
             defaultAction = undefined;
           }
-
           document.body.className = document.body.className.replace(
             /(?:\s|^)sandcastle-loading(?:\s|$)/,
             " "
           );
         },
-        // addToggleButton: function (
-        //   text: string,
-        //   checked: boolean,
-        //   onchange: (arg0: boolean) => void,
-        //   toolbarID: any
-        // ) {
-        //   //@ts-ignore
-        //   Sandcastle.declare(onchange);
-        //   const input = document.createElement('input');
-        //   input.checked = checked;
-        //   input.type = 'checkbox';
-        //   input.style.pointerEvents = 'none';
-        //   const label = document.createElement('label');
-        //   label.appendChild(input);
-        //   label.appendChild(document.createTextNode(text));
-        //   label.style.pointerEvents = 'none';
-        //   const button = document.createElement('button');
-        //   button.type = 'button';
-        //   button.className = 'cesium-button';
-        //   button.appendChild(label);
-
-        //   button.onclick = function () {
-        //     Sandcastle.reset();
-        //     //@ts-ignore
-        //     Sandcastle.highlight(onchange);
-        //     input.checked = !input.checked;
-        //     onchange(input.checked);
-        //   };
-
-        //   //@ts-ignore
-        //   document.getElementById(toolbarID || 'toolbar').appendChild(button);
-        // },
         addToolbarButton: function (
           text: string | null,
           onclick: () => void,
@@ -217,11 +175,9 @@ const CesiumComponent: React.FC<{}> = () => {
           };
           //@ts-ignore
           document.getElementById(toolbarID || "toolbar").appendChild(menu);
-
           if (!defaultAction && typeof options[0].onselect === "function") {
             defaultAction = options[0].onselect;
           }
-
           for (let i = 0, len = options.length; i < len; ++i) {
             const option = document.createElement("option");
             option.textContent = options[i].text;
@@ -231,11 +187,10 @@ const CesiumComponent: React.FC<{}> = () => {
         },
         reset: function () { },
       };
-
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-50.czml");
         const stripeMaterial = new CM.StripeMaterialProperty({
           evenColor: CM.Color.WHITE.withAlpha(0.5),
           oddColor: CM.Color.BLUE.withAlpha(0.5),
@@ -248,9 +203,7 @@ const CesiumComponent: React.FC<{}> = () => {
           let entities = viewer.entities;
           // 通过ID选择需要轨迹的实体
           drone = dataSource.entities.getById("Satellite/ISS");
-
           dataSource.entities._entities._array.forEach((ele: any) => {
-
             // 1. 改成点
             if (ele.path != undefined) {
             ele.billboard = undefined;
@@ -262,7 +215,6 @@ const CesiumComponent: React.FC<{}> = () => {
               pixelSize: 5,
             };
           }
-
             // // 2. 添加和配置运动实体的模型
             // ele.model = {
             //   // 引入模型
@@ -282,47 +234,19 @@ const CesiumComponent: React.FC<{}> = () => {
             // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
             // //设置查看器，让模型动起来
             // viewer.clock.shouldAnimate = true;
-
             // 3. 配置样式与路径
             if (ele.label != undefined) {
               ele.label.show = false;
             }
-
             if (ele.path != undefined) {
               ele.path.show = false; // 设置路径不可看
               ele.path.material.color = CM.Color.WHITE;
             }
-
             // 4. 集站附近绘制网格
             var Radius = 50;
             if (ele.id === "Facility/AGI") {
               //@ts-ignore
               let [lon, lat] = GetWGS84FromDKR(ele.position._value, 1)
-              //主体
-              // debugger;
-              // let center =CM.Cartesian3.fromDegrees(parseFloat(lon),parseFloat(lat), 0);
-              // //局部坐标系   右手坐标系
-              // //x->东
-              // //y->上
-              // //z->南
-              // let L2W = CM.Transforms.localFrameToFixedFrameGenerator('east', 'up')(center);//中心点
-              // //函数
-              // //计算点位
-              // const computedposition =(L2W: any,x: number,y: number,z: number)=>{
-              //   let temp = CM.Matrix4.multiplyByPoint(L2W,CM.Cartesian3.fromElements(x,y,z),new CM.Cartesian3())
-              //   return temp
-              // }
-              // //获取长方形的四个顶点
-              // const CreateRange = (L2W: any)=>{
-              //   let LT = computedposition(L2W,-650,0,-350) ; 
-              //   let LB = computedposition(L2W,-650,0,350) ; 
-              //   let RT = computedposition(L2W,650,0,-350) ; 
-              //   let RB = computedposition(L2W,650,0,350) ; 
-              //   return [LT,LB,RB,RT]
-              // }
-              
-              // let range = CreateRange(L2W);
-              // console.log(range);
               //添加Entity
               let radius = 1
               lon = parseFloat(lon);
@@ -350,39 +274,11 @@ const CesiumComponent: React.FC<{}> = () => {
                   material: CM.Color.fromCssColorString("rgba(5, 39, 175, 0.3)").withAlpha(0.1),
                 },
               });
-              // var scene = viewer.scene;
-              // var instance = new CM.GeometryInstance({
-              //   geometry : new CM.RectangleGeometry({
-              //     rectangle : CM.Rectangle.fromDegrees(-100.0, 20.0, -90.0, 30.0),
-              //     vertexFormat : CM.EllipsoidSurfaceAppearance.VERTEX_FORMAT
-              //   })
-              // });
-              
-              // scene.primitives.add(new CM.Primitive({
-              //   geometryInstances : instance,
-              //   appearance : new CM.EllipsoidSurfaceAppearance({
-              //     material : CM.Material.fromType('Stripe')
-              //   })
-              // }));
-
-              // entities.add({
-              //   rectangle: {
-              //     coordinates: CM.Rectangle.fromDegrees(
-              //       lon - 15 ,  // 西 [-Pi, Pi]
-              //       lat - 15,  // 南 [-Pi/2, Pi/2]
-              //       lon + 100,  // 东 [-Pi, Pi]
-              //       lat  // 北 [-Pi/2, Pi/2] 
-              //     ),
-              //     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-              //     material: CM.Color.fromRandom({ alpha: 0.5 }),
-              //   },
-              // });
             }
           });
         });
         viewer.camera.flyHome(0);
       });
-
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (click: { position: any }) {
@@ -430,15 +326,12 @@ const CesiumComponent: React.FC<{}> = () => {
     if(type === 0 ) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`
     else if(type === 1) return [x.toFixed(2) as number, y.toFixed(2) as number]
   };
-
   // 绘制线条测量距离
   const measureDistance = () => {
     if (!isDrawLine) return;
-
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
       CM.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
-
     handler = new CM.ScreenSpaceEventHandler(
       viewer.scene._imageryLayerCollection
     );
@@ -558,7 +451,6 @@ const CesiumComponent: React.FC<{}> = () => {
       return (distance / 1000).toFixed(2);
     }
   };
-
   const measureArea = () => {
     if (!isDrawPolygon) return;
     // 鼠标事件
@@ -706,7 +598,6 @@ const CesiumComponent: React.FC<{}> = () => {
                 material: CM.Color.GREEN.withAlpha(0.1),
             }
         });
- 
     }
 
     function distance(point1: any, point2: any) {
@@ -721,117 +612,13 @@ const CesiumComponent: React.FC<{}> = () => {
         return s;
     }
     };
-
-  // const drawPolygon = () => {
-
-  // }
-
-  //   const specialEffects = () => {
-  //     function CircleWaveMaterialProperty (color: any, duration: any, count: any, gradient: any) {
-  //       setColor2(color)
-  //       setDuration(CM.defaultValue(duration, 1e3))
-  //       setCount(CM.defaultValue(count, 2))
-  //       if (count <= 0) setCount(1)
-  //       setGradient(CM.defaultValue(gradient, 0.1))
-  //       if (gradient < 0) setGradient(0)
-  //       else if (gradient > 1) setGradient(1)
-  //       setTime(performance.now())
-
-  //     }
-  //     Object.defineProperties(CircleWaveMaterialProperty.prototype, {
-  //       isConstant: {
-  //         get: function () {
-  //           return false
-  //         }
-  //       },
-  //       definitionChanged: {
-  //         get: function () {
-  //           return definitionChanged
-  //         }
-  //       },
-  //       color: CM.createPropertyDescriptor('color')
-  //     })
-  //     CircleWaveMaterialProperty.prototype.getType = function () {
-  //       return CM.Material.CircleWaveMaterialType
-  //     }
-  //     CircleWaveMaterialProperty.prototype.getValue = function (time_1: any, result: { color?: any; time?: any; count?: any; gradient?: any; }) {
-  //       if (!CM.defined(result)) {
-  //         result = {}
-  //       }
-  //       result.color = CM.Property.getValueOrClonedDefault(color1, time_1, CM.Color.WHITE, result.color)
-  //       result.time = (((new Date()).getTime() - time) % duration) / duration
-  //       result.count = count
-  //       result.gradient = 1 + 10 * (1 - gradient)
-  //       return result
-  //     }
-  //     CircleWaveMaterialProperty.prototype.equals = function (other: { _color: any; }) {
-  //       return this === other ||
-  //         (other instanceof CircleWaveMaterialProperty &&
-  //           CM.Property.equals(color1, other._color))
-  //     }
-  //     //@ts-ignore
-  //     CM.CircleWaveMaterialProperty = CircleWaveMaterialProperty
-  //     CM.Material.CircleWaveMaterialType = 'CircleWaveMaterial'
-  //     CM.Material.CircleWaveSource = `czm_material czm_getMaterial(czm_materialInput materialInput)\n
-  //   {\n
-  //       czm_material material = czm_getDefaultMaterial(materialInput);\n
-  //       material.diffuse = 1.5 * color.rgb;\n
-  //       vec2 st = materialInput.st;\n
-  //       vec3 str = materialInput.str;\n
-  //       float dis = distance(st, vec2(0.5, 0.5));\n
-  //       float per = fract(time);\n
-  //       if (abs(str.z) > 0.001) {\n
-  //           discard;\n
-  //       }\n
-  //       if (dis > 0.5) { \n
-  //           discard; \n
-  //       } else { \n
-  //           float perDis = 0.5 / count;\n
-  //           float disNum; \n
-  //           float bl = .0; \n
-  //           for (int i = 0; i <= 999; i++) { \n
-  //               if (float(i) <= count) { \n
-  //                 disNum = perDis *
-  //   float(i) - dis + per / count; \n
-  //                   if (disNum > 0.0) { \n
-  //                       if (disNum < perDis) { \n
-  //                           bl = 1.0 - disNum / perDis;\n
-  //                       }\n
-  //                     else if
-  //   (disNum - perDis < perDis) { \n
-  //                               bl = 1.0 - abs(1.0 - disNum / perDis); \n
-  //                       } \n
-  //                       material.alpha = pow(bl, gradient); \n
-  //                   } \n
-  //               } \n
-  //           } \n
-  //       } \n
-  //   return material; \n
-  //   } \n`
-  //     CM.Material._materialCache.addMaterial(CM.Material.CircleWaveMaterialType, {
-  //       fabric: {
-  //         type: CM.Material.CircleWaveMaterialType,
-  //         uniforms: {
-  //           color: new CM.Color(1.0, 0.0, 0.0, 1.0),
-  //           time: 1,
-  //           count: 1,
-  //           gradient: 0.1
-  //         },
-  //         source: CM.Material.CircleWaveSource
-  //       },
-  //       translucent: function () {
-  //         return !0
-  //       }
-  //     })
-  //   }
-
   const nowSatellitePostion = () => {
     let cartographic = null
     cartographic = CM.Cartographic.fromCartesian(nowPicksatellite.primitive._actualPosition);
 
     let x = CM.Math.toDegrees(cartographic.longitude);
     let y = CM.Math.toDegrees(cartographic.latitude);
-    let z = cartographic.height / 1000;
+    let z = Math.ceil(cartographic.height / 1000);
     let nowDate = (new Date(viewer.clock.currentTime)).toUTCString()
 
     if(viewer.clock.shouldAnimate){
@@ -847,18 +634,35 @@ const CesiumComponent: React.FC<{}> = () => {
 
   useEffect(() => {
     if (satellitePostionData.length !== 0) {
-      
       let myChart = echarts.getInstanceByDom(chartRef.current as unknown as HTMLDivElement);
       if(myChart == null){
-        myChart= echarts.init(chartRef.current as unknown as HTMLDivElement, 'dark');
+        myChart= echarts.init(chartRef.current as unknown as HTMLDivElement);
       }
       let option = {
+        grid: {
+          left: '11%',
+          top: '15%',
+          right: '2%',
+          bottom: '15%'
+        },
         xAxis: {
           type: 'category',
+          axisLabel: {
+            color: '#fff',
+            align: 'left'
+          },
           data: nowSystemDate
         },
         yAxis: {
           type: 'value',
+          name: 'height / km',
+          position: 'left',
+          nameTextStyle: {
+            color: '#fff'
+          },
+          axisLabel: {
+            color: '#fff'
+          },
           min: (value: any) => {
             return value.min - 1
           },
@@ -880,11 +684,8 @@ const CesiumComponent: React.FC<{}> = () => {
       myChart.setOption(option);
       myChart.resize()
     }
-
   }, [satellitePostionData, nowSystemDate])
 
-  setInterval(function () {
-  })
   return (
     <>
       <style>
@@ -908,10 +709,12 @@ const CesiumComponent: React.FC<{}> = () => {
           position:absolute;
         }
         #satellite{
-          height: 15vh;
-          width:20vw;
-          background:#fff;
+          height: 18vh;
+          width:25vw;
+          background:rgba(0,0,0,0.3);
           position:absolute;
+          right: 5px;
+          top: 12vh;
           z-index:999;
         }
 
