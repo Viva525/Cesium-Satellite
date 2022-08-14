@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 //@ts-ignore
 import * as CM from "cesium/Cesium";
+import { assert } from "console";
 
 //@ts-ignore
-// var globalViewer = null
+let viewer: any;
 var handler: {
   setInputAction: (
     arg0: {
@@ -17,8 +18,19 @@ var handler: {
 };
 const CesiumComponent: React.FC<{}> = () => {
   const [init, setInit] = useState<boolean>(false);
-  const [isDraw, setIsDraw] = useState<boolean>(false);
+  const [isDrawLine, setIsDrawLine] = useState<boolean>(false);
   const [isDrawPolygon, setIsDrawPolygon] = useState<boolean>(false);
+  const [definitionChanged, setDefinitionChanged] = useState<any>(
+    new CM.Event()
+  );
+  const [colorSubscription, setColorSubscription] = useState<any>(undefined);
+  const [duration, setDuration] = useState<any>(undefined);
+  const [color1, setColor1] = useState<any>(undefined);
+  const [color2, setColor2] = useState<any>(undefined);
+  const [count, setCount] = useState<any>(undefined);
+  const [gradient, setGradient] = useState<any>(undefined);
+  const [time, setTime] = useState<any>(undefined);
+
   useEffect(() => {
     setInit(true);
   }, []);
@@ -27,20 +39,47 @@ const CesiumComponent: React.FC<{}> = () => {
     if (isDrawPolygon) {
       //@ts-ignore
       document.getElementById("measureArea").classList.add("btnSelected");
-
       //@ts-ignore
-      // measureArea(globalViewer)
+      document.getElementById("measureDistance").disabled = true;
+      //@ts-ignore
+      measureArea(viewer);
     } else {
       //@ts-ignore
       document.getElementById("measureArea").classList.remove("btnSelected");
+      //@ts-ignore
+      document.getElementById("measureDistance").disabled = false;
+      if (handler) {
+        handler.destroy();
+      }
     }
   }, [isDrawPolygon]);
+
+  useEffect(() => {
+    if (isDrawLine) {
+      //@ts-ignore
+      document.getElementById("measureDistance").classList.add("btnSelected");
+      //@ts-ignore
+      document.getElementById("measureArea").disabled = true;
+      //@ts-ignore
+      measureDistance();
+    } else {
+      //@ts-ignore
+      document
+        .getElementById("measureDistance")
+        .classList.remove("btnSelected");
+      //@ts-ignore
+      document.getElementById("measureArea").disabled = false;
+      if (handler) {
+        handler.destroy();
+      }
+    }
+  }, [isDrawLine]);
 
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
-      const viewer = new CM.Viewer("cesiumContainer", {
+      viewer = new CM.Viewer("cesiumContainer", {
         shouldAnimate: true,
         // 去掉地球表面的大气效果黑圈问题
         skyAtmosphere: false, // 关闭地球光环
@@ -51,7 +90,6 @@ const CesiumComponent: React.FC<{}> = () => {
           },
         },
       });
-
       // 尝试提高分辨率
       viewer._cesiumWidget._supportsImageRenderingPixelated =
         CM.FeatureDetection.supportsImageRenderingPixelated();
@@ -192,24 +230,30 @@ const CesiumComponent: React.FC<{}> = () => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
+        const stripeMaterial = new CM.StripeMaterialProperty({
+          evenColor: CM.Color.WHITE.withAlpha(0.5),
+          oddColor: CM.Color.BLUE.withAlpha(0.5),
+          repeat: 5.0,
+        });
         // 加载实体
         let drone;
         dronePromise.then((dataSource: any) => {
           viewer.dataSources.add(dronePromise);
+          let entities = viewer.entities;
           // 通过ID选择需要轨迹的实体
           drone = dataSource.entities.getById("Satellite/ISS");
-          // console.log(dataSource.entities._entities._array[0]);
-          // console.log(dataSource.entities);
 
           dataSource.entities._entities._array.forEach((ele: any) => {
-            ele.billboard = undefined;
             // 1. 改成点
+            if (ele.path != undefined) {
+            ele.billboard = undefined;
             ele.point = {
               show: true,
               color: CM.Color.WHITE,
               // outlineWidth: 4,
               pixelSize: 5,
             };
+          }
 
             // // 2. 添加和配置运动实体的模型
             // ele.model = {
@@ -242,12 +286,90 @@ const CesiumComponent: React.FC<{}> = () => {
             }
 
             // 4. 集站附近绘制网格
-            // var baseStationRadius = 50
-            // if(ele.id === 'Facility/AGI'){
-            //   let wgsPosition = GetWGS84FromDKR(ele.position.cartesian)
-            //   console.log(wgsPosition);
+            var Radius = 50;
+            if (ele.id === "Facility/AGI") {
+              //@ts-ignore
+              let [lon, lat] = GetWGS84FromDKR(ele.position._value, 1)
+              //主体
+              // debugger;
+              // let center =CM.Cartesian3.fromDegrees(parseFloat(lon),parseFloat(lat), 0);
+              // //局部坐标系   右手坐标系
+              // //x->东
+              // //y->上
+              // //z->南
+              // let L2W = CM.Transforms.localFrameToFixedFrameGenerator('east', 'up')(center);//中心点
+              // //函数
+              // //计算点位
+              // const computedposition =(L2W: any,x: number,y: number,z: number)=>{
+              //   let temp = CM.Matrix4.multiplyByPoint(L2W,CM.Cartesian3.fromElements(x,y,z),new CM.Cartesian3())
+              //   return temp
+              // }
+              // //获取长方形的四个顶点
+              // const CreateRange = (L2W: any)=>{
+              //   let LT = computedposition(L2W,-650,0,-350) ; 
+              //   let LB = computedposition(L2W,-650,0,350) ; 
+              //   let RT = computedposition(L2W,650,0,-350) ; 
+              //   let RB = computedposition(L2W,650,0,350) ; 
+              //   return [LT,LB,RB,RT]
+              // }
+              
+              // let range = CreateRange(L2W);
+              // console.log(range);
+              //添加Entity
+              let radius = 1
+              lon = parseFloat(lon);
+              lat = parseFloat(lat);
+              viewer.entities.add({
+                id:"ShowRange",
+                name: "选取范围",
+                polygon: {
+                  hierarchy: new CM.PolygonHierarchy(
+                    CM.Cartesian3.fromDegreesArray([
+                      lon-radius,
+                      lat+radius,
+                      lon+radius,
+                      lat+radius,
+                      lon+radius,
+                      lat-radius,
+                      lon-radius,
+                      lat-radius
+                    ])
+                  ),
+                  outline: true,
+                  outlineColor: CM.Color.RED,
+                  outlineWidth: 4,
+                  fill: false,
+                  material: CM.Color.fromCssColorString("rgba(5, 39, 175, 0.3)").withAlpha(0.1),
+                },
+              });
+              // var scene = viewer.scene;
+              // var instance = new CM.GeometryInstance({
+              //   geometry : new CM.RectangleGeometry({
+              //     rectangle : CM.Rectangle.fromDegrees(-100.0, 20.0, -90.0, 30.0),
+              //     vertexFormat : CM.EllipsoidSurfaceAppearance.VERTEX_FORMAT
+              //   })
+              // });
+              
+              // scene.primitives.add(new CM.Primitive({
+              //   geometryInstances : instance,
+              //   appearance : new CM.EllipsoidSurfaceAppearance({
+              //     material : CM.Material.fromType('Stripe')
+              //   })
+              // }));
 
-            // }
+              // entities.add({
+              //   rectangle: {
+              //     coordinates: CM.Rectangle.fromDegrees(
+              //       lon - 15 ,  // 西 [-Pi, Pi]
+              //       lat - 15,  // 南 [-Pi/2, Pi/2]
+              //       lon + 100,  // 东 [-Pi, Pi]
+              //       lat  // 北 [-Pi/2, Pi/2] 
+              //     ),
+              //     heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              //     material: CM.Color.fromRandom({ alpha: 0.5 }),
+              //   },
+              // });
+            }
           });
         });
         viewer.camera.flyHome(0);
@@ -271,27 +393,29 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
-      drawDistanceLine(viewer);
-      measureArea(viewer);
+
+      // specialEffects()
+      // getEllipseModel2()
     }
   }, [init]);
+  // 笛卡尔坐标系转经纬度
+  const GetWGS84FromDKR = (coor: any, type: number) => {
+    let cartographic = CM.Cartographic.fromCartesian(coor);
+    let x = CM.Math.toDegrees(cartographic.longitude);
+    let y = CM.Math.toDegrees(cartographic.latitude);
+    if(type === 0 ) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`
+    else if(type === 1) return [x.toFixed(2) as number, y.toFixed(2) as number]
+  };
 
   // 绘制线条测量距离
-  const drawDistanceLine = (viewer: any) => {
-    // 笛卡尔坐标系转经纬度
-    const GetWGS84FromDKR = (coor: any) => {
-      let cartographic = CM.Cartographic.fromCartesian(coor);
-      let x = CM.Math.toDegrees(cartographic.longitude);
-      let y = CM.Math.toDegrees(cartographic.latitude);
-      let wgs84 = `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
-      return wgs84;
-    };
+  const measureDistance = () => {
+    if (!isDrawLine) return;
 
     viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
       CM.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
 
-    let handler = new CM.ScreenSpaceEventHandler(
+    handler = new CM.ScreenSpaceEventHandler(
       viewer.scene._imageryLayerCollection
     );
     var positions: any[] = [];
@@ -299,7 +423,7 @@ const CesiumComponent: React.FC<{}> = () => {
     var distance: string | null = "0";
     var cartesian = null;
     var floatingPoint;
-
+    //@ts-ignore
     handler.setInputAction(function (movement: { endPosition: any }) {
       let ray = viewer.camera.getPickRay(movement.endPosition);
       cartesian = viewer.scene.globe.pick(ray, viewer.scene);
@@ -315,7 +439,7 @@ const CesiumComponent: React.FC<{}> = () => {
         distance = getSpaceDistance(curPositions);
       }
     }, CM.ScreenSpaceEventType.MOUSE_MOVE);
-
+    //@ts-ignore
     handler.setInputAction(function (movement: { position: any }) {
       // debugger;
       if (1) {
@@ -328,7 +452,7 @@ const CesiumComponent: React.FC<{}> = () => {
         let curPositions = positions.slice(0);
         var textDisance = distance + " km";
         floatingPoint = viewer.entities.add({
-          name: `${GetWGS84FromDKR(curPositions[curPositions.length - 1])}`,
+          name: `${GetWGS84FromDKR(curPositions[curPositions.length - 1], 0)}`,
           position: curPositions[curPositions.length - 1],
           point: {
             pixelSize: 5,
@@ -411,7 +535,7 @@ const CesiumComponent: React.FC<{}> = () => {
     }
   };
 
-  const measureArea = (viewer: any) => {
+  const measureArea = () => {
     if (!isDrawPolygon) return;
     // 鼠标事件
     handler = new CM.ScreenSpaceEventHandler(
@@ -591,9 +715,123 @@ const CesiumComponent: React.FC<{}> = () => {
     }
   };
 
-  const specialEffects = () => {
-    
-  }
+  // const drawPolygon = () => {
+
+  // }
+
+  //   const specialEffects = () => {
+  //     function CircleWaveMaterialProperty (color: any, duration: any, count: any, gradient: any) {
+  //       setColor2(color)
+  //       setDuration(CM.defaultValue(duration, 1e3))
+  //       setCount(CM.defaultValue(count, 2))
+  //       if (count <= 0) setCount(1)
+  //       setGradient(CM.defaultValue(gradient, 0.1))
+  //       if (gradient < 0) setGradient(0)
+  //       else if (gradient > 1) setGradient(1)
+  //       setTime(performance.now())
+
+  //     }
+  //     Object.defineProperties(CircleWaveMaterialProperty.prototype, {
+  //       isConstant: {
+  //         get: function () {
+  //           return false
+  //         }
+  //       },
+  //       definitionChanged: {
+  //         get: function () {
+  //           return definitionChanged
+  //         }
+  //       },
+  //       color: CM.createPropertyDescriptor('color')
+  //     })
+  //     CircleWaveMaterialProperty.prototype.getType = function () {
+  //       return CM.Material.CircleWaveMaterialType
+  //     }
+  //     CircleWaveMaterialProperty.prototype.getValue = function (time_1: any, result: { color?: any; time?: any; count?: any; gradient?: any; }) {
+  //       if (!CM.defined(result)) {
+  //         result = {}
+  //       }
+  //       result.color = CM.Property.getValueOrClonedDefault(color1, time_1, CM.Color.WHITE, result.color)
+  //       result.time = (((new Date()).getTime() - time) % duration) / duration
+  //       result.count = count
+  //       result.gradient = 1 + 10 * (1 - gradient)
+  //       return result
+  //     }
+  //     CircleWaveMaterialProperty.prototype.equals = function (other: { _color: any; }) {
+  //       return this === other ||
+  //         (other instanceof CircleWaveMaterialProperty &&
+  //           CM.Property.equals(color1, other._color))
+  //     }
+  //     //@ts-ignore
+  //     CM.CircleWaveMaterialProperty = CircleWaveMaterialProperty
+  //     CM.Material.CircleWaveMaterialType = 'CircleWaveMaterial'
+  //     CM.Material.CircleWaveSource = `czm_material czm_getMaterial(czm_materialInput materialInput)\n
+  //   {\n
+  //       czm_material material = czm_getDefaultMaterial(materialInput);\n
+  //       material.diffuse = 1.5 * color.rgb;\n
+  //       vec2 st = materialInput.st;\n
+  //       vec3 str = materialInput.str;\n
+  //       float dis = distance(st, vec2(0.5, 0.5));\n
+  //       float per = fract(time);\n
+  //       if (abs(str.z) > 0.001) {\n
+  //           discard;\n
+  //       }\n
+  //       if (dis > 0.5) { \n
+  //           discard; \n
+  //       } else { \n
+  //           float perDis = 0.5 / count;\n
+  //           float disNum; \n
+  //           float bl = .0; \n
+  //           for (int i = 0; i <= 999; i++) { \n
+  //               if (float(i) <= count) { \n
+  //                 disNum = perDis *
+  //   float(i) - dis + per / count; \n
+  //                   if (disNum > 0.0) { \n
+  //                       if (disNum < perDis) { \n
+  //                           bl = 1.0 - disNum / perDis;\n
+  //                       }\n
+  //                     else if
+  //   (disNum - perDis < perDis) { \n
+  //                               bl = 1.0 - abs(1.0 - disNum / perDis); \n
+  //                       } \n
+  //                       material.alpha = pow(bl, gradient); \n
+  //                   } \n
+  //               } \n
+  //           } \n
+  //       } \n
+  //   return material; \n
+  //   } \n`
+  //     CM.Material._materialCache.addMaterial(CM.Material.CircleWaveMaterialType, {
+  //       fabric: {
+  //         type: CM.Material.CircleWaveMaterialType,
+  //         uniforms: {
+  //           color: new CM.Color(1.0, 0.0, 0.0, 1.0),
+  //           time: 1,
+  //           count: 1,
+  //           gradient: 0.1
+  //         },
+  //         source: CM.Material.CircleWaveSource
+  //       },
+  //       translucent: function () {
+  //         return !0
+  //       }
+  //     })
+  //   }
+
+  // // 圆圈模型红色多线圈
+  //   const getEllipseModel2 = ()  => {
+  //     viewer.entities.add({
+  //       id: 'Ellipse2',
+  //       name: 'Ellipse2',
+  //       position: new CM.Cartesian3.fromDegrees(113.49439466650142, 23.15807733261752, 0),
+  //       ellipse: {
+  //         height: 0,
+  //         semiMinorAxis: 50,
+  //         semiMajorAxis: 50,
+  //         material: new CM.CircleWaveMaterialProperty(CM.Color.fromCssColorString('#E54030'), 2e3, 3, 0)
+  //       }
+  //     })
+  //   }
 
   return (
     <>
@@ -632,10 +870,9 @@ const CesiumComponent: React.FC<{}> = () => {
       <div id="toolbar">
         <button
           type="button"
-          id="MeasureDis"
+          id="measureDistance"
           onClick={() => {
-            //debugger;
-            setIsDraw(!isDraw);
+            setIsDrawLine(!isDrawLine);
           }}
           className="cesium-button"
         >
