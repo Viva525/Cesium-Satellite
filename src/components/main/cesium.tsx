@@ -4,11 +4,11 @@ import * as CM from 'cesium/Cesium';
 
 
 //@ts-ignore
-// var globalViewer = null
+let viewer: any;
 var handler: { setInputAction: (arg0: { (movement: { endPosition: any; }): void; (movement: { position: any; }): void; (): void; }, arg1: any) => void; destroy: () => void; };
 const CesiumComponent: React.FC<{}> = () => {
   const [init, setInit] = useState<boolean>(false);
-  const [isDraw, setIsDraw] = useState<boolean>(false);
+  const [isDrawLine, setIsDrawLine] = useState<boolean>(false);
   const [isDrawPolygon, setIsDrawPolygon] = useState<boolean>(false);
   useEffect(() => {
     setInit(true);
@@ -18,20 +18,46 @@ const CesiumComponent: React.FC<{}> = () => {
     if(isDrawPolygon){
       //@ts-ignore
       document.getElementById('measureArea').classList.add('btnSelected')
-      
       //@ts-ignore
-      // measureArea(globalViewer)
+      document.getElementById('measureDistance').disabled = true
+      //@ts-ignore
+      measureArea(viewer)
     }else{
       //@ts-ignore
       document.getElementById('measureArea').classList.remove('btnSelected')
+      //@ts-ignore
+      document.getElementById('measureDistance').disabled = false
+      if(handler){
+        handler.destroy()
+      }
     }
-  }, [isDrawPolygon])
+  }, [isDrawPolygon]);
+
+  useEffect(() =>{
+    if(isDrawLine){
+      //@ts-ignore
+      document.getElementById('measureDistance').classList.add('btnSelected')
+      //@ts-ignore
+      document.getElementById('measureArea').disabled = true
+      //@ts-ignore
+      measureDistance(viewer)
+    }else{
+      //@ts-ignore
+      document.getElementById('measureDistance').classList.remove('btnSelected')
+      //@ts-ignore
+      document.getElementById('measureArea').disabled = false
+      if(handler){
+        handler.destroy()
+      }
+    }
+  }, [isDrawLine]);
+
 
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY';
-      const viewer = new CM.Viewer('cesiumContainer', {
+      viewer = new CM.Viewer('cesiumContainer', {
         shouldAnimate: true,
         // 去掉地球表面的大气效果黑圈问题
         skyAtmosphere: false, // 关闭地球光环
@@ -42,7 +68,6 @@ const CesiumComponent: React.FC<{}> = () => {
           },
         },
       });
-
       // 尝试提高分辨率
       viewer._cesiumWidget._supportsImageRenderingPixelated =
         CM.FeatureDetection.supportsImageRenderingPixelated();
@@ -262,13 +287,12 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
-      drawDistanceLine(viewer);
-      measureArea(viewer)
     }
   }, [init]);
 
   // 绘制线条测量距离
-  const drawDistanceLine = (viewer: any) => {
+  const measureDistance = (viewer: any) => {
+    if(!isDrawLine) return
     // 笛卡尔坐标系转经纬度
     const GetWGS84FromDKR = (coor: any) => {
       let cartographic = CM.Cartographic.fromCartesian(coor);
@@ -282,7 +306,7 @@ const CesiumComponent: React.FC<{}> = () => {
       CM.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
     );
 
-    let handler = new CM.ScreenSpaceEventHandler(
+    handler = new CM.ScreenSpaceEventHandler(
       viewer.scene._imageryLayerCollection
     );
     var positions: any[] = [];
@@ -290,7 +314,7 @@ const CesiumComponent: React.FC<{}> = () => {
     var distance: string | null = '0';
     var cartesian = null;
     var floatingPoint;
-
+//@ts-ignore
     handler.setInputAction(function (movement: { endPosition: any }) {
       let ray = viewer.camera.getPickRay(movement.endPosition);
       cartesian = viewer.scene.globe.pick(ray, viewer.scene);
@@ -306,7 +330,7 @@ const CesiumComponent: React.FC<{}> = () => {
         distance = getSpaceDistance(curPositions);
       }
     }, CM.ScreenSpaceEventType.MOUSE_MOVE);
-
+//@ts-ignore
     handler.setInputAction(function (movement: { position: any }) {
       // debugger;
       if (1) {
@@ -404,7 +428,7 @@ const CesiumComponent: React.FC<{}> = () => {
   };
 
 
-const measureArea = (viewer: any) => {
+const measureArea = () => {
   if(!isDrawPolygon) return
   // 鼠标事件
     handler = new CM.ScreenSpaceEventHandler(viewer.scene._imageryLayerCollection);
@@ -594,9 +618,8 @@ const measureArea = (viewer: any) => {
       `}
       </style>
       <div id='toolbar'>
-        <button type='button' id='MeasureDis' onClick={()=>{
-          //debugger;
-          setIsDraw(!isDraw);
+        <button type='button' id='measureDistance' onClick={()=>{
+          setIsDrawLine(!isDrawLine);
         }} className='cesium-button'>
           MeasureDistance
         </button>
