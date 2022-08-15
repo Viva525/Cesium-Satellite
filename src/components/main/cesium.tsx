@@ -192,7 +192,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-300.czml");
         const stripeMaterial = new CM.StripeMaterialProperty({
           evenColor: CM.Color.WHITE.withAlpha(0.5),
           oddColor: CM.Color.BLUE.withAlpha(0.5),
@@ -350,8 +350,8 @@ const CesiumComponent: React.FC<{}> = () => {
 
   const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new CM.TimeInterval({
-      start : CM.JulianDate.fromIso8601('2012-03-15T10:00:00Z'),
-      stop : CM.JulianDate.fromIso8601('2012-03-16T10:00:00Z'),
+      start : CM.JulianDate.fromIso8601('2022-08-11T03:37:16.042872+00:00'),
+      stop : CM.JulianDate.fromIso8601('2022-08-12T03:37:16.042872+00:00'),
       isStartIncluded : true,
       isStopIncluded : true,
   });
