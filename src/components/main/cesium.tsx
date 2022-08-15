@@ -1,8 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from 'react';
+import { Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import type { TableRowSelection } from 'antd/es/table/interface';
 //@ts-ignore
 import * as CM from "cesium/Cesium";
 import { assert } from "console";
-import * as echarts from "echarts";
+import * as echarts from 'echarts';
+import SatelliteList from "../satelliteList"
+
+import "antd/dist/antd.css"
+
 
 //@ts-ignore
 let viewer: any;
@@ -17,7 +24,9 @@ var handler: {
   ) => void;
   destroy: () => void;
 };
-let nowPicksatellite: any;
+let nowPicksatellite: any
+// let satelliteList: {[key:string]:any []} = {};
+// let satelliteList: string[] = []
 const CesiumComponent: React.FC<{}> = () => {
   const [init, setInit] = useState<boolean>(false);
   const [isDrawLine, setIsDrawLine] = useState<boolean>(false);
@@ -37,8 +46,9 @@ const CesiumComponent: React.FC<{}> = () => {
   );
   const [nowSystemDate, setNowSystemDate] = useState<string[]>([]);
   const [isPostion, setIsPostion] = useState<boolean>(false);
-  const chartRef = useRef(null);
-
+  const [satelliteList, setSatelliteList] = useState<string[]>([]);
+  const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([])
+  const chartRef = useRef(null)
   useEffect(() => {
     setInit(true);
   }, []);
@@ -49,7 +59,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       document.getElementById("measureDistance").disabled = true;
       //@ts-ignore
-      measureArea(viewer);
+      measureArea(viewer)
     } else {
       //@ts-ignore
       document.getElementById("measureArea").classList.remove("btnSelected");
@@ -74,12 +84,13 @@ const CesiumComponent: React.FC<{}> = () => {
         .getElementById("measureDistance")
         .classList.remove("btnSelected");
       //@ts-ignore
-      document.getElementById("measureArea").disabled = false;
+      document.getElementById('measureArea').disabled = false
       if (handler) {
-        handler.destroy();
+        handler.destroy()
       }
     }
   }, [isDrawLine]);
+
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
@@ -192,16 +203,39 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-50.czml");
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-300.czml");
+        const stripeMaterial = new CM.StripeMaterialProperty({
+          evenColor: CM.Color.WHITE.withAlpha(0.5),
+          oddColor: CM.Color.BLUE.withAlpha(0.5),
+          repeat: 5.0,
+        });
         // 加载实体
-        let drone;
         dronePromise.then((dataSource: any) => {
           viewer.dataSources.add(dronePromise);
           let entities = viewer.entities;
           // debugger;
           // 通过ID选择需要轨迹的实体
-          drone = dataSource.entities.getById("Satellite/ISS");
+
+          let nowSatelliteList: string[] = []
           dataSource.entities._entities._array.forEach((ele: any) => {
+            // let drone = dataSource.entities.getById(ele.id);
+            let id = ele.id
+
+            // satelliteList[id] = []
+            nowSatelliteList.push(id)
+            viewer.entities.add(ele)
+
+            // let cartographic = null
+            // viewer.clock.onTick.addEventListener((clock: any) => {
+            //   let positon = drone.position.getValue(clock.currentTime);
+            //   cartographic = CM.Cartographic.fromCartesian(positon);
+            //   let x = CM.Math.toDegrees(cartographic.longitude);
+            //   let y = CM.Math.toDegrees(cartographic.latitude);
+            //   let z = cartographic.height / 1000;
+            //   satelliteList[id] = [x,y,z]
+            // })
+
+
             // 1. 改成点
             if (ele.path != undefined) {
               ele.billboard = undefined;
@@ -213,6 +247,7 @@ const CesiumComponent: React.FC<{}> = () => {
                 pixelSize: 5,
               };
             }
+
             // // 2. 添加和配置运动实体的模型
             // ele.model = {
             //   // 引入模型
@@ -241,15 +276,15 @@ const CesiumComponent: React.FC<{}> = () => {
               ele.path.material.color = CM.Color.WHITE;
             }
             // 4. 集站附近绘制网格
-            // if (ele.path === undefined) {
+            // if (ele.id === "Facility/AGI") {
             //   //@ts-ignore
-            //   let [lon, lat] = GetWGS84FromDKR(ele.position._value, 1);
+            //   let [lon, lat] = GetWGS84FromDKR(ele.position._value, 1)
             //   //添加Entity
             //   let radius = 1;
             //   lon = parseFloat(lon);
             //   lat = parseFloat(lat);
             //   viewer.entities.add({
-            //     id: "ShowRange",
+            //     id:  "ShowRange",
             //     name: "选取范围",
             //     polygon: {
             //       hierarchy: new CM.PolygonHierarchy(
@@ -261,7 +296,7 @@ const CesiumComponent: React.FC<{}> = () => {
             //           lon + radius,
             //           lat - radius,
             //           lon - radius,
-            //           lat - radius,
+            //           lat - radius
             //         ])
             //       ),
             //       outline: true,
@@ -275,7 +310,7 @@ const CesiumComponent: React.FC<{}> = () => {
             //   });
             // }
           });
-
+          setSatelliteList(nowSatelliteList)
         });
         viewer.camera.flyHome(0);
         const lngMin = -180
@@ -321,7 +356,6 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
-
     }
   }, [init]);
   // 笛卡尔坐标系转经纬度
@@ -344,11 +378,11 @@ const CesiumComponent: React.FC<{}> = () => {
 
   const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new CM.TimeInterval({
-      start : CM.JulianDate.fromIso8601('2012-03-15T10:00:00Z'),
-      stop : CM.JulianDate.fromIso8601('2012-03-16T10:00:00Z'),
+      start : CM.JulianDate.fromIso8601('2022-08-11T03:37:16.042872+00:00'),
+      stop : CM.JulianDate.fromIso8601('2022-08-12T03:37:16.042872+00:00'),
       isStartIncluded : true,
       isStopIncluded : true,
-  });
+    });
     let baseStation = {
       id: `Facility/baseStation_${id}`,
       name: `baseStation_${id}`,
@@ -383,31 +417,31 @@ const CesiumComponent: React.FC<{}> = () => {
 
     //添加矩形Entity
     let radius = 1;
-    // viewer.entities.add({
-    //   id: `ShowRange_${id}`,
-    //   name: "选取范围",
-    //   polygon: {
-    //     hierarchy: new CM.PolygonHierarchy(
-    //       CM.Cartesian3.fromDegreesArray([
-    //         lng - radius,
-    //         lat + radius,
-    //         lng + radius,
-    //         lat + radius,
-    //         lng + radius,
-    //         lat - radius,
-    //         lng - radius,
-    //         lat - radius,
-    //       ])
-    //     ),
-    //     outline: true,
-    //     outlineColor: CM.Color.RED,
-    //     outlineWidth: 4,
-    //     fill: false,
-    //     material: CM.Color.fromCssColorString(
-    //       "rgba(5, 39, 175, 0.3)"
-    //     ).withAlpha(0.1),
-    //   },
-    // });
+    viewer.entities.add({
+      id: `ShowRange_${id}`,
+      name: "选取范围",
+      polygon: {
+        hierarchy: new CM.PolygonHierarchy(
+          CM.Cartesian3.fromDegreesArray([
+            lng - radius,
+            lat + radius,
+            lng + radius,
+            lat + radius,
+            lng + radius,
+            lat - radius,
+            lng - radius,
+            lat - radius,
+          ])
+        ),
+        outline: true,
+        outlineColor: CM.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: CM.Color.fromCssColorString(
+          "rgba(5, 39, 175, 0.3)"
+        ).withAlpha(0.1),
+      },
+    });
   };
 
   // 绘制线条测量距离
@@ -678,7 +712,7 @@ const CesiumComponent: React.FC<{}> = () => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -692,8 +726,9 @@ const CesiumComponent: React.FC<{}> = () => {
         polygon: {
           hierarchy: positions,
           material: CM.Color.GREEN.withAlpha(0.1),
-        },
+        }
       });
+
     }
 
     function distance(point1: any, point2: any) {
@@ -704,19 +739,13 @@ const CesiumComponent: React.FC<{}> = () => {
       geodesic.setEndPoints(point1cartographic, point2cartographic);
       var s = geodesic.surfaceDistance;
       //返回两点之间的距离
-      s = Math.sqrt(
-        Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
-      );
+      s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
       return s;
     }
   };
   const nowSatellitePostion = () => {
-    let cartographic = null;
-    cartographic = CM.Cartographic.fromCartesian(
-      nowPicksatellite.primitive._actualPosition
-    );
-
+    let cartographic = null
+    cartographic = CM.Cartographic.fromCartesian(nowPicksatellite.primitive._actualPosition);
     let x = CM.Math.toDegrees(cartographic.longitude);
     let y = CM.Math.toDegrees(cartographic.latitude);
     let z = Math.ceil(cartographic.height / 1000);
@@ -730,7 +759,8 @@ const CesiumComponent: React.FC<{}> = () => {
         return [...prev, z];
       });
     }
-  };
+  }
+
 
   useEffect(() => {
     if (satellitePostionData.length !== 0) {
@@ -788,8 +818,22 @@ const CesiumComponent: React.FC<{}> = () => {
       myChart.setOption(option);
       myChart.resize();
     }
-  }, [satellitePostionData, nowSystemDate]);
 
+  }, [satellitePostionData, nowSystemDate])
+
+  useEffect(() => {
+    for(let i of selectSatelliteList){
+      console.log(selectSatelliteList)
+      var pick = viewer.entities.getById(i[0]);
+      if (pick.id) {
+        if (pick._path != undefined) {
+          pick._path.show = i[1];
+        }
+      }
+    }
+  }, [selectSatelliteList])
+  setInterval(function () {
+  })
   return (
     <>
       <style>
@@ -820,31 +864,39 @@ const CesiumComponent: React.FC<{}> = () => {
             border-color: transparent;
             box-shadow:none;
         }
-
         #toolbar{
           position:absolute;
         }
         #satellite{
-          height: 18vh;
-          width:25vw;
-          background:rgba(0,0,0,0.3);
+          height: 15vh;
+          right: 2px;
+          top: 10vh;
+          width:20vw;
+          background:rgba(0,0,0,0);
           position:absolute;
-          right: 5px;
-          top: 12vh;
           z-index:999;
         }
-
         // #cesiumContainer{
         //   background-repeat:no-repeat ;
         //   background-size: cover;
         // }
-
+        #satelliteList {
+          position: absolute;
+          width: 20vw;
+          height: 100vh;
+          z-index: 999;
+        }
         .btnSelected{
           background:#4488bb
         }
-
       `}
       </style>
+      {/* <div id="satelliteList">
+        <SatelliteList
+          statelliteList={satelliteList}
+          setSelectSatelliteList={setSelectSatelliteList}
+        />
+      </div> */}
       <div id="toolbar">
         <button
           type="button"
