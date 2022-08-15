@@ -202,9 +202,12 @@ const CesiumComponent: React.FC<{}> = () => {
         let drone;
         dronePromise.then((dataSource: any) => {
           viewer.dataSources.add(dronePromise);
+
           let entities = viewer.entities;
+          
           // 通过ID选择需要轨迹的实体
           drone = dataSource.entities.getById("Satellite/ISS");
+          console.log(drone);
           dataSource.entities._entities._array.forEach((ele: any) => {
             // 1. 改成点
             if (ele.path != undefined) {
@@ -283,8 +286,48 @@ const CesiumComponent: React.FC<{}> = () => {
 
         });
         viewer.camera.flyHome(0);
+        // createBaseStation(116.620437, 40.084067, 0, 0);
+        let baseStation =   {
+          id: `Facility/baseStation_${1}`,
+          name: `baseStation_${1}`,
+          availability:CM.TimeIntervalCollection.fromIso8601({
+            start : CM.JulianDate.fromIso8601('2012-03-15T10:00:00Z'),
+            stop : CM.JulianDate.fromIso8601('2012-03-16T10:00:00Z'),
+            // isStartIncluded : true,
+            // isStopIncluded : false,
+            // data : CM.Cartesian3.fromDegrees(181.149531,33.689691)
+          }),
+          description: `baseStation${1}`,
+          billboard: {
+            eyeOffset: new CM.Cartesian3(0, 0, 0),
+            horizontalOrigin: CM.HorizontalOrigin.CENTER,
+            // image:"./logo512.png",
+            image:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC",
+            pixelOffset: new CM.Cartesian2(0, 0),
+            scale: 1,
+            show: true,
+            verticalOrigin: CM.VerticalOrigin.CENTER,
+          },
+          label: {
+            fillColor: CM.Color.BLUE,
+            font: "100px Lucida Console",
+            horizontalOrigin: CM.HorizontalOrigin.LEFT,
+            outlineColor: CM.Color.BLUE,
+            outlineWidth: 2,
+            pixelOffset: new CM.Cartesian2(12, 0),
+            show: true,
+            style: CM.LabelStyle.FILL_AND_OUTLINE,
+            text: "AGI",
+            verticalOrigin: CM.VerticalOrigin.CENTER
+          },
+          // position: new CM.Cartesian3.fromDegrees(181.149531,33.689691),
+        };
+        viewer.entities.add(baseStation);
 
-        createBaseStation(116.620437, 40.084067, 0, 0);
+        console.log(viewer.entities);
+        
+
+
       });
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -346,8 +389,8 @@ const CesiumComponent: React.FC<{}> = () => {
   const createBaseStation = (lng: any, lat: any, alt: any, id: number) => {
     let baseStationCartesian3 = wgs84ToCartesign(lng, lat, alt);
     let baseStation =   {
-      // id: `Facility/baseStation_${id}`,
-      // name: `baseStation_${id}`,
+      id: `Facility/baseStation_${id}`,
+      name: `baseStation_${id}`,
       availability: "2012-03-15T10:00:00Z/2012-03-16T10:00:00Z",
       // description: `baseStation${id}`,
       billboard: {
@@ -382,14 +425,18 @@ const CesiumComponent: React.FC<{}> = () => {
         text: "AGI",
         verticalOrigin: "CENTER",
       },
-      position: {
-        cartesian: [-2189623.7867968017, 4368684.828525778, 4085131.7456468237],
-      },
+      position: new CM.Cartesian3.fromDegrees(116.40, 39.92, 0)
+      // position: {
+      //   cartesian: [-2189623.7867968017, 4368684.828525778, 4085131.7456468237],
+      // },
     };
-    console.log(new CM.Entity(baseStation));
-    
+
+
+ 
+
+
     // viewer.entities.add(new CM.Entity(baseStation));
-    viewer.scene.primitives.add(new CM.Entity(baseStation))
+    // viewer.scene.primitives.add(new CM.Entity(baseStation))
     //
     // baseStationCartesian3.x,baseStationCartesian3.y,baseStationCartesian3.z
   };
