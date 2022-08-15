@@ -385,7 +385,7 @@ const CesiumComponent: React.FC<{}> = () => {
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
     return cartesian3;
   };
-
+  // 创建基站
   const createBaseStation = (lng: any, lat: any, alt: any, id: number) => {
     let baseStationCartesian3 = wgs84ToCartesign(lng, lat, alt);
     let baseStation =   {
