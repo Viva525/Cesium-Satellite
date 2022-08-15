@@ -192,12 +192,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
-        const stripeMaterial = new CM.StripeMaterialProperty({
-          evenColor: CM.Color.WHITE.withAlpha(0.5),
-          oddColor: CM.Color.BLUE.withAlpha(0.5),
-          repeat: 5.0,
-        });
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-50.czml");
         // 加载实体
         let drone;
         dronePromise.then((dataSource: any) => {
@@ -246,40 +241,39 @@ const CesiumComponent: React.FC<{}> = () => {
               ele.path.material.color = CM.Color.WHITE;
             }
             // 4. 集站附近绘制网格
-            var Radius = 50;
-            if (ele.id === "Facility/AGI") {
-              //@ts-ignore
-              let [lon, lat] = GetWGS84FromDKR(ele.position._value, 1);
-              //添加Entity
-              let radius = 1;
-              lon = parseFloat(lon);
-              lat = parseFloat(lat);
-              viewer.entities.add({
-                id: "ShowRange",
-                name: "选取范围",
-                polygon: {
-                  hierarchy: new CM.PolygonHierarchy(
-                    CM.Cartesian3.fromDegreesArray([
-                      lon - radius,
-                      lat + radius,
-                      lon + radius,
-                      lat + radius,
-                      lon + radius,
-                      lat - radius,
-                      lon - radius,
-                      lat - radius,
-                    ])
-                  ),
-                  outline: true,
-                  outlineColor: CM.Color.RED,
-                  outlineWidth: 4,
-                  fill: false,
-                  material: CM.Color.fromCssColorString(
-                    "rgba(5, 39, 175, 0.3)"
-                  ).withAlpha(0.1),
-                },
-              });
-            }
+            // if (ele.path === undefined) {
+            //   //@ts-ignore
+            //   let [lon, lat] = GetWGS84FromDKR(ele.position._value, 1);
+            //   //添加Entity
+            //   let radius = 1;
+            //   lon = parseFloat(lon);
+            //   lat = parseFloat(lat);
+            //   viewer.entities.add({
+            //     id: "ShowRange",
+            //     name: "选取范围",
+            //     polygon: {
+            //       hierarchy: new CM.PolygonHierarchy(
+            //         CM.Cartesian3.fromDegreesArray([
+            //           lon - radius,
+            //           lat + radius,
+            //           lon + radius,
+            //           lat + radius,
+            //           lon + radius,
+            //           lat - radius,
+            //           lon - radius,
+            //           lat - radius,
+            //         ])
+            //       ),
+            //       outline: true,
+            //       outlineColor: CM.Color.RED,
+            //       outlineWidth: 4,
+            //       fill: false,
+            //       material: CM.Color.fromCssColorString(
+            //         "rgba(5, 39, 175, 0.3)"
+            //       ).withAlpha(0.1),
+            //     },
+            //   });
+            // }
           });
 
         });
@@ -355,7 +349,7 @@ const CesiumComponent: React.FC<{}> = () => {
       isStartIncluded : true,
       isStopIncluded : true,
   });
-    let baseStation =   {
+    let baseStation = {
       id: `Facility/baseStation_${id}`,
       name: `baseStation_${id}`,
       availability: new CM.TimeIntervalCollection([timeInterval]),
@@ -385,6 +379,35 @@ const CesiumComponent: React.FC<{}> = () => {
       position: new CM.Cartesian3.fromDegrees(lng, lat),
     };
     viewer.entities.add(baseStation);
+
+
+    //添加矩形Entity
+    let radius = 1;
+    // viewer.entities.add({
+    //   id: `ShowRange_${id}`,
+    //   name: "选取范围",
+    //   polygon: {
+    //     hierarchy: new CM.PolygonHierarchy(
+    //       CM.Cartesian3.fromDegreesArray([
+    //         lng - radius,
+    //         lat + radius,
+    //         lng + radius,
+    //         lat + radius,
+    //         lng + radius,
+    //         lat - radius,
+    //         lng - radius,
+    //         lat - radius,
+    //       ])
+    //     ),
+    //     outline: true,
+    //     outlineColor: CM.Color.RED,
+    //     outlineWidth: 4,
+    //     fill: false,
+    //     material: CM.Color.fromCssColorString(
+    //       "rgba(5, 39, 175, 0.3)"
+    //     ).withAlpha(0.1),
+    //   },
+    // });
   };
 
   // 绘制线条测量距离
