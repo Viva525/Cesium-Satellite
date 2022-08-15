@@ -200,7 +200,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-300.czml");
         const stripeMaterial = new CM.StripeMaterialProperty({
           evenColor: CM.Color.WHITE.withAlpha(0.5),
           oddColor: CM.Color.BLUE.withAlpha(0.5),
@@ -360,6 +360,7 @@ const CesiumComponent: React.FC<{}> = () => {
               // });
             }
           });
+          setSatelliteList(nowSatelliteList)
         });
         viewer.camera.flyHome(0);
         const lngMin = -180
@@ -992,27 +993,31 @@ const CesiumComponent: React.FC<{}> = () => {
             border-color: transparent;
             box-shadow:none;
         }
-
         #toolbar{
           position:absolute;
         }
         #satellite{
           height: 15vh;
+          right: 2px;
+          top: 10vh;
           width:20vw;
-          background:#fff;
+          background:rgba(0,0,0,0);
           position:absolute;
           z-index:999;
         }
-
         // #cesiumContainer{
         //   background-repeat:no-repeat ;
         //   background-size: cover;
         // }
-
+        #satelliteList {
+          position: absolute;
+          width: 20vw;
+          height: 100vh;
+          z-index: 999;
+        }
         .btnSelected{
           background:#4488bb
         }
-
       `}
       </style>
       <div id="satelliteList">
