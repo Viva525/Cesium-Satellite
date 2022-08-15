@@ -393,7 +393,7 @@ const CesiumComponent: React.FC<{}> = () => {
       id: `Facility/baseStation_${id}`,
       name: `baseStation_${id}`,
       availability: "2012-03-15T10:00:00Z/2012-03-16T10:00:00Z",
-      // description: `baseStation${id}`,
+      description: `baseStation${id}`,
       billboard: {
         eyeOffset: {
           cartesian: [0, 0, 0],
