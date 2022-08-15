@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import type { TableRowSelection } from 'antd/es/table/interface';
 //@ts-ignore
 import * as CM from "cesium/Cesium";
-import { assert } from "console";import * as echarts from 'echarts';
+import { assert } from "console";
+import * as echarts from 'echarts';
+import SatelliteList from "../satelliteList"
 
 
 //@ts-ignore
@@ -18,6 +23,8 @@ var handler: {
   destroy: () => void;
 };
 let nowPicksatellite: any
+// let satelliteList: {[key:string]:any []} = {};
+// let satelliteList: string[] = []
 const CesiumComponent: React.FC<{}> = () => {
   const [init, setInit] = useState<boolean>(false);
   const [isDrawLine, setIsDrawLine] = useState<boolean>(false);
@@ -36,6 +43,8 @@ const CesiumComponent: React.FC<{}> = () => {
   const [satellitePostionData, setSatellitePostionData] = useState<number[]>([])
   const [nowSystemDate, setNowSystemDate] = useState<string[]>([])
   const [isPostion, setIsPostion] = useState<boolean>(false);
+  const [satelliteList, setSatelliteList] = useState<string[]>([]);
+  const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([])
   const chartRef = useRef(null)
   useEffect(() => {
     setInit(true);
@@ -49,7 +58,7 @@ const CesiumComponent: React.FC<{}> = () => {
       document.getElementById("measureDistance").disabled = true;
       //@ts-ignore
       measureArea(viewer)
-    }else{
+    } else {
       //@ts-ignore
       document.getElementById("measureArea").classList.remove("btnSelected");
       //@ts-ignore
@@ -75,7 +84,7 @@ const CesiumComponent: React.FC<{}> = () => {
         .classList.remove("btnSelected");
       //@ts-ignore
       document.getElementById('measureArea').disabled = false
-      if(handler){
+      if (handler) {
         handler.destroy()
       }
     }
@@ -235,33 +244,49 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-3.czml");
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-50.czml");
         const stripeMaterial = new CM.StripeMaterialProperty({
           evenColor: CM.Color.WHITE.withAlpha(0.5),
           oddColor: CM.Color.BLUE.withAlpha(0.5),
           repeat: 5.0,
         });
         // 加载实体
-        let drone;
         dronePromise.then((dataSource: any) => {
           viewer.dataSources.add(dronePromise);
           let entities = viewer.entities;
           // 通过ID选择需要轨迹的实体
-          drone = dataSource.entities.getById("Satellite/ISS");
 
+          let nowSatelliteList: string[] = []
           dataSource.entities._entities._array.forEach((ele: any) => {
+            // let drone = dataSource.entities.getById(ele.id);
+            let id = ele.id
+
+            // satelliteList[id] = []
+            nowSatelliteList.push(id)
+            viewer.entities.add(ele)
+
+            // let cartographic = null
+            // viewer.clock.onTick.addEventListener((clock: any) => {
+            //   let positon = drone.position.getValue(clock.currentTime);
+            //   cartographic = CM.Cartographic.fromCartesian(positon);
+            //   let x = CM.Math.toDegrees(cartographic.longitude);
+            //   let y = CM.Math.toDegrees(cartographic.latitude);
+            //   let z = cartographic.height / 1000;
+            //   satelliteList[id] = [x,y,z]
+            // })
+
 
             // 1. 改成点
             if (ele.path != undefined) {
-            ele.billboard = undefined;
-            // 1. 改成点
-            ele.point = {
-              show: true,
-              color: CM.Color.WHITE,
-              // outlineWidth: 4,
-              pixelSize: 5,
-            };
-          }
+              ele.billboard = undefined;
+              // 1. 改成点
+              ele.point = {
+                show: true,
+                color: CM.Color.WHITE,
+                // outlineWidth: 4,
+                pixelSize: 5,
+              };
+            }
 
             // // 2. 添加和配置运动实体的模型
             // ele.model = {
@@ -320,7 +345,7 @@ const CesiumComponent: React.FC<{}> = () => {
               //   let RB = computedposition(L2W,650,0,350) ; 
               //   return [LT,LB,RB,RT]
               // }
-              
+
               // let range = CreateRange(L2W);
               // console.log(range);
               //添加Entity
@@ -328,19 +353,19 @@ const CesiumComponent: React.FC<{}> = () => {
               lon = parseFloat(lon);
               lat = parseFloat(lat);
               viewer.entities.add({
-                id:"ShowRange",
+                id: "ShowRange",
                 name: "选取范围",
                 polygon: {
                   hierarchy: new CM.PolygonHierarchy(
                     CM.Cartesian3.fromDegreesArray([
-                      lon-radius,
-                      lat+radius,
-                      lon+radius,
-                      lat+radius,
-                      lon+radius,
-                      lat-radius,
-                      lon-radius,
-                      lat-radius
+                      lon - radius,
+                      lat + radius,
+                      lon + radius,
+                      lat + radius,
+                      lon + radius,
+                      lat - radius,
+                      lon - radius,
+                      lat - radius
                     ])
                   ),
                   outline: true,
@@ -357,7 +382,7 @@ const CesiumComponent: React.FC<{}> = () => {
               //     vertexFormat : CM.EllipsoidSurfaceAppearance.VERTEX_FORMAT
               //   })
               // });
-              
+
               // scene.primitives.add(new CM.Primitive({
               //   geometryInstances : instance,
               //   appearance : new CM.EllipsoidSurfaceAppearance({
@@ -379,6 +404,7 @@ const CesiumComponent: React.FC<{}> = () => {
               // });
             }
           });
+          setSatelliteList(nowSatelliteList)
         });
         viewer.camera.flyHome(0);
       });
@@ -427,8 +453,8 @@ const CesiumComponent: React.FC<{}> = () => {
     let cartographic = CM.Cartographic.fromCartesian(coor);
     let x = CM.Math.toDegrees(cartographic.longitude);
     let y = CM.Math.toDegrees(cartographic.latitude);
-    if(type === 0 ) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`
-    else if(type === 1) return [x.toFixed(2) as number, y.toFixed(2) as number]
+    if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`
+    else if (type === 1) return [x.toFixed(2) as number, y.toFixed(2) as number]
   };
 
   // 绘制线条测量距离
@@ -588,41 +614,41 @@ const CesiumComponent: React.FC<{}> = () => {
 
     //@ts-ignore
     handler.setInputAction(function (movement: { position: any; }) {
-        let ray = viewer.camera.getPickRay(movement.position);
-        cartesian = viewer.scene.globe.pick(ray, viewer.scene);
-        if (positions.length == 0) {
-            positions.push(cartesian.clone());
+      let ray = viewer.camera.getPickRay(movement.position);
+      cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+      if (positions.length == 0) {
+        positions.push(cartesian.clone());
+      }
+      positions.push(cartesian);
+      let curPositions = positions.slice(0)
+      //在三维场景中添加点
+      var cartographic = CM.Cartographic.fromCartesian(curPositions[curPositions.length - 1]);
+      var longitudeString = CM.Math.toDegrees(cartographic.longitude);
+      var latitudeString = CM.Math.toDegrees(cartographic.latitude);
+      var heightString = cartographic.height;
+      var labelText = "(" + longitudeString.toFixed(2) + "," + latitudeString.toFixed(2) + ")";
+      // @ts-ignore
+      tempPoints.push({ lon: longitudeString, lat: latitudeString, hei: heightString });
+      floatingPoint = viewer.entities.add({
+        name: '多边形面积',
+        position: curPositions[curPositions.length - 1],
+        point: {
+          pixelSize: 5,
+          color: CM.Color.RED,
+          outlineColor: CM.Color.WHITE,
+          outlineWidth: 2,
+          heightReference: CM.HeightReference.CLAMP_TO_GROUND
+        },
+        label: {
+          text: labelText,
+          font: '18px sans-serif',
+          fillColor: CM.Color.GOLD,
+          style: CM.LabelStyle.FILL_AND_OUTLINE,
+          outlineWidth: 2,
+          verticalOrigin: CM.VerticalOrigin.BOTTOM,
+          pixelOffset: new CM.Cartesian2(20, -20),
         }
-        positions.push(cartesian);
-        let curPositions = positions.slice(0)
-        //在三维场景中添加点
-        var cartographic = CM.Cartographic.fromCartesian(curPositions[curPositions.length - 1]);
-        var longitudeString = CM.Math.toDegrees(cartographic.longitude);
-        var latitudeString = CM.Math.toDegrees(cartographic.latitude);
-        var heightString = cartographic.height;
-        var labelText = "(" + longitudeString.toFixed(2) + "," + latitudeString.toFixed(2) + ")";
-        // @ts-ignore
-        tempPoints.push({ lon: longitudeString, lat: latitudeString, hei: heightString });
-        floatingPoint = viewer.entities.add({
-            name: '多边形面积',
-            position: curPositions[curPositions.length - 1],
-            point: {
-                pixelSize: 5,
-                color: CM.Color.RED,
-                outlineColor: CM.Color.WHITE,
-                outlineWidth: 2,
-                heightReference: CM.HeightReference.CLAMP_TO_GROUND
-            },
-            label: {
-                text: labelText,
-                font: '18px sans-serif',
-                fillColor: CM.Color.GOLD,
-                style: CM.LabelStyle.FILL_AND_OUTLINE,
-                outlineWidth: 2,
-                verticalOrigin: CM.VerticalOrigin.BOTTOM,
-                pixelOffset: new CM.Cartesian2(20, -20),
-            }
-        });
+      });
     }, CM.ScreenSpaceEventType.LEFT_CLICK);
     handler.setInputAction(function () {
       // handler.destroy();
@@ -670,13 +696,13 @@ const CesiumComponent: React.FC<{}> = () => {
 
     /*角度*/
     function Angle(p1: { lat: number; lon: number; }, p2: { lat: number; lon: number; }, p3: { lat: number; lon: number; }) {
-        var bearing21 = Bearing(p2, p1);
-        var bearing23 = Bearing(p2, p3);
-        var angle = bearing21 - bearing23;
-        if (angle < 0) {
-            angle += 360;
-        }
-        return angle;
+      var bearing21 = Bearing(p2, p1);
+      var bearing23 = Bearing(p2, p3);
+      var angle = bearing21 - bearing23;
+      if (angle < 0) {
+        angle += 360;
+      }
+      return angle;
     }
     /*方向*/
     function Bearing(
@@ -690,7 +716,7 @@ const CesiumComponent: React.FC<{}> = () => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -700,27 +726,27 @@ const CesiumComponent: React.FC<{}> = () => {
     }
 
     function PolygonPrimitive(positions: any) {
-        polygon = viewer.entities.add({
-            polygon: {
-                hierarchy: positions,
-                material: CM.Color.GREEN.withAlpha(0.1),
-            }
-        });
- 
+      polygon = viewer.entities.add({
+        polygon: {
+          hierarchy: positions,
+          material: CM.Color.GREEN.withAlpha(0.1),
+        }
+      });
+
     }
 
     function distance(point1: any, point2: any) {
-        var point1cartographic = CM.Cartographic.fromCartesian(point1);
-        var point2cartographic = CM.Cartographic.fromCartesian(point2);
-        /**根据经纬度计算出距离**/
-        var geodesic = new CM.EllipsoidGeodesic();
-        geodesic.setEndPoints(point1cartographic, point2cartographic);
-        var s = geodesic.surfaceDistance;
-        //返回两点之间的距离
-        s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
-        return s;
+      var point1cartographic = CM.Cartographic.fromCartesian(point1);
+      var point2cartographic = CM.Cartographic.fromCartesian(point2);
+      /**根据经纬度计算出距离**/
+      var geodesic = new CM.EllipsoidGeodesic();
+      geodesic.setEndPoints(point1cartographic, point2cartographic);
+      var s = geodesic.surfaceDistance;
+      //返回两点之间的距离
+      s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
+      return s;
     }
-    };
+  };
 
   // const drawPolygon = () => {
 
@@ -826,6 +852,7 @@ const CesiumComponent: React.FC<{}> = () => {
   //   }
 
   const nowSatellitePostion = () => {
+
     let cartographic = null
     cartographic = CM.Cartographic.fromCartesian(nowPicksatellite.primitive._actualPosition);
 
@@ -834,7 +861,7 @@ const CesiumComponent: React.FC<{}> = () => {
     let z = cartographic.height / 1000;
     let nowDate = (new Date(viewer.clock.currentTime)).toUTCString()
 
-    if(viewer.clock.shouldAnimate){
+    if (viewer.clock.shouldAnimate) {
       setNowSystemDate((prev) => {
         return [...prev, nowDate]
       })
@@ -842,15 +869,16 @@ const CesiumComponent: React.FC<{}> = () => {
         return [...prev, z]
       })
     }
-
   }
+
+
 
   useEffect(() => {
     if (satellitePostionData.length !== 0) {
-      
+
       let myChart = echarts.getInstanceByDom(chartRef.current as unknown as HTMLDivElement);
-      if(myChart == null){
-        myChart= echarts.init(chartRef.current as unknown as HTMLDivElement, 'dark');
+      if (myChart == null) {
+        myChart = echarts.init(chartRef.current as unknown as HTMLDivElement, 'dark');
       }
       let option = {
         xAxis: {
@@ -883,6 +911,17 @@ const CesiumComponent: React.FC<{}> = () => {
 
   }, [satellitePostionData, nowSystemDate])
 
+  useEffect(() => {
+    for(let i of selectSatelliteList){
+      console.log(selectSatelliteList)
+      var pick = viewer.entities.getById(i[0]);
+      if (pick.id) {
+        if (pick._path != undefined) {
+          pick._path.show = i[1];
+        }
+      }
+    }
+  }, [selectSatelliteList])
   setInterval(function () {
   })
   return (
@@ -914,6 +953,14 @@ const CesiumComponent: React.FC<{}> = () => {
           position:absolute;
           z-index:999;
         }
+        #satelliteList{
+          height: 100vh;
+          width:15vw;
+          background:#fff;
+          z-index:999;
+          position:absolute;
+          float:left;
+        }
 
         // #cesiumContainer{
         //   background-repeat:no-repeat ;
@@ -926,6 +973,12 @@ const CesiumComponent: React.FC<{}> = () => {
 
       `}
       </style>
+      <div id="satelliteList">
+        <SatelliteList
+          statelliteList={satelliteList}
+          setSelectSatelliteList={setSelectSatelliteList}
+        />
+      </div>
       <div id="toolbar">
         <button
           type="button"
