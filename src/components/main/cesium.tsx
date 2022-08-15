@@ -290,13 +290,13 @@ const CesiumComponent: React.FC<{}> = () => {
         let baseStation =   {
           id: `Facility/baseStation_${1}`,
           name: `baseStation_${1}`,
-          availability:CM.TimeIntervalCollection.fromJulianDateArray({
+          availability:CM.TimeIntervalCollection.fromIso8601({
             iso8601:"2012-03-15T10:00:00Z/2012-03-16T10:00:00Z",
             // start : CM.JulianDate.fromIso8601('2012-03-15T10:00:00Z'),
             // stop : CM.JulianDate.fromIso8601('2012-03-16T10:00:00Z'),
             // isStartIncluded : true,
             // isStopIncluded : false,
-            data : CM.Cartesian3.fromDegrees(181.149531,33.689691)
+            data : new CM.Cartesian3.fromDegrees(181.149531,33.689691)
           }),
           description: `baseStation${1}`,
           billboard: {
@@ -393,7 +393,7 @@ const CesiumComponent: React.FC<{}> = () => {
       id: `Facility/baseStation_${id}`,
       name: `baseStation_${id}`,
       availability: "2012-03-15T10:00:00Z/2012-03-16T10:00:00Z",
-      description: `baseStation${id}`,
+      // description: `baseStation${id}`,
       billboard: {
         eyeOffset: {
           cartesian: [0, 0, 0],
