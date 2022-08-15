@@ -346,10 +346,10 @@ const CesiumComponent: React.FC<{}> = () => {
   const createBaseStation = (lng: any, lat: any, alt: any, id: number) => {
     let baseStationCartesian3 = wgs84ToCartesign(lng, lat, alt);
     let baseStation =   {
-      // id: `Facility/baseStation_${id}`,
-      // name: `baseStation_${id}`,
+      id: `baseStation_${id}`,
+      name: `baseStation_${id}`,
       availability: "2012-03-15T10:00:00Z/2012-03-16T10:00:00Z",
-      // description: `baseStation${id}`,
+      description: `baseStation${id}`,
       billboard: {
         eyeOffset: {
           cartesian: [0, 0, 0],
@@ -388,8 +388,8 @@ const CesiumComponent: React.FC<{}> = () => {
     };
     console.log(new CM.Entity(baseStation));
     
-    // viewer.entities.add(new CM.Entity(baseStation));
-    viewer.scene.primitives.add(new CM.Entity(baseStation))
+    viewer.entities.add(new CM.Entity(baseStation));
+    // viewer.scene.primitives.add(new CM.Entity(baseStation))
     //
     // baseStationCartesian3.x,baseStationCartesian3.y,baseStationCartesian3.z
   };
