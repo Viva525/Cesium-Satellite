@@ -202,9 +202,8 @@ const CesiumComponent: React.FC<{}> = () => {
         let drone;
         dronePromise.then((dataSource: any) => {
           viewer.dataSources.add(dronePromise);
-
           let entities = viewer.entities;
-          
+          debugger;
           // 通过ID选择需要轨迹的实体
           drone = dataSource.entities.getById("Satellite/ISS");
           console.log(drone);
