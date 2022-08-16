@@ -1,8 +1,8 @@
-.ant-table-cell, .ant-empty-description, .ant-pagination-item-link, .ant-pagination-item>a, .ant-select-selector{
+.ant-table-cell, .ant-empty-description, .ant-pagination-item-link, .ant-pagination-item>a, .ant-select-selector,.ant-pagination-simple-pager input{
     background: #303336 !important;
     color: #fff !important;
 }
 
-.ant-pagination-item-ellipsis, .ant-select-arrow{
+.ant-pagination-item-ellipsis, .ant-select-arrow, .ant-pagination-slash, .ant-pagination-simple-pager{
     color: #fff !important;
 }

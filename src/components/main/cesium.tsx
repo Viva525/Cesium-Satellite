@@ -882,7 +882,7 @@ const CesiumComponent: React.FC<{}> = () => {
         // }
         #satelliteList {
           position: absolute;
-          width: 22vw;
+          width: 10.5vw;
           height: 100vh;
           padding-top: 5vh;
           padding-left: 10px;
