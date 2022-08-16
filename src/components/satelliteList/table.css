@@ -1,6 +1,12 @@
 .ant-table-cell, .ant-empty-description, .ant-pagination-item-link, .ant-pagination-item>a, .ant-select-selector,.ant-pagination-simple-pager input{
-    background: #303336 !important;
+    /* background: #303336 !important; */
+    background: rgba(255, 255, 255, 0.1) !important;
+
     color: #fff !important;
+}
+
+.ant-table{
+    background: transparent !important;
 }
 
 .ant-pagination-item-ellipsis, .ant-select-arrow, .ant-pagination-slash, .ant-pagination-simple-pager{
