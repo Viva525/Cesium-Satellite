@@ -882,8 +882,10 @@ const CesiumComponent: React.FC<{}> = () => {
         // }
         #satelliteList {
           position: absolute;
-          width: 20vw;
+          width: 22vw;
           height: 100vh;
+          padding-top: 5vh;
+          padding-left: 10px;
           z-index: 999;
         }
         .btnSelected{
@@ -891,12 +893,12 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       `}
       </style>
-      {/* <div id="satelliteList">
+      <div id="satelliteList">
         <SatelliteList
           statelliteList={satelliteList}
           setSelectSatelliteList={setSelectSatelliteList}
         />
-      </div> */}
+      </div>
       <div id="toolbar">
         <button
           type="button"

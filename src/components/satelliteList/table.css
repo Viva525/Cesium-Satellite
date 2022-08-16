@@ -1,0 +1,8 @@
+.ant-table-cell, .ant-empty-description, .ant-pagination-item-link, .ant-pagination-item>a, .ant-select-selector{
+    background: #303336 !important;
+    color: #fff !important;
+}
+
+.ant-pagination-item-ellipsis, .ant-select-arrow{
+    color: #fff !important;
+}
