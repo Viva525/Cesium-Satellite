@@ -7,6 +7,9 @@
 
 .ant-table{
     background: transparent !important;
+    background-image: url("../main//assets/rightCon01.png") !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
 }
 
 .ant-pagination-item-ellipsis, .ant-select-arrow, .ant-pagination-slash, .ant-pagination-simple-pager{
