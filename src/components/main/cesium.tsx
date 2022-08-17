@@ -50,10 +50,10 @@ const CesiumComponent: React.FC<{}> = () => {
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const chartRef = useRef(null);
   const [start, setStart] = useState(
-    CM.JulianDate.fromIso8601('2022-08-11T03:37:16.042872+00:00')
+    CM.JulianDate.fromIso8601('2022-08-17T07:10:35.930703+00:00')
   );
   const [stop, setStop] = useState(
-    CM.JulianDate.fromIso8601('2022-08-12T03:37:16.042872+00:00')
+    CM.JulianDate.fromIso8601('2022-08-18T07:10:35.930703+00:00')
   );
   const [baseStationList, setBaseStationList] = useState<BaseStation[]>([]);
   const [curBaseStationPos, setCurBaseStationPos] = useState<number[]>([]);
@@ -207,7 +207,6 @@ const CesiumComponent: React.FC<{}> = () => {
         ) {
           //@ts-ignore
           Sandcastle.addToolbarButton(text, onclick, toolbarID);
-          // debugger;
           defaultAction = onclick;
         },
         addDefaultToolbarMenu: function (
@@ -245,18 +244,11 @@ const CesiumComponent: React.FC<{}> = () => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = CM.CzmlDataSource.load(
-          './data/starlink-50.czml'
+          './data/star-beidou-gps.czml'
         );
-        let dronePromise_beidou = CM.CzmlDataSource.load('./data/beidou.czml');
-        let dronePromise_GPS = CM.CzmlDataSource.load('./data/gps.czml');
         let nowSatelliteList: string[] = [];
         // 加载星链实体
         dronePromise.then((dataSource: any) => {
-          // 配置时间轴
-          // dataSource.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
-          // dataSource.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
-          // dataSource.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
-
           viewer.dataSources.add(dronePromise);
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
@@ -307,8 +299,24 @@ const CesiumComponent: React.FC<{}> = () => {
               ele.label.show = false;
             }
             if (ele.path != undefined) {
+              // 设置路径样式
+              let re_starlink = /Satellite\/STARLINK*/;
+              let re_beidou = /Satellite\/BEIDOU*/;
+              let re_gps = /Satellite\/GPS/;
+              if(re_starlink.exec(ele.id) != null){
+                // 星链轨迹
+                ele.path.material.color = CM.Color.RED;
+              }
+              if(re_beidou.exec(ele.id) != null){
+                // 北斗轨迹
+                ele.path.material.color = CM.Color.GREEN;
+              }
+              if(re_gps.exec(ele.id) != null){
+                // gps轨迹
+                ele.path.material.color = CM.Color.YELLOW;
+              }
               ele.path.show = false; // 设置路径不可看
-              ele.path.material.color = CM.Color.WHITE;
+              //ele.path.material.color = CM.Color.WHITE;
             }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
@@ -885,7 +893,6 @@ const CesiumComponent: React.FC<{}> = () => {
 
   useEffect(() => {
     for (let i of selectSatelliteList) {
-      console.log(selectSatelliteList);
       var pick = viewer.entities.getById(i[0]);
 
       let curradarScanner = viewer.entities.getById('radarScan_' + i[0]);
@@ -929,7 +936,6 @@ const CesiumComponent: React.FC<{}> = () => {
           type="button"
           id="measureArea"
           onClick={() => {
-            //debugger;
             setIsDrawPolygon(!isDrawPolygon);
           }}
           className="cesium-button"
