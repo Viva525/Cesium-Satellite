@@ -68,7 +68,12 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     ],
   };
 
-  return <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{simple: true, position:['bottomCenter']}}/>;
+  return <>
+  <div className='box-title'>
+    <span className='box-title-font'>卫星列表</span>
+  </div>
+  <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{simple: true, position:['bottomCenter']}}/>
+  </>;
 };
 
 export default SatelliteList;

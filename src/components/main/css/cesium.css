@@ -46,10 +46,9 @@
 }
 #satelliteList {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 10.5vw;
-    height: 80vh;
+    top: 2%;
+    width: 14vw;
+    height: 70vh;
     padding-top: 5vh;
     padding-left: 10px;
     z-index: 999;
@@ -66,9 +65,33 @@
     transform: translate(-50%);
 }
 
+.box-title {
+    width: 100%;
+    height: 3vh;
+    background-size:contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url("../assets/title_con.png");
+}
+
+.box-title-font {
+    color: #08acbd;
+    margin-left: 50%;
+    letter-spacing: 2px;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
 .btnSelected{
     background:#4488bb
 }
 .cesium-viewer-bottom{
     display: none !important;
+}
+
+.cesium-viewer-toolbar{
+    width: 10vw;
+    left: 50vw;
+    margin-top: 5vh;
+    transform: translateX(-50%);
 }

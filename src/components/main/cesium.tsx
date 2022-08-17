@@ -961,7 +961,7 @@ const CesiumComponent: React.FC<{}> = () => {
   }, [selectSatelliteList]);
   setInterval(function () {});
   return (
-    <div className='cesium-bg'>
+    <>
       <div id='satelliteList'>
         <SatelliteList
           statelliteList={satelliteList}
@@ -1003,7 +1003,7 @@ const CesiumComponent: React.FC<{}> = () => {
           // backgroundImage: "url(./images/star.jpg)",
         }}
       ></div>
-    </div>
+    </>
   );
 };
 
