@@ -331,7 +331,7 @@ const CesiumComponent: React.FC<{}> = () => {
             state: Math.random()>0.5? "working":"stoped",
           });
         }
-        setBaseStationList(baseStationList);
+        setBaseStationList(baseStationTemp);
       });
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -388,7 +388,9 @@ const CesiumComponent: React.FC<{}> = () => {
             viewer.clock.onTick.removeEventListener(nowSatellitePostion, false);
 
             // 删除雷达扫描实体
-            viewer.entities.removeById('radarScan_' + pick.id._id)
+            // viewer.entities.removeById('radarScan_' + pick.id._id)
+            let curradarScanner = viewer.entities.getById('radarScan_' + pick.id._id);
+            curradarScanner.show = false
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
