@@ -164,8 +164,8 @@ const CesiumComponent: React.FC<{}> = () => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () {},
-        highlight: function () {},
+        declare: function () { },
+        highlight: function () { },
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -238,7 +238,7 @@ const CesiumComponent: React.FC<{}> = () => {
             menu.appendChild(option);
           }
         },
-        reset: function () {},
+        reset: function () { },
       };
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
@@ -263,6 +263,8 @@ const CesiumComponent: React.FC<{}> = () => {
                 // outlineWidth: 4,
                 pixelSize: 5,
               };
+
+
             }
             // 更改显示的时间
             // var timeInterval = new CM.TimeInterval({
@@ -318,6 +320,8 @@ const CesiumComponent: React.FC<{}> = () => {
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
+
+
         // 随机生成基站
         viewer.camera.flyHome(0);
         const lngMin = -180;
@@ -333,7 +337,7 @@ const CesiumComponent: React.FC<{}> = () => {
             name: `baseStation_${i}`,
             desc: 'baseStation',
             pos: [lng, lat],
-            state: Math.random()>0.5? "working":"stoped",
+            state: Math.random() > 0.5 ? "working" : "stoped",
           });
         }
         setBaseStationList(baseStationTemp);
@@ -590,7 +594,7 @@ const CesiumComponent: React.FC<{}> = () => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -744,7 +748,7 @@ const CesiumComponent: React.FC<{}> = () => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -770,7 +774,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
@@ -805,7 +809,7 @@ const CesiumComponent: React.FC<{}> = () => {
   ) => {
     viewer.entities.add({
       id: radarId,
-      show:false,
+      show: false,
       availability: new CM.TimeIntervalCollection([
         new CM.TimeInterval({
           start: start,
@@ -889,7 +893,11 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     for (let i of selectSatelliteList) {
       var pick = viewer.entities.getById(i[0]);
+
+      let curradarScanner = viewer.entities.getById('radarScan_' + i[0]);
+      curradarScanner.show = i[1]
       if (pick.id) {
+
         if (pick._path != undefined) {
           pick._path.show = i[1];
         }
@@ -898,12 +906,12 @@ const CesiumComponent: React.FC<{}> = () => {
   }, [selectSatelliteList]);
 
   useEffect(() => {
-    if(init){
+    if (init) {
       viewer.camera.flyTo({
-        destination: CM.Cartesian3.fromDegrees(curBaseStationPos[0],curBaseStationPos[1],1500000),
+        destination: CM.Cartesian3.fromDegrees(curBaseStationPos[0], curBaseStationPos[1], 1500000),
       });
     }
-  },[curBaseStationPos[0],curBaseStationPos[1]])
+  }, [curBaseStationPos[0], curBaseStationPos[1]])
   return (
     <>
       <div id="satelliteList">
@@ -950,12 +958,12 @@ const CesiumComponent: React.FC<{}> = () => {
             <div id='satellite' className='charts' ref={chartRef}></div>
           </div>
         </div>
-        <div className='left-box' style={{height:"35vh"}}>
+        <div className='left-box' style={{ height: "35vh" }}>
           <div className='box-title'>
             <span className='box-title-font'>地面基站信息列表</span>
           </div>
           <div className="baseStation-wrap">
-            <BaseStationInfo baseStationList={baseStationList} setBaseStationPos={setCurBaseStationPos}/>
+            <BaseStationInfo baseStationList={baseStationList} setBaseStationPos={setCurBaseStationPos} />
           </div>
         </div>
       </div>
