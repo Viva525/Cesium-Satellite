@@ -1,13 +1,15 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
-import type { TableRowSelection } from "antd/es/table/interface";
+import React, { useEffect, useState, useRef } from 'react';
+import { Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import type { TableRowSelection } from 'antd/es/table/interface';
 //@ts-ignore
 import * as CM from 'cesium/Cesium';
 import * as echarts from 'echarts';
 import SatelliteList from '../satelliteList';
 import 'antd/dist/antd.css';
 import './css/cesium.css';
+import { BaseStation } from './types/type';
+import BaseStationInfo from './baseStationInfo';
 
 //@ts-ignore
 let viewer: any;
@@ -47,9 +49,14 @@ const CesiumComponent: React.FC<{}> = () => {
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const chartRef = useRef(null);
-
-  const [start, setStart] = useState(CM.JulianDate.fromIso8601("2022-08-11T03:37:16.042872+00:00"))
-  const [stop, setStop] = useState(CM.JulianDate.fromIso8601("2022-08-12T03:37:16.042872+00:00"))
+  const [start, setStart] = useState(
+    CM.JulianDate.fromIso8601('2022-08-11T03:37:16.042872+00:00')
+  );
+  const [stop, setStop] = useState(
+    CM.JulianDate.fromIso8601('2022-08-12T03:37:16.042872+00:00')
+  );
+  const [baseStationList, setBaseStationList] = useState<BaseStation[]>([]);
+  const [curBaseStationPos, setCurBaseStationPos] = useState<number[]>([]);
 
   useEffect(() => {
     setInit(true);
@@ -86,7 +93,7 @@ const CesiumComponent: React.FC<{}> = () => {
         .getElementById('measureDistance')
         .classList.remove('btnSelected');
       //@ts-ignore
-      document.getElementById('measureArea').disabled = false
+      document.getElementById('measureArea').disabled = false;
       if (handler) {
         handler.destroy();
       }
@@ -249,58 +256,58 @@ const CesiumComponent: React.FC<{}> = () => {
           // dataSource.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
           // dataSource.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
           // dataSource.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
-          
+
           viewer.dataSources.add(dronePromise_starlink50);
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
             nowSatelliteList.push(ele.id);
             viewer.entities.add(ele);
-             // 1. 改成点
-          if (ele.path != undefined) {
-            ele.billboard = undefined;
-            ele.point = {
-              show: true,
-              color: CM.Color.RED,
-              // outlineWidth: 4,
-              pixelSize: 5,
-            };
-          }
+            // 1. 改成点
+            if (ele.path != undefined) {
+              ele.billboard = undefined;
+              ele.point = {
+                show: true,
+                color: CM.Color.RED,
+                // outlineWidth: 4,
+                pixelSize: 5,
+              };
+            }
 
-          // 更改显示的时间
-          // var timeInterval = new CM.TimeInterval({
-          //   start: start,
-          //   stop: stop,
-          //   isStartIncluded: true,
-          //   isStopIncluded: true,
-          // });
-          // ele.availability = new CM.TimeIntervalCollection([timeInterval])
-          // // 2. 添加和配置运动实体的模型
-          // ele.model = {
-          //   // 引入模型
-          //   uri: "./Satellite.gltf",
-          //   // 配置模型大小的最小值
-          //   minimumPixelSize: 50,
-          //   //配置模型大小的最大值
-          //   maximumScale: 50,
-          //   //配置模型轮廓的颜色
-          //   silhouetteColor: CM.Color.WHITE,
-          //   //配置轮廓的大小
-          //   silhouetteSize: 0,
-          // };
-          // //设置方向,根据实体的位置来配置方向
-          // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
-          // //设置模型初始的位置
-          // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
-          // //设置查看器，让模型动起来
-          // viewer.clock.shouldAnimate = true;
-          // 3. 配置样式与路径
-          if (ele.label != undefined) {
-            ele.label.show = false;
-          }
-          if (ele.path != undefined) {
-            ele.path.show = false; // 设置路径不可看
-            ele.path.material.color = CM.Color.WHITE;
-          }
+            // 更改显示的时间
+            // var timeInterval = new CM.TimeInterval({
+            //   start: start,
+            //   stop: stop,
+            //   isStartIncluded: true,
+            //   isStopIncluded: true,
+            // });
+            // ele.availability = new CM.TimeIntervalCollection([timeInterval])
+            // // 2. 添加和配置运动实体的模型
+            // ele.model = {
+            //   // 引入模型
+            //   uri: "./Satellite.gltf",
+            //   // 配置模型大小的最小值
+            //   minimumPixelSize: 50,
+            //   //配置模型大小的最大值
+            //   maximumScale: 50,
+            //   //配置模型轮廓的颜色
+            //   silhouetteColor: CM.Color.WHITE,
+            //   //配置轮廓的大小
+            //   silhouetteSize: 0,
+            // };
+            // //设置方向,根据实体的位置来配置方向
+            // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
+            // //设置模型初始的位置
+            // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
+            // //设置查看器，让模型动起来
+            // viewer.clock.shouldAnimate = true;
+            // 3. 配置样式与路径
+            if (ele.label != undefined) {
+              ele.label.show = false;
+            }
+            if (ele.path != undefined) {
+              ele.path.show = false; // 设置路径不可看
+              ele.path.material.color = CM.Color.WHITE;
+            }
           });
         });
         // // 加载北斗实体
@@ -355,7 +362,6 @@ const CesiumComponent: React.FC<{}> = () => {
         //   // dataSource.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
         //   // dataSource.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
 
-          
         //   viewer.dataSources.add(dronePromise_GPS);
         //   dataSource.entities._entities._array.forEach((ele: any) => {
         //     nowSatelliteList.push(ele.id);
@@ -391,7 +397,7 @@ const CesiumComponent: React.FC<{}> = () => {
         //   });
         // });
 
-          setSatelliteList(ele => [...ele, ...nowSatelliteList]);
+        setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
 
         // 随机生成基站
         viewer.camera.flyHome(0);
@@ -399,13 +405,19 @@ const CesiumComponent: React.FC<{}> = () => {
         const lngMax = 180;
         const latMin = -90;
         const latMax = 90;
+        let baseStationTemp: BaseStation[] = [];
         for (let i = 0; i < 20; i++) {
           let lng = Math.random() * (lngMax - lngMin + 1) + lngMin;
           let lat = Math.random() * (latMax - latMin + 1) + latMin;
           createBaseStation(lng, lat, i);
+          baseStationTemp.push({
+            name: `baseStation_${i}`,
+            desc: 'baseStation',
+            pos: [lng, lat],
+            state: Math.random()>0.5? "working":"stoped",
+          });
         }
-        console.log(viewer.entities.values);
-        
+        setBaseStationList(baseStationTemp);
       });
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -424,8 +436,8 @@ const CesiumComponent: React.FC<{}> = () => {
             } else {
               nowPicksatellite = pick;
             }
-            viewer.clock.onTick.addEventListener(nowSatellitePostion, false); 
-            radarScanner(pick.id.position)   // 添加扫描的卫星
+            viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
+            radarScanner(pick.id.position); // 添加扫描的卫星
           }
         }
       }, CM.ScreenSpaceEventType.LEFT_CLICK);
@@ -443,14 +455,13 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
 
-      
       // 配置时间轴
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
       // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
       // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
-
     }
   }, [init]);
+
   // 笛卡尔坐标系转经纬度
   const GetWGS84FromDKR = (coor: any, type: number) => {
     let cartographic = CM.Cartographic.fromCartesian(coor);
@@ -487,7 +498,7 @@ const CesiumComponent: React.FC<{}> = () => {
         horizontalOrigin: CM.HorizontalOrigin.CENTER,
         // image:"./logo512.png",
         image:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC",
+          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC',
         pixelOffset: new CM.Cartesian2(0, 0),
         scale: 1,
         show: true,
@@ -599,11 +610,9 @@ const CesiumComponent: React.FC<{}> = () => {
         },
       });
     }, CM.ScreenSpaceEventType.LEFT_CLICK);
-
     handler.setInputAction(function () {
       // handler.destroy(); // 关闭事件句柄
       positions.pop(); // 最后一个点无效
-
       positions = [];
       poly = null;
       distance = '0';
@@ -816,7 +825,6 @@ const CesiumComponent: React.FC<{}> = () => {
       angle = angle * degreesPerRadian; //角度
       return angle;
     }
-
     function PolygonPrimitive(positions: any) {
       polygon = viewer.entities.add({
         polygon: {
@@ -825,7 +833,6 @@ const CesiumComponent: React.FC<{}> = () => {
         },
       });
     }
-
     function distance(point1: any, point2: any) {
       var point1cartographic = CM.Cartographic.fromCartesian(point1);
       var point2cartographic = CM.Cartographic.fromCartesian(point2);
@@ -851,7 +858,7 @@ const CesiumComponent: React.FC<{}> = () => {
     let y = CM.Math.toDegrees(cartographic.latitude);
     let z = Math.ceil(cartographic.height / 1000);
     let nowDate = new Date(viewer.clock.currentTime).toUTCString();
-  
+
     // 时间没有暂停
     if (viewer.clock.shouldAnimate) {
       setNowSystemDate((prev) => {
@@ -860,12 +867,11 @@ const CesiumComponent: React.FC<{}> = () => {
       setSatellitePostionData((prev) => {
         return [...prev, z];
       });
-      
     }
   };
 
   // 绘制卫星锥体
-  const radarScanner= (position: any) => {
+  const radarScanner = (position: any) => {
     viewer.entities.add({
       availability: new CM.TimeIntervalCollection([
         new CM.TimeInterval({
@@ -887,8 +893,7 @@ const CesiumComponent: React.FC<{}> = () => {
         material: CM.Color.fromBytes(35, 170, 242, 80),
       },
     });
-  }
-
+  };
 
   useEffect(() => {
     if (satellitePostionData.length !== 0) {
@@ -902,7 +907,7 @@ const CesiumComponent: React.FC<{}> = () => {
         grid: {
           left: '11%',
           top: '15%',
-          right: '2%',
+          right: '0%',
           bottom: '15%',
         },
         xAxis: {
@@ -959,7 +964,14 @@ const CesiumComponent: React.FC<{}> = () => {
       }
     }
   }, [selectSatelliteList]);
-  setInterval(function () {});
+
+  useEffect(() => {
+    if(init){
+      viewer.camera.flyTo({
+        destination: CM.Cartesian3.fromDegrees(curBaseStationPos[0],curBaseStationPos[1],1500000),
+      });
+    }
+  },[curBaseStationPos[0],curBaseStationPos[1]])
   return (
     <>
       <div id='satelliteList'>
@@ -992,9 +1004,6 @@ const CesiumComponent: React.FC<{}> = () => {
         </button>
       </div>
       <div id='title'>卫星态势仿真监控平台</div>
-      {isPostion === true && (
-        <div id='satellite' className='charts' ref={chartRef}></div>
-      )}
       <div
         id='cesiumContainer'
         style={{
@@ -1003,6 +1012,22 @@ const CesiumComponent: React.FC<{}> = () => {
           // backgroundImage: "url(./images/star.jpg)",
         }}
       ></div>
+      <div className='left-wrap'>
+        <div className='left-box'>
+          <div className='box-title'>
+            <span className='box-title-font'>卫星实时高度图</span>
+            <div id='satellite' className='charts' ref={chartRef}></div>
+          </div>
+        </div>
+        <div className='left-box' style={{height:"35vh"}}>
+          <div className='box-title'>
+            <span className='box-title-font'>地面基站信息列表</span>
+          </div>
+          <div className="baseStation-wrap">
+            <BaseStationInfo baseStationList={baseStationList} setBaseStationPos={setCurBaseStationPos}/>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
