@@ -264,6 +264,7 @@ const CesiumComponent: React.FC<{}> = () => {
                 pixelSize: 5,
               };
             }
+
             // 更改显示的时间
             // var timeInterval = new CM.TimeInterval({
             //   start: start,
@@ -337,7 +338,6 @@ const CesiumComponent: React.FC<{}> = () => {
           });
         }
         setBaseStationList(baseStationTemp);
-        console.log(viewer.entities);
       });
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -348,26 +348,8 @@ const CesiumComponent: React.FC<{}> = () => {
             pick.id._path.show = true;
             setIsPostion(true);
 
-            // 绘制雷达扫描
-            let cartographic = CM.Cartographic.fromCartesian(
-              pick.primitive._actualPosition
-            );
-
-            let radarId = 'radarScan_' + pick.id._id
-            let postionValues = [...pick.id.position._property._values];
-            var property = new CM.SampledPositionProperty();
-            for (var i = 0; i < postionValues.length/3; i++) {
-              let time = CM.JulianDate.clone(pick.id.position._property._times[i]);
-              // @ts-ignore
-              let [lng, lat] = GetWGS84FromDKR(new CM.Cartesian3(postionValues[i*3], postionValues[i*3 + 1], postionValues[i*3 + 2]), 1)              
-              let radarPosition = CM.Cartesian3.fromDegrees(eval(lng), eval(lat), cartographic.height/2);
-              // 添加位置，和时间对应
-              property.addSample(time, radarPosition);
-              property._property._interpolationAlgorithm.type = pick.id.position._property._interpolationAlgorithm.type
-              property._property._interpolationDegree =  pick.id.position._property._interpolationDegree
-              property._referenceFrame = CM.ReferenceFrame.INERTIAL
-            }
-            radarScanner(property, cartographic.height, radarId)
+            let curradarScanner = viewer.entities.getById('radarScan_' + pick.id._id);
+            curradarScanner.show = true
 
             if (nowPicksatellite) {
               if (pick.id !== nowPicksatellite.id) {
@@ -394,7 +376,9 @@ const CesiumComponent: React.FC<{}> = () => {
             viewer.clock.onTick.removeEventListener(nowSatellitePostion, false);
 
             // 删除雷达扫描实体
-            viewer.entities.removeById('radarScan_' + pick.id._id)
+            // viewer.entities.removeById('radarScan_' + pick.id._id)
+            let curradarScanner = viewer.entities.getById('radarScan_' + pick.id._id);
+            curradarScanner.show = false
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
@@ -822,6 +806,7 @@ const CesiumComponent: React.FC<{}> = () => {
   ) => {
     viewer.entities.add({
       id: radarId,
+      show:false,
       availability: new CM.TimeIntervalCollection([
         new CM.TimeInterval({
           start: start,
