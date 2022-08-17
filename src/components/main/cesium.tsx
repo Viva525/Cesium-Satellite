@@ -3,12 +3,11 @@ import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
-import * as CM from "cesium/Cesium";
-import { assert } from "console";
-import * as echarts from "echarts";
-import SatelliteList from "../satelliteList";
-
-import "antd/dist/antd.css";
+import * as CM from 'cesium/Cesium';
+import * as echarts from 'echarts';
+import SatelliteList from '../satelliteList';
+import 'antd/dist/antd.css';
+import './css/cesium.css';
 
 //@ts-ignore
 let viewer: any;
@@ -58,16 +57,16 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (isDrawPolygon) {
       //@ts-ignore
-      document.getElementById("measureArea").classList.add("btnSelected");
+      document.getElementById('measureArea').classList.add('btnSelected');
       //@ts-ignore
-      document.getElementById("measureDistance").disabled = true;
+      document.getElementById('measureDistance').disabled = true;
       //@ts-ignore
       measureArea(viewer);
     } else {
       //@ts-ignore
-      document.getElementById("measureArea").classList.remove("btnSelected");
+      document.getElementById('measureArea').classList.remove('btnSelected');
       //@ts-ignore
-      document.getElementById("measureDistance").disabled = false;
+      document.getElementById('measureDistance').disabled = false;
       if (handler) {
         handler.destroy();
       }
@@ -76,18 +75,18 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (isDrawLine) {
       //@ts-ignore
-      document.getElementById("measureDistance").classList.add("btnSelected");
+      document.getElementById('measureDistance').classList.add('btnSelected');
       //@ts-ignore
-      document.getElementById("measureArea").disabled = true;
+      document.getElementById('measureArea').disabled = true;
       //@ts-ignore
       measureDistance();
     } else {
       //@ts-ignore
       document
-        .getElementById("measureDistance")
-        .classList.remove("btnSelected");
+        .getElementById('measureDistance')
+        .classList.remove('btnSelected');
       //@ts-ignore
-      document.getElementById("measureArea").disabled = false;
+      document.getElementById('measureArea').disabled = false
       if (handler) {
         handler.destroy();
       }
@@ -97,8 +96,8 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
-      viewer = new CM.Viewer("cesiumContainer", {
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY';
+      viewer = new CM.Viewer('cesiumContainer', {
         shouldAnimate: true,
         infoBox: false, // 是否显示点击要素之后显示的信息
         // 去掉地球表面的大气效果黑圈问题
@@ -110,6 +109,36 @@ const CesiumComponent: React.FC<{}> = () => {
           },
         },
       });
+      // 添加高德影像图
+      let atLayer = new CM.UrlTemplateImageryProvider({
+        url: 'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+        minimumLevel: 3,
+        maximumLevel: 18,
+      });
+      viewer.imageryLayers.addImageryProvider(atLayer);
+      // 开启光照
+      viewer.scene.globe.enableLighting = true;
+      viewer.shadows = true;
+      // 亮度设置
+      var stages = viewer.scene.postProcessStages;
+      viewer.scene.brightness =
+        viewer.scene.brightness ||
+        stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
+      viewer.scene.brightness.enabled = true;
+      viewer.scene.brightness.uniforms.brightness = Number(1.2);
+
+      // 更换天空盒
+      let spaceSkybox = new CM.SkyBox({
+        sources: {
+          negativeX: './images/Space_Skybox/starmap_2020_16k_mx.jpg',
+          positiveX: './images/Space_Skybox/starmap_2020_16k_px.jpg',
+          negativeY: './images/Space_Skybox/starmap_2020_16k_my.jpg',
+          positiveY: './images/Space_Skybox/starmap_2020_16k_py.jpg',
+          negativeZ: './images/Space_Skybox/starmap_2020_16k_mz.jpg',
+          positiveZ: './images/Space_Skybox/starmap_2020_16k_pz.jpg',
+        },
+      });
+      viewer.scene.skyBox = spaceSkybox;
       // 尝试提高分辨率
       viewer._cesiumWidget._supportsImageRenderingPixelated =
         CM.FeatureDetection.supportsImageRenderingPixelated();
@@ -140,7 +169,7 @@ const CesiumComponent: React.FC<{}> = () => {
           }
           document.body.className = document.body.className.replace(
             /(?:\s|^)sandcastle-loading(?:\s|$)/,
-            " "
+            ' '
           );
         },
         addToolbarButton: function (
@@ -150,9 +179,9 @@ const CesiumComponent: React.FC<{}> = () => {
         ) {
           //@ts-ignore
           Sandcastle.declare(onclick);
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "cesium-button";
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'cesium-button';
           button.onclick = function () {
             Sandcastle.reset();
             //@ts-ignore
@@ -161,7 +190,7 @@ const CesiumComponent: React.FC<{}> = () => {
           };
           button.textContent = text;
           //@ts-ignore
-          document.getElementById(toolbarID || "toolbar").appendChild(button);
+          document.getElementById(toolbarID || 'toolbar').appendChild(button);
         },
         addDefaultToolbarButton: function (
           text: string | null,
@@ -170,7 +199,7 @@ const CesiumComponent: React.FC<{}> = () => {
         ) {
           //@ts-ignore
           Sandcastle.addToolbarButton(text, onclick, toolbarID);
-          //   debugger;
+          // debugger;
           defaultAction = onclick;
         },
         addDefaultToolbarMenu: function (
@@ -181,22 +210,22 @@ const CesiumComponent: React.FC<{}> = () => {
           defaultAction = options[0].onselect;
         },
         addToolbarMenu: function (options: string | any[], toolbarID: any) {
-          const menu = document.createElement("select");
-          menu.className = "cesium-button";
+          const menu = document.createElement('select');
+          menu.className = 'cesium-button';
           menu.onchange = function () {
             Sandcastle.reset();
             const item = options[menu.selectedIndex];
-            if (item && typeof item.onselect === "function") {
+            if (item && typeof item.onselect === 'function') {
               item.onselect();
             }
           };
           //@ts-ignore
-          document.getElementById(toolbarID || "toolbar").appendChild(menu);
-          if (!defaultAction && typeof options[0].onselect === "function") {
+          document.getElementById(toolbarID || 'toolbar').appendChild(menu);
+          if (!defaultAction && typeof options[0].onselect === 'function') {
             defaultAction = options[0].onselect;
           }
           for (let i = 0, len = options.length; i < len; ++i) {
-            const option = document.createElement("option");
+            const option = document.createElement('option');
             option.textContent = options[i].text;
             option.value = options[i].value;
             menu.appendChild(option);
@@ -205,116 +234,157 @@ const CesiumComponent: React.FC<{}> = () => {
         reset: function () {},
       };
       //@ts-ignore
-      Sandcastle.addDefaultToolbarButton("Satellites", function () {
+      Sandcastle.addDefaultToolbarButton('Satellites', function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-50.czml");
-        const stripeMaterial = new CM.StripeMaterialProperty({
-          evenColor: CM.Color.WHITE.withAlpha(0.5),
-          oddColor: CM.Color.BLUE.withAlpha(0.5),
-          repeat: 5.0,
-        });
-        // 加载实体
-        dronePromise.then((dataSource: any) => {
-          viewer.dataSources.add(dronePromise);
-          let entities = viewer.entities;
-          // debugger;
+        let dronePromise_starlink50 = CM.CzmlDataSource.load(
+          './data/starlink-50.czml'
+        );
+        let dronePromise_beidou = CM.CzmlDataSource.load('./data/beidou.czml');
+        let dronePromise_GPS = CM.CzmlDataSource.load('./data/gps.czml');
+        let nowSatelliteList: string[] = [];
+        // 加载星链实体
+        dronePromise_starlink50.then((dataSource: any) => {
+          viewer.dataSources.add(dronePromise_starlink50);
           // 通过ID选择需要轨迹的实体
 
           let nowSatelliteList: string[] = [];
           dataSource.entities._entities._array.forEach((ele: any) => {
-            // let drone = dataSource.entities.getById(ele.id);
-            let id = ele.id;
-
-            // satelliteList[id] = []
-            nowSatelliteList.push(id);
+            nowSatelliteList.push(ele.id);
             viewer.entities.add(ele);
-
-            // let cartographic = null
-            // viewer.clock.onTick.addEventListener((clock: any) => {
-            //   let positon = drone.position.getValue(clock.currentTime);
-            //   cartographic = CM.Cartographic.fromCartesian(positon);
-            //   let x = CM.Math.toDegrees(cartographic.longitude);
-            //   let y = CM.Math.toDegrees(cartographic.latitude);
-            //   let z = cartographic.height / 1000;
-            //   satelliteList[id] = [x,y,z]
-            // })
-
+             // 1. 改成点
+          if (ele.path != undefined) {
+            ele.billboard = undefined;
             // 1. 改成点
-            if (ele.path != undefined) {
-              ele.billboard = undefined;
-              // 1. 改成点
-              ele.point = {
-                show: true,
-                color: CM.Color.WHITE,
-                // outlineWidth: 4,
-                pixelSize: 5,
-              };
-            }
-
-            // // 2. 添加和配置运动实体的模型
-            // ele.model = {
-            //   // 引入模型
-            //   uri: "./Satellite.gltf",
-            //   // 配置模型大小的最小值
-            //   minimumPixelSize: 50,
-            //   //配置模型大小的最大值
-            //   maximumScale: 50,
-            //   //配置模型轮廓的颜色
-            //   silhouetteColor: CM.Color.WHITE,
-            //   //配置轮廓的大小
-            //   silhouetteSize: 0,
-            // };
-            // //设置方向,根据实体的位置来配置方向
-            // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
-            // //设置模型初始的位置
-            // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
-            // //设置查看器，让模型动起来
-            // viewer.clock.shouldAnimate = true;
-            // 3. 配置样式与路径
-            if (ele.label != undefined) {
-              ele.label.show = false;
-            }
-            if (ele.path != undefined) {
-              ele.path.show = false; // 设置路径不可看
-              ele.path.material.color = CM.Color.WHITE;
-            }
-            // 4. 集站附近绘制网格
-            // if (ele.id === "Facility/AGI") {
-            //   //@ts-ignore
-            //   let [lon, lat] = GetWGS84FromDKR(ele.position._value, 1)
-            //   //添加Entity
-            //   let radius = 1;
-            //   lon = parseFloat(lon);
-            //   lat = parseFloat(lat);
-            //   viewer.entities.add({
-            //     id:  "ShowRange",
-            //     name: "选取范围",
-            //     polygon: {
-            //       hierarchy: new CM.PolygonHierarchy(
-            //         CM.Cartesian3.fromDegreesArray([
-            //           lon - radius,
-            //           lat + radius,
-            //           lon + radius,
-            //           lat + radius,
-            //           lon + radius,
-            //           lat - radius,
-            //           lon - radius,
-            //           lat - radius
-            //         ])
-            //       ),
-            //       outline: true,
-            //       outlineColor: CM.Color.RED,
-            //       outlineWidth: 4,
-            //       fill: false,
-            //       material: CM.Color.fromCssColorString(
-            //         "rgba(5, 39, 175, 0.3)"
-            //       ).withAlpha(0.1),
-            //     },
-            //   });
-            // }
+            ele.point = {
+              show: true,
+              color: CM.Color.WHITE,
+              // outlineWidth: 4,
+              pixelSize: 5,
+            };
+          }
+          // // 2. 添加和配置运动实体的模型
+          // ele.model = {
+          //   // 引入模型
+          //   uri: "./Satellite.gltf",
+          //   // 配置模型大小的最小值
+          //   minimumPixelSize: 50,
+          //   //配置模型大小的最大值
+          //   maximumScale: 50,
+          //   //配置模型轮廓的颜色
+          //   silhouetteColor: CM.Color.WHITE,
+          //   //配置轮廓的大小
+          //   silhouetteSize: 0,
+          // };
+          // //设置方向,根据实体的位置来配置方向
+          // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
+          // //设置模型初始的位置
+          // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
+          // //设置查看器，让模型动起来
+          // viewer.clock.shouldAnimate = true;
+          // 3. 配置样式与路径
+          if (ele.label != undefined) {
+            ele.label.show = false;
+          }
+          if (ele.path != undefined) {
+            ele.path.show = false; // 设置路径不可看
+            ele.path.material.color = CM.Color.WHITE;
+          }
+          });
+        });
+        // // 加载北斗实体
+        // dronePromise_beidou.then((dataSource: any) => {
+        //   viewer.dataSources.add(dronePromise_beidou);
+        //   dataSource.entities._entities._array.forEach((ele: any) => {
+        //     nowSatelliteList.push(ele.id);
+        //     viewer.entities.add(ele);
+        //      // 1. 改成点
+        //   if (ele.path != undefined) {
+        //     ele.billboard = undefined;
+        //     // 1. 改成点
+        //     ele.point = {
+        //       show: true,
+        //       color: CM.Color.WHITE,
+        //       // outlineWidth: 4,
+        //       pixelSize: 5,
+        //     };
+        //   }
+        //   // // 2. 添加和配置运动实体的模型
+        //   // ele.model = {
+        //   //   // 引入模型
+        //   //   uri: "./Satellite.gltf",
+        //   //   // 配置模型大小的最小值
+        //   //   minimumPixelSize: 50,
+        //   //   //配置模型大小的最大值
+        //   //   maximumScale: 50,
+        //   //   //配置模型轮廓的颜色
+        //   //   silhouetteColor: CM.Color.WHITE,
+        //   //   //配置轮廓的大小
+        //   //   silhouetteSize: 0,
+        //   // };
+        //   // //设置方向,根据实体的位置来配置方向
+        //   // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
+        //   // //设置模型初始的位置
+        //   // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
+        //   // //设置查看器，让模型动起来
+        //   // viewer.clock.shouldAnimate = true;
+        //   // 3. 配置样式与路径
+        //   if (ele.label != undefined) {
+        //     ele.label.show = false;
+        //   }
+        //   if (ele.path != undefined) {
+        //     ele.path.show = false; // 设置路径不可看
+        //     ele.path.material.color = CM.Color.WHITE;
+        //   }
+        //   });
+        // });
+        // 加载GPS实体
+        dronePromise_GPS.then((dataSource: any) => {
+          viewer.dataSources.add(dronePromise_GPS);
+          dataSource.entities._entities._array.forEach((ele: any) => {
+            nowSatelliteList.push(ele.id);
+            viewer.entities.add(ele);
+             // 1. 改成点
+          if (ele.path != undefined) {
+            ele.billboard = undefined;
+            // 1. 改成点
+            ele.point = {
+              show: true,
+              color: CM.Color.WHITE,
+              // outlineWidth: 4,
+              pixelSize: 5,
+            };
+          }
+          // // 2. 添加和配置运动实体的模型
+          // ele.model = {
+          //   // 引入模型
+          //   uri: "./Satellite.gltf",
+          //   // 配置模型大小的最小值
+          //   minimumPixelSize: 50,
+          //   //配置模型大小的最大值
+          //   maximumScale: 50,
+          //   //配置模型轮廓的颜色
+          //   silhouetteColor: CM.Color.WHITE,
+          //   //配置轮廓的大小
+          //   silhouetteSize: 0,
+          // };
+          // //设置方向,根据实体的位置来配置方向
+          // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
+          // //设置模型初始的位置
+          // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
+          // //设置查看器，让模型动起来
+          // viewer.clock.shouldAnimate = true;
+          // 3. 配置样式与路径
+          if (ele.label != undefined) {
+            ele.label.show = false;
+          }
+          if (ele.path != undefined) {
+            ele.path.show = false; // 设置路径不可看
+            ele.path.material.color = CM.Color.WHITE;
+          }
           });
           setSatelliteList(nowSatelliteList);
         });
+        console.log(viewer.entities);
         viewer.camera.flyHome(0);
         const lngMin = -180;
         const lngMax = 180;
@@ -408,7 +478,7 @@ const CesiumComponent: React.FC<{}> = () => {
       },
       label: {
         fillColor: new CM.Color(244, 164, 96, 1),
-        font: "18px Lucida Console",
+        font: '18px Lucida Console',
         horizontalOrigin: CM.HorizontalOrigin.LEFT,
         // outlineColor: CM.Color.BLUE,
         outlineWidth: 0,
@@ -426,7 +496,7 @@ const CesiumComponent: React.FC<{}> = () => {
     let radius = 1;
     viewer.entities.add({
       id: `ShowRange_${id}`,
-      name: "选取范围",
+      name: '选取范围',
       polygon: {
         hierarchy: new CM.PolygonHierarchy(
           CM.Cartesian3.fromDegreesArray([
@@ -445,7 +515,7 @@ const CesiumComponent: React.FC<{}> = () => {
         outlineWidth: 4,
         fill: false,
         material: CM.Color.fromCssColorString(
-          "rgba(5, 39, 175, 0.3)"
+          'rgba(5, 39, 175, 0.3)'
         ).withAlpha(0.1),
       },
     });
@@ -462,7 +532,7 @@ const CesiumComponent: React.FC<{}> = () => {
     );
     var positions: any[] = [];
     var poly: any = null;
-    var distance: string | null = "0";
+    var distance: string | null = '0';
     var cartesian = null;
     var floatingPoint;
     //@ts-ignore
@@ -490,7 +560,7 @@ const CesiumComponent: React.FC<{}> = () => {
       }
       positions.push(cartesian);
       let curPositions = positions.slice(0);
-      var textDisance = distance + " km";
+      var textDisance = distance + ' km';
       floatingPoint = viewer.entities.add({
         name: `${GetWGS84FromDKR(curPositions[curPositions.length - 1], 0)}`,
         position: curPositions[curPositions.length - 1],
@@ -502,7 +572,7 @@ const CesiumComponent: React.FC<{}> = () => {
         },
         label: {
           text: textDisance,
-          font: "18px sans-serif",
+          font: '18px sans-serif',
           fillColor: CM.Color.GOLD,
           style: CM.LabelStyle.FILL_AND_OUTLINE,
           outlineWidth: 2,
@@ -518,13 +588,13 @@ const CesiumComponent: React.FC<{}> = () => {
 
       positions = [];
       poly = null;
-      distance = "0";
+      distance = '0';
       cartesian = null;
     }, CM.ScreenSpaceEventType.RIGHT_CLICK);
     var PolyLinePrimitive = (function () {
       function _(this: any, positions: any) {
         this.options = {
-          name: "直线",
+          name: '直线',
           polyline: {
             show: true,
             positions: [],
@@ -618,11 +688,11 @@ const CesiumComponent: React.FC<{}> = () => {
       var latitudeString = CM.Math.toDegrees(cartographic.latitude);
       var heightString = cartographic.height;
       var labelText =
-        "(" +
+        '(' +
         longitudeString.toFixed(2) +
-        "," +
+        ',' +
         latitudeString.toFixed(2) +
-        ")";
+        ')';
       // @ts-ignore
       tempPoints.push({
         lon: longitudeString,
@@ -630,7 +700,7 @@ const CesiumComponent: React.FC<{}> = () => {
         hei: heightString,
       });
       floatingPoint = viewer.entities.add({
-        name: "多边形面积",
+        name: '多边形面积',
         position: curPositions[curPositions.length - 1],
         point: {
           pixelSize: 5,
@@ -641,7 +711,7 @@ const CesiumComponent: React.FC<{}> = () => {
         },
         label: {
           text: labelText,
-          font: "18px sans-serif",
+          font: '18px sans-serif',
           fillColor: CM.Color.GOLD,
           style: CM.LabelStyle.FILL_AND_OUTLINE,
           outlineWidth: 2,
@@ -655,13 +725,13 @@ const CesiumComponent: React.FC<{}> = () => {
       positions.pop();
       let curPositions = positions.slice(0);
 
-      var textArea = getArea(tempPoints) + "平方公里";
+      var textArea = getArea(tempPoints) + '平方公里';
       viewer.entities.add({
-        name: "多边形面积",
+        name: '多边形面积',
         position: curPositions[curPositions.length - 1],
         label: {
           text: textArea,
-          font: "18px sans-serif",
+          font: '18px sans-serif',
           fillColor: CM.Color.RED,
           style: CM.LabelStyle.FILL_AND_OUTLINE,
           outlineWidth: 2,
@@ -812,28 +882,28 @@ const CesiumComponent: React.FC<{}> = () => {
       }
       let option = {
         grid: {
-          left: "11%",
-          top: "15%",
-          right: "2%",
-          bottom: "15%",
+          left: '11%',
+          top: '15%',
+          right: '2%',
+          bottom: '15%',
         },
         xAxis: {
-          type: "category",
+          type: 'category',
           axisLabel: {
-            color: "#fff",
-            align: "left",
+            color: '#fff',
+            align: 'left',
           },
           data: nowSystemDate,
         },
         yAxis: {
-          type: "value",
-          name: "height / km",
-          position: "left",
+          type: 'value',
+          name: 'height / km',
+          position: 'left',
           nameTextStyle: {
-            color: "#fff",
+            color: '#fff',
           },
           axisLabel: {
-            color: "#fff",
+            color: '#fff',
           },
           min: (value: any) => {
             return value.min - 1;
@@ -844,20 +914,19 @@ const CesiumComponent: React.FC<{}> = () => {
         },
         dataZoom: [
           {
-            type: "inside",
-            orient: "vertical",
+            type: 'inside',
+            orient: 'vertical',
           },
         ],
         series: [
           {
             data: satellitePostionData,
-            type: "line",
+            type: 'line',
           },
         ],
       };
       myChart.setOption(option);
       myChart.resize();
-
     }
   }, [satellitePostionData, nowSystemDate]);
 
@@ -874,105 +943,49 @@ const CesiumComponent: React.FC<{}> = () => {
   }, [selectSatelliteList]);
   setInterval(function () {});
   return (
-    <>
-      <style>
-        {`.cesium-button {
-          background: #303336;
-          border: 1px solid #444;
-          color: #edffff;
-          fill: #edffff;
-          border-radius: 4px;
-          padding: 5px 12px;
-          margin: 10px 10px;
-          cursor: pointer;
-          overflow: hidden;
-          -moz-user-select: none;
-          -webkit-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-          outline:0 none !important;
-          z-index:999;
-        }
-        .cesium-button:focus,
-        .cesium-button:active:focus,
-        .cesium-button.active:focus,
-        .cesium-button.focus,
-        .cesium-button:active.focus,
-        .cesium-button.active.focus{
-            outline: none;
-            border-color: transparent;
-            box-shadow:none;
-        }
-        #toolbar{
-          position:absolute;
-        }
-        #satellite{
-          height: 15vh;
-          right: 2px;
-          top: 10vh;
-          width:20vw;
-          background:rgba(0,0,0,0);
-          position:absolute;
-          z-index:999;
-        }
-        // #cesiumContainer{
-        //   background-repeat:no-repeat ;
-        //   background-size: cover;
-        // }
-        #satelliteList {
-          position: absolute;
-          width: 10.5vw;
-          height: 100vh;
-          padding-top: 5vh;
-          padding-left: 10px;
-          z-index: 999;
-        }
-        .btnSelected{
-          background:#4488bb
-        }
-      `}
-      </style>
-      <div id="satelliteList" style={{height: '500px'}}>
+    <div className='cesium-bg'>
+      <div id='satelliteList'>
         <SatelliteList
           statelliteList={satelliteList}
           setSelectSatelliteList={setSelectSatelliteList}
         />
       </div>
-      <div id="toolbar">
+      <div id='toolbar'>
         <button
-          type="button"
-          id="measureDistance"
+          type='button'
+          id='measureDistance'
           onClick={() => {
             setIsDrawLine(!isDrawLine);
           }}
-          className="cesium-button"
+          className='cesium-button'
         >
           MeasureDistance
         </button>
         <button
-          type="button"
-          id="measureArea"
+          type='button'
+          id='measureArea'
           onClick={() => {
             //debugger;
             setIsDrawPolygon(!isDrawPolygon);
           }}
-          className="cesium-button"
+          className='cesium-button'
         >
           MeasureArea
         </button>
       </div>
+      <div id='title'>卫星态势仿真监控平台</div>
       {isPostion === true && (
-        <div id="satellite" className="charts" ref={chartRef}></div>
+        <div id='satellite' className='charts' ref={chartRef}></div>
       )}
       <div
-        id="cesiumContainer"
+        id='cesiumContainer'
         style={{
-          height: "100%",
-          width: "100%",
+          height: '100%',
+          width: '100%',
           // backgroundImage: "url(./images/star.jpg)",
         }}
       ></div>
-    </>
+    </div>
   );
 };
 
