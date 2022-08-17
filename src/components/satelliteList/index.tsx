@@ -40,8 +40,6 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     if (selectedRowKeys.length < newSelectedRowKeys.length) {
 
       let nowSelectKey = newSelectedRowKeys.concat(selectedRowKeys).filter(item => !selectedRowKeys.includes(item))
-      console.log(nowSelectKey)
-
       for (let i of nowSelectKey) {
         nowSelectList.push([i, true])
       }

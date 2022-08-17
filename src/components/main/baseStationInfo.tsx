@@ -17,9 +17,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
     },[])
 
     useEffect(()=>{
-        if(init){
-            console.log(baseStationList)
-        }
+
     },[init])
 
 return (<div id='baseStationList' style={{ width: '100%', height: '100%', overflowY:"scroll"}}>
