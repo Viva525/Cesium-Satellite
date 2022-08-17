@@ -1,15 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import type { TableRowSelection } from 'antd/es/table/interface';
+import React, { useEffect, useState, useRef } from "react";
+import { Table } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
 import * as CM from "cesium/Cesium";
 import { assert } from "console";
-import * as echarts from 'echarts';
-import SatelliteList from "../satelliteList"
+import * as echarts from "echarts";
+import SatelliteList from "../satelliteList";
 
-import "antd/dist/antd.css"
-
+import "antd/dist/antd.css";
 
 //@ts-ignore
 let viewer: any;
@@ -24,7 +23,7 @@ var handler: {
   ) => void;
   destroy: () => void;
 };
-let nowPicksatellite: any
+let nowPicksatellite: any;
 // let satelliteList: {[key:string]:any []} = {};
 // let satelliteList: string[] = []
 const CesiumComponent: React.FC<{}> = () => {
@@ -47,8 +46,12 @@ const CesiumComponent: React.FC<{}> = () => {
   const [nowSystemDate, setNowSystemDate] = useState<string[]>([]);
   const [isPostion, setIsPostion] = useState<boolean>(false);
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
-  const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([])
-  const chartRef = useRef(null)
+  const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
+  const chartRef = useRef(null);
+
+  const [start, setStart] = useState(CM.JulianDate.fromIso8601("2022-08-11T03:37:16.042872+00:00"))
+  const [stop, setStop] = useState(CM.JulianDate.fromIso8601("2022-08-12T03:37:16.042872+00:00"))
+
   useEffect(() => {
     setInit(true);
   }, []);
@@ -59,7 +62,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       document.getElementById("measureDistance").disabled = true;
       //@ts-ignore
-      measureArea(viewer)
+      measureArea(viewer);
     } else {
       //@ts-ignore
       document.getElementById("measureArea").classList.remove("btnSelected");
@@ -84,9 +87,9 @@ const CesiumComponent: React.FC<{}> = () => {
         .getElementById("measureDistance")
         .classList.remove("btnSelected");
       //@ts-ignore
-      document.getElementById('measureArea').disabled = false
+      document.getElementById("measureArea").disabled = false;
       if (handler) {
-        handler.destroy()
+        handler.destroy();
       }
     }
   }, [isDrawLine]);
@@ -97,6 +100,7 @@ const CesiumComponent: React.FC<{}> = () => {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
       viewer = new CM.Viewer("cesiumContainer", {
         shouldAnimate: true,
+        infoBox: false, // 是否显示点击要素之后显示的信息
         // 去掉地球表面的大气效果黑圈问题
         skyAtmosphere: false, // 关闭地球光环
         orderIndependentTranslucency: false,
@@ -203,7 +207,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
-        let dronePromise = CM.CzmlDataSource.load("./data/starlink-300.czml");
+        let dronePromise = CM.CzmlDataSource.load("./data/starlink-50.czml");
         const stripeMaterial = new CM.StripeMaterialProperty({
           evenColor: CM.Color.WHITE.withAlpha(0.5),
           oddColor: CM.Color.BLUE.withAlpha(0.5),
@@ -216,14 +220,14 @@ const CesiumComponent: React.FC<{}> = () => {
           // debugger;
           // 通过ID选择需要轨迹的实体
 
-          let nowSatelliteList: string[] = []
+          let nowSatelliteList: string[] = [];
           dataSource.entities._entities._array.forEach((ele: any) => {
             // let drone = dataSource.entities.getById(ele.id);
-            let id = ele.id
+            let id = ele.id;
 
             // satelliteList[id] = []
-            nowSatelliteList.push(id)
-            viewer.entities.add(ele)
+            nowSatelliteList.push(id);
+            viewer.entities.add(ele);
 
             // let cartographic = null
             // viewer.clock.onTick.addEventListener((clock: any) => {
@@ -234,7 +238,6 @@ const CesiumComponent: React.FC<{}> = () => {
             //   let z = cartographic.height / 1000;
             //   satelliteList[id] = [x,y,z]
             // })
-
 
             // 1. 改成点
             if (ele.path != undefined) {
@@ -310,17 +313,17 @@ const CesiumComponent: React.FC<{}> = () => {
             //   });
             // }
           });
-          setSatelliteList(nowSatelliteList)
+          setSatelliteList(nowSatelliteList);
         });
         viewer.camera.flyHome(0);
-        const lngMin = -180
-        const lngMax = 180
-        const latMin = -90
-        const latMax = 90
-        for(let i =0; i<20; i++){
-          let lng = Math.random() * (lngMax - lngMin + 1) + lngMin
-          let lat = Math.random() * (latMax - latMin + 1) + latMin
-          createBaseStation(lng,lat, i)
+        const lngMin = -180;
+        const lngMax = 180;
+        const latMin = -90;
+        const latMax = 90;
+        for (let i = 0; i < 20; i++) {
+          let lng = Math.random() * (lngMax - lngMin + 1) + lngMin;
+          let lat = Math.random() * (latMax - latMin + 1) + latMin;
+          createBaseStation(lng, lat, i);
         }
       });
       // 鼠标事件
@@ -340,13 +343,15 @@ const CesiumComponent: React.FC<{}> = () => {
             } else {
               nowPicksatellite = pick;
             }
-            viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
+            viewer.clock.onTick.addEventListener(nowSatellitePostion, false); 
+            radarScanner(pick.id.position)   // 添加扫描的卫星
           }
         }
       }, CM.ScreenSpaceEventType.LEFT_CLICK);
       handler.setInputAction(function (click: { position: any }) {
         var pick = viewer.scene.pick(click.position);
         if (pick && pick.id) {
+          // 点击的是卫星
           if (pick.id._path != undefined) {
             pick.id._path.show = false;
             setIsPostion(false);
@@ -356,6 +361,7 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
+
     }
   }, [init]);
   // 笛卡尔坐标系转经纬度
@@ -376,12 +382,13 @@ const CesiumComponent: React.FC<{}> = () => {
     return cartesian3;
   };
 
+  // 创建基站
   const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new CM.TimeInterval({
-      start : CM.JulianDate.fromIso8601('2022-08-11T03:37:16.042872+00:00'),
-      stop : CM.JulianDate.fromIso8601('2022-08-12T03:37:16.042872+00:00'),
-      isStartIncluded : true,
-      isStopIncluded : true,
+      start: start,
+      stop: stop,
+      isStartIncluded: true,
+      isStopIncluded: true,
     });
     let baseStation = {
       id: `Facility/baseStation_${id}`,
@@ -392,7 +399,8 @@ const CesiumComponent: React.FC<{}> = () => {
         eyeOffset: new CM.Cartesian3(0, 0, 0),
         horizontalOrigin: CM.HorizontalOrigin.CENTER,
         // image:"./logo512.png",
-        image:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC",
+        image:
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC",
         pixelOffset: new CM.Cartesian2(0, 0),
         scale: 1,
         show: true,
@@ -408,12 +416,11 @@ const CesiumComponent: React.FC<{}> = () => {
         show: true,
         // style: CM.LabelStyle.FILL_AND_OUTLINE,
         text: `baseStation_${id}`,
-        verticalOrigin: CM.VerticalOrigin.CENTER
+        verticalOrigin: CM.VerticalOrigin.CENTER,
       },
       position: new CM.Cartesian3.fromDegrees(lng, lat),
     };
     viewer.entities.add(baseStation);
-
 
     //添加矩形Entity
     let radius = 1;
@@ -566,6 +573,7 @@ const CesiumComponent: React.FC<{}> = () => {
       return (distance / 1000).toFixed(2);
     }
   };
+
   const measureArea = () => {
     if (!isDrawPolygon) return;
     // 鼠标事件
@@ -712,7 +720,7 @@ const CesiumComponent: React.FC<{}> = () => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -726,9 +734,8 @@ const CesiumComponent: React.FC<{}> = () => {
         polygon: {
           hierarchy: positions,
           material: CM.Color.GREEN.withAlpha(0.1),
-        }
+        },
       });
-
     }
 
     function distance(point1: any, point2: any) {
@@ -739,18 +746,25 @@ const CesiumComponent: React.FC<{}> = () => {
       geodesic.setEndPoints(point1cartographic, point2cartographic);
       var s = geodesic.surfaceDistance;
       //返回两点之间的距离
-      s = Math.sqrt(Math.pow(s, 2) + Math.pow(point2cartographic.height - point1cartographic.height, 2));
+      s = Math.sqrt(
+        Math.pow(s, 2) +
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+      );
       return s;
     }
   };
+
   const nowSatellitePostion = () => {
-    let cartographic = null
-    cartographic = CM.Cartographic.fromCartesian(nowPicksatellite.primitive._actualPosition);
+    let cartographic = null;
+    cartographic = CM.Cartographic.fromCartesian(
+      nowPicksatellite.primitive._actualPosition
+    );
     let x = CM.Math.toDegrees(cartographic.longitude);
     let y = CM.Math.toDegrees(cartographic.latitude);
     let z = Math.ceil(cartographic.height / 1000);
     let nowDate = new Date(viewer.clock.currentTime).toUTCString();
-
+  
+    // 时间没有暂停
     if (viewer.clock.shouldAnimate) {
       setNowSystemDate((prev) => {
         return [...prev, nowDate];
@@ -758,7 +772,33 @@ const CesiumComponent: React.FC<{}> = () => {
       setSatellitePostionData((prev) => {
         return [...prev, z];
       });
+      
     }
+  };
+
+  // 绘制卫星锥体
+  const radarScanner= (position: any) => {
+    viewer.entities.add({
+      availability: new CM.TimeIntervalCollection([
+        new CM.TimeInterval({
+          start: start,
+          stop: stop,
+        }),
+      ]),
+      position: position, //轨道高度
+      // orientation: new CM.VelocityOrientationProperty(entity_ty1p),
+      cylinder: {
+        HeightReference: CM.HeightReference.CLAMP_TO_GROUND,
+        length: 500000,
+        topRadius: 0,
+        bottomRadius: 500000,
+        // material: CM.Color.RED.withAlpha(.4),
+        // outline: !0,
+        numberOfVerticalLines: 0,
+        // outlineColor: CM.Color.RED.withAlpha(.8),
+        material: CM.Color.fromBytes(35, 170, 242, 80),
+      },
+    });
   }
 
 
@@ -817,13 +857,13 @@ const CesiumComponent: React.FC<{}> = () => {
       };
       myChart.setOption(option);
       myChart.resize();
-    }
 
-  }, [satellitePostionData, nowSystemDate])
+    }
+  }, [satellitePostionData, nowSystemDate]);
 
   useEffect(() => {
-    for(let i of selectSatelliteList){
-      console.log(selectSatelliteList)
+    for (let i of selectSatelliteList) {
+      console.log(selectSatelliteList);
       var pick = viewer.entities.getById(i[0]);
       if (pick.id) {
         if (pick._path != undefined) {
@@ -831,9 +871,8 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       }
     }
-  }, [selectSatelliteList])
-  setInterval(function () {
-  })
+  }, [selectSatelliteList]);
+  setInterval(function () {});
   return (
     <>
       <style>
@@ -893,7 +932,7 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       `}
       </style>
-      <div id="satelliteList">
+      <div id="satelliteList" style={{height: '500px'}}>
         <SatelliteList
           statelliteList={satelliteList}
           setSelectSatelliteList={setSelectSatelliteList}
