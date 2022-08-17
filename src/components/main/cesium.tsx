@@ -331,7 +331,8 @@ const CesiumComponent: React.FC<{}> = () => {
             state: Math.random()>0.5? "working":"stoped",
           });
         }
-        setBaseStationList(baseStationList);
+        setBaseStationList(baseStationTemp);
+        debugger;
       });
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
