@@ -291,7 +291,6 @@ const CesiumComponent: React.FC<{}> = () => {
               }
               radarScanner(property, cartographic.height, radarId)
             }
-
             // 更改显示的时间
             // var timeInterval = new CM.TimeInterval({
             //   start: start,
