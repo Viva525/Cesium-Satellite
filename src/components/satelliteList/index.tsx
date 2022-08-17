@@ -65,6 +65,34 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
       Table.SELECTION_ALL,
       Table.SELECTION_INVERT,
       Table.SELECTION_NONE,
+      {
+        key: 'even',
+        text: 'Select BEIDOU',
+        onSelect: changableRowKeys => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changableRowKeys.filter((item, index) => {
+            if(item.toString().indexOf("BEIDOU") > 0){
+              return true
+            }
+            return false;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
+      {
+        key: 'even',
+        text: 'Select GPS',
+        onSelect: changableRowKeys => {
+          let newSelectedRowKeys = [];
+          newSelectedRowKeys = changableRowKeys.filter((item, index) => {
+            if(item.toString().indexOf("GPS") > 0){
+              return true
+            }
+            return false;
+          });
+          setSelectedRowKeys(newSelectedRowKeys);
+        },
+      },
     ],
   };
 
