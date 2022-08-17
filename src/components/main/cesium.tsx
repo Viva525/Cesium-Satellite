@@ -264,7 +264,6 @@ const CesiumComponent: React.FC<{}> = () => {
                 pixelSize: 5,
               };
             }
-
             // 更改显示的时间
             // var timeInterval = new CM.TimeInterval({
             //   start: start,
