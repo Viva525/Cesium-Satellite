@@ -109,6 +109,7 @@ const CesiumComponent: React.FC<{}> = () => {
           },
         },
       });
+
       // 添加高德影像图
       let atLayer = new CM.UrlTemplateImageryProvider({
         url: 'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
@@ -244,24 +245,35 @@ const CesiumComponent: React.FC<{}> = () => {
         let nowSatelliteList: string[] = [];
         // 加载星链实体
         dronePromise_starlink50.then((dataSource: any) => {
+          // 配置时间轴
+          // dataSource.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
+          // dataSource.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
+          // dataSource.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
+          
           viewer.dataSources.add(dronePromise_starlink50);
           // 通过ID选择需要轨迹的实体
-
-          let nowSatelliteList: string[] = [];
           dataSource.entities._entities._array.forEach((ele: any) => {
             nowSatelliteList.push(ele.id);
             viewer.entities.add(ele);
              // 1. 改成点
           if (ele.path != undefined) {
             ele.billboard = undefined;
-            // 1. 改成点
             ele.point = {
               show: true,
-              color: CM.Color.WHITE,
+              color: CM.Color.RED,
               // outlineWidth: 4,
               pixelSize: 5,
             };
           }
+
+          // 更改显示的时间
+          // var timeInterval = new CM.TimeInterval({
+          //   start: start,
+          //   stop: stop,
+          //   isStartIncluded: true,
+          //   isStopIncluded: true,
+          // });
+          // ele.availability = new CM.TimeIntervalCollection([timeInterval])
           // // 2. 添加和配置运动实体的模型
           // ele.model = {
           //   // 引入模型
@@ -338,53 +350,50 @@ const CesiumComponent: React.FC<{}> = () => {
         //   });
         // });
         // 加载GPS实体
-        dronePromise_GPS.then((dataSource: any) => {
-          viewer.dataSources.add(dronePromise_GPS);
-          dataSource.entities._entities._array.forEach((ele: any) => {
-            nowSatelliteList.push(ele.id);
-            viewer.entities.add(ele);
-             // 1. 改成点
-          if (ele.path != undefined) {
-            ele.billboard = undefined;
-            // 1. 改成点
-            ele.point = {
-              show: true,
-              color: CM.Color.WHITE,
-              // outlineWidth: 4,
-              pixelSize: 5,
-            };
-          }
-          // // 2. 添加和配置运动实体的模型
-          // ele.model = {
-          //   // 引入模型
-          //   uri: "./Satellite.gltf",
-          //   // 配置模型大小的最小值
-          //   minimumPixelSize: 50,
-          //   //配置模型大小的最大值
-          //   maximumScale: 50,
-          //   //配置模型轮廓的颜色
-          //   silhouetteColor: CM.Color.WHITE,
-          //   //配置轮廓的大小
-          //   silhouetteSize: 0,
-          // };
-          // //设置方向,根据实体的位置来配置方向
-          // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
-          // //设置模型初始的位置
-          // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
-          // //设置查看器，让模型动起来
-          // viewer.clock.shouldAnimate = true;
-          // 3. 配置样式与路径
-          if (ele.label != undefined) {
-            ele.label.show = false;
-          }
-          if (ele.path != undefined) {
-            ele.path.show = false; // 设置路径不可看
-            ele.path.material.color = CM.Color.WHITE;
-          }
-          });
-          setSatelliteList(nowSatelliteList);
-        });
-        console.log(viewer.entities);
+        // dronePromise_GPS.then((dataSource: any) => {
+        //   // dataSource.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
+        //   // dataSource.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
+        //   // dataSource.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
+
+          
+        //   viewer.dataSources.add(dronePromise_GPS);
+        //   dataSource.entities._entities._array.forEach((ele: any) => {
+        //     nowSatelliteList.push(ele.id);
+        //     // 1. 改成点
+        //     if (ele.path != undefined) {
+        //       ele.billboard = undefined;
+        //       // 1. 改成点
+        //       ele.point = {
+        //         show: true,
+        //         color: CM.Color.RED,
+        //         pixelSize: 5,
+        //       };
+        //     }
+        //     // 更改显示的时间
+        //     // var timeInterval = new CM.TimeInterval({
+        //     //   start: start,
+        //     //   stop: stop,
+        //     //   isStartIncluded: true,
+        //     //   isStopIncluded: true,
+        //     // });
+        //     // ele.availability = new CM.TimeIntervalCollection([timeInterval])
+        //     // ele.availability = undefined
+
+        //   // 3. 配置样式与路径
+        //   if (ele.label != undefined) {
+        //     ele.label.show = false;
+        //   }
+        //   if (ele.path != undefined) {
+        //     ele.path.show = false; // 设置路径不可看
+        //     ele.path.material.color = CM.Color.WHITE;
+        //   }
+        //   viewer.entities.add(ele);
+        //   });
+        // });
+
+          setSatelliteList(ele => [...ele, ...nowSatelliteList]);
+
+        // 随机生成基站
         viewer.camera.flyHome(0);
         const lngMin = -180;
         const lngMax = 180;
@@ -395,6 +404,8 @@ const CesiumComponent: React.FC<{}> = () => {
           let lat = Math.random() * (latMax - latMin + 1) + latMin;
           createBaseStation(lng, lat, i);
         }
+        console.log(viewer.entities.values);
+        
       });
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -431,6 +442,12 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
+
+      
+      // 配置时间轴
+      // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
+      // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
+      // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
 
     }
   }, [init]);
@@ -491,6 +508,7 @@ const CesiumComponent: React.FC<{}> = () => {
       position: new CM.Cartesian3.fromDegrees(lng, lat),
     };
     viewer.entities.add(baseStation);
+    // setSatelliteList(ele => [...ele, `baseStation_${id}`])
 
     //添加矩形Entity
     let radius = 1;
