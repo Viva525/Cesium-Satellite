@@ -11,6 +11,7 @@ import './css/cesium.css';
 import { BaseStation } from './types/type';
 import BaseStationInfo from './baseStationInfo';
 
+
 //@ts-ignore
 let viewer: any;
 var handler: {
@@ -25,6 +26,8 @@ var handler: {
   destroy: () => void;
 };
 let nowPicksatellite: any;
+let rain: any, snow: any, fog: any;
+let stages: any;
 // let satelliteList: {[key:string]:any []} = {};
 // let satelliteList: string[] = []
 const CesiumComponent: React.FC<{}> = () => {
@@ -108,7 +111,6 @@ const CesiumComponent: React.FC<{}> = () => {
         shouldAnimate: true,
         infoBox: false, // 是否显示点击要素之后显示的信息
         // 去掉地球表面的大气效果黑圈问题
-        skyAtmosphere: false, // 关闭地球光环
         orderIndependentTranslucency: false,
         contextOptions: {
           webgl: {
@@ -123,12 +125,12 @@ const CesiumComponent: React.FC<{}> = () => {
         minimumLevel: 3,
         maximumLevel: 18,
       });
-      viewer.imageryLayers.addImageryProvider(atLayer);
+      // viewer.imageryLayers.addImageryProvider(atLayer);
       // 开启光照
       viewer.scene.globe.enableLighting = true;
       viewer.shadows = true;
       // 亮度设置
-      var stages = viewer.scene.postProcessStages;
+      stages = viewer.scene.postProcessStages;
       viewer.scene.brightness =
         viewer.scene.brightness ||
         stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
@@ -284,7 +286,7 @@ const CesiumComponent: React.FC<{}> = () => {
             console.log("bottomRadius:", bottomRadius)
             // 卫星辐射的长度
             let satelliteLenght= Math.abs(height + earthRadius - earthHeight)
-            console.log("satelliteHeigh:", satelliteLenght)
+            // console.log("satelliteHeigh:", satelliteLenght)
 
             var property = new CM.SampledPositionProperty();
             let radarHeight: number = 0
@@ -393,6 +395,7 @@ const CesiumComponent: React.FC<{}> = () => {
       // 鼠标事件
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (click: { position: any }) {
+        
         var pick = viewer.scene.pick(click.position);
         if (pick && pick.id) {
           if (pick.id._path != undefined) {
@@ -437,6 +440,17 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
+
+      //监控相机高度
+      var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
+      handler.setInputAction(function() {
+          let height=viewer.camera.positionCartographic.height;
+          if(height> 200){
+            snow && viewer.scene.postProcessStages.remove(snow)  // 移除
+            rain && viewer.scene.postProcessStages.remove(rain)  // 移除
+            fog && viewer.scene.postProcessStages.remove(fog)  // 移除
+          }
+      }, CM.ScreenSpaceEventType.WHEEL);
 
       // 配置时间轴
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
@@ -494,7 +508,7 @@ const CesiumComponent: React.FC<{}> = () => {
         // outlineColor: CM.Color.BLUE,
         outlineWidth: 0,
         pixelOffset: new CM.Cartesian2(12, 0),
-        show: true,
+        show: false,
         // style: CM.LabelStyle.FILL_AND_OUTLINE,
         text: `baseStation_${id}`,
         verticalOrigin: CM.VerticalOrigin.CENTER,
@@ -880,6 +894,104 @@ const CesiumComponent: React.FC<{}> = () => {
     });
   };
 
+  const addWether = (type: string) => {
+    snow && viewer.scene.postProcessStages.remove(snow)  // 移除
+    rain && viewer.scene.postProcessStages.remove(rain)  // 移除
+    fog && viewer.scene.postProcessStages.remove(fog)  // 移除
+    if(type === 'snow'){
+        //定义下雪场景 着色器
+      function FS_Snow() {
+          return "uniform sampler2D colorTexture;\n\
+            varying vec2 v_textureCoordinates;\n\
+          \n\
+            float snow(vec2 uv,float scale)\n\
+            {\n\
+                float time = czm_frameNumber / 60.0;\n\
+                float w=smoothstep(1.,0.,-uv.y*(scale/10.));if(w<.1)return 0.;\n\
+                uv+=time/scale;uv.y+=time*2./scale;uv.x+=sin(uv.y+time*.5)/scale;\n\
+                uv*=scale;vec2 s=floor(uv),f=fract(uv),p;float k=3.,d;\n\
+                p=.5+.35*sin(11.*fract(sin((s+p+scale)*mat2(7,3,6,5))*5.))-f;d=length(p);k=min(d,k);\n\
+                k=smoothstep(0.,k,sin(f.x+f.y)*0.01);\n\
+                return k*w;\n\
+            }\n\
+          \n\
+            void main(void){\n\
+                vec2 resolution = czm_viewport.zw;\n\
+                vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+                vec3 finalColor=vec3(0);\n\
+                float c = 0.0;\n\
+                c+=snow(uv,30.)*.0;\n\
+                c+=snow(uv,20.)*.0;\n\
+                c+=snow(uv,15.)*.0;\n\
+                c+=snow(uv,10.);\n\
+                c+=snow(uv,8.);\n\
+            c+=snow(uv,6.);\n\
+                c+=snow(uv,5.);\n\
+                finalColor=(vec3(c)); \n\
+                gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), 0.5); \n\
+          \n\
+            }\n\
+          ";
+      }
+      let fs_snow = FS_Snow();
+      snow = new CM.PostProcessStage({
+          name: 'czm_snow',
+          fragmentShader: fs_snow
+      });
+      stages.add(snow);
+      viewer.scene.skyAtmosphere.hueShift = -0.8;
+      viewer.scene.skyAtmosphere.saturationShift = -0.7;
+      viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+      viewer.scene.fog.density = 0.8;
+      viewer.scene.fog.minimumBrightness = 0.8;
+    }else if(type === 'rain'){
+      // 定义下雨场景 着色器
+        function FS_Rain() {
+            return "uniform sampler2D colorTexture;\n\
+            varying vec2 v_textureCoordinates;\n\
+        \n\
+            float hash(float x){\n\
+                return fract(sin(x*133.3)*13.13);\n\
+        }\n\
+        \n\
+        void main(void){\n\
+        \n\
+            float time = czm_frameNumber / 60.0;\n\
+        vec2 resolution = czm_viewport.zw;\n\
+        \n\
+        vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+        vec3 c=vec3(.6,.7,.8);\n\
+        \n\
+        float a=-.4;\n\
+        float si=sin(a),co=cos(a);\n\
+        uv*=mat2(co,-si,si,co);\n\
+        uv*=length(uv+vec2(0,4.9))*.3+1.;\n\
+        \n\
+        float v=1.-sin(hash(floor(uv.x*100.))*2.);\n\
+        float b=clamp(abs(sin(20.*time*v+uv.y*(5./(2.+v))))-.95,0.,1.)*20.;\n\
+        c*=v*b; \n\
+        \n\
+        gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), 0.5);  \n\
+        }\n\
+";
+        }
+        let fs_rain = FS_Rain();
+        rain = new CM.PostProcessStage({
+            name: 'czm_rain',
+            fragmentShader: fs_rain
+        });
+        stages.add(rain);
+        viewer.scene.skyAtmosphere.hueShift = -0.8;
+        viewer.scene.skyAtmosphere.saturationShift = -0.7;
+        viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+        viewer.scene.fog.density = 0.001;
+        viewer.scene.fog.minimumBrightness = 0.8;
+    }
+    else if(type === 'fog'){
+
+    }
+  }
+
   useEffect(() => {
     if (satellitePostionData.length !== 0) {
       let myChart = echarts.getInstanceByDom(
@@ -958,9 +1070,22 @@ const CesiumComponent: React.FC<{}> = () => {
         destination: CM.Cartesian3.fromDegrees(
           curBaseStationPos[0],
           curBaseStationPos[1],
-          1500000
+          150
         ),
       });
+
+      let getCityUrl = "http://api.map.baidu.com/reverse_geocoding/v3/?ak=IPRZ6sdlLwMEqc5evhlazd2YQoRH4j4G&output=json&coordtype=bd09ll&location=" + curBaseStationPos[0] + ',' + curBaseStationPos[1]
+      
+
+      let t = Math.floor(Math.random()*10)
+      if(t % 2 === 0 ){
+        addWether('snow')
+        console.log('t', t);
+        
+      }else{
+        addWether('rain')
+        console.log('t', t);
+      }
     }
   }, [curBaseStationPos[0], curBaseStationPos[1]]);
   return (
