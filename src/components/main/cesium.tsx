@@ -10,7 +10,6 @@ import 'antd/dist/antd.css';
 import './css/cesium.css';
 import { BaseStation } from './types/type';
 import BaseStationInfo from './baseStationInfo';
-
 //@ts-ignore
 let viewer: any;
 var handler: {
@@ -56,8 +55,9 @@ const CesiumComponent: React.FC<{}> = () => {
     CM.JulianDate.fromIso8601('2022-08-18T07:10:35.930703+00:00')
   );
   const [baseStationList, setBaseStationList] = useState<BaseStation[]>([]);
-  const [curBaseStationPos, setCurBaseStationPos] = useState<number[]>([]);
-
+  const [curBaseStation, setCurBaseStation] = useState<BaseStation | null>(
+    null
+  );
   useEffect(() => {
     setInit(true);
   }, []);
@@ -99,7 +99,6 @@ const CesiumComponent: React.FC<{}> = () => {
       }
     }
   }, [isDrawLine]);
-
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
@@ -116,14 +115,13 @@ const CesiumComponent: React.FC<{}> = () => {
           },
         },
       });
-
       // 添加高德影像图
-      let atLayer = new CM.UrlTemplateImageryProvider({
-        url: 'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
-        minimumLevel: 3,
-        maximumLevel: 18,
-      });
-      viewer.imageryLayers.addImageryProvider(atLayer);
+      // let atLayer = new CM.UrlTemplateImageryProvider({
+      //   // url: 'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
+      //   // minimumLevel: 3,
+      //   // maximumLevel: 18,
+      // });
+      // viewer.imageryLayers.addImageryProvider(atLayer);
       // 开启光照
       viewer.scene.globe.enableLighting = true;
       viewer.shadows = true;
@@ -134,7 +132,6 @@ const CesiumComponent: React.FC<{}> = () => {
         stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
       viewer.scene.brightness.enabled = true;
       viewer.scene.brightness.uniforms.brightness = Number(1.2);
-
       // 更换天空盒
       let spaceSkybox = new CM.SkyBox({
         sources: {
@@ -273,24 +270,22 @@ const CesiumComponent: React.FC<{}> = () => {
                 postionValues[2]
               )
             );
-            let height = Math.abs(cartographic.height)
-            console.log("height:", height)
-            let earthRadius = 6371393
+            let height = Math.abs(cartographic.height);
+            let earthRadius = 6371393;
             // 卫星底部据地球中心的距离
-            let earthHeight = earthRadius * earthRadius / (height + earthRadius)
-            console.log("earthHeight:", earthHeight)
+            let earthHeight =
+              (earthRadius * earthRadius) / (height + earthRadius);
             // 卫星底部的辐射半径
-            let bottomRadius = Math.sqrt(earthRadius * earthRadius - earthHeight * earthHeight)
-            console.log("bottomRadius:", bottomRadius)
+            let bottomRadius = Math.sqrt(
+              earthRadius * earthRadius - earthHeight * earthHeight
+            );
             // 卫星辐射的长度
-            let satelliteLenght= Math.abs(height + earthRadius - earthHeight)
-            console.log("satelliteHeigh:", satelliteLenght)
-
+            let satelliteLenght = Math.abs(height + earthRadius - earthHeight);
             var property = new CM.SampledPositionProperty();
-            let radarHeight: number = 0
+            let radarHeight: number = 0;
             for (var i = 0; i < postionValues.length / 3; i++) {
-              let time = CM.JulianDate.clone(ele.position._property._times[i]); 
-              let radarHeight = earthHeight + satelliteLenght / 2 - earthRadius
+              let time = CM.JulianDate.clone(ele.position._property._times[i]);
+              let radarHeight = earthHeight + satelliteLenght / 2 - earthRadius;
               // @ts-ignore
               let [lng, lat] = GetWGS84FromDKR(
                 new CM.Cartesian3(
@@ -312,8 +307,6 @@ const CesiumComponent: React.FC<{}> = () => {
                 ele.position._property._interpolationDegree;
               property._referenceFrame = CM.ReferenceFrame.INERTIAL;
             }
-            
-            console.log("radarHeight:", radarHeight)
             radarScanner(property, satelliteLenght, radarId, bottomRadius);
             // 更改显示的时间
             // var timeInterval = new CM.TimeInterval({
@@ -369,7 +362,6 @@ const CesiumComponent: React.FC<{}> = () => {
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
-
         // 随机生成基站
         viewer.camera.flyHome(0);
         const lngMin = -180;
@@ -398,12 +390,10 @@ const CesiumComponent: React.FC<{}> = () => {
           if (pick.id._path != undefined) {
             pick.id._path.show = true;
             setIsPostion(true);
-
             let curradarScanner = viewer.entities.getById(
               'radarScan_' + pick.id._id
             );
             curradarScanner.show = true;
-
             if (nowPicksatellite) {
               if (pick.id !== nowPicksatellite.id) {
                 nowPicksatellite = pick;
@@ -427,7 +417,6 @@ const CesiumComponent: React.FC<{}> = () => {
             setNowSystemDate([]);
             setSatellitePostionData([]);
             viewer.clock.onTick.removeEventListener(nowSatellitePostion, false);
-
             // 删除雷达扫描实体
             // viewer.entities.removeById('radarScan_' + pick.id._id)
             let curradarScanner = viewer.entities.getById(
@@ -437,14 +426,12 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
-
       // 配置时间轴
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
       // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
       // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
     }
   }, [init]);
-
   // 笛卡尔坐标系转经纬度
   const GetWGS84FromDKR = (coor: any, type: number) => {
     let cartographic = CM.Cartographic.fromCartesian(coor);
@@ -454,7 +441,6 @@ const CesiumComponent: React.FC<{}> = () => {
     else if (type === 1)
       return [x.toFixed(2) as number, y.toFixed(2) as number];
   };
-
   // 经纬度转笛卡尔坐标
   const wgs84ToCartesign = (lng: any, lat: any, alt: any) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
@@ -462,7 +448,6 @@ const CesiumComponent: React.FC<{}> = () => {
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
     return cartesian3;
   };
-
   // 创建基站
   const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new CM.TimeInterval({
@@ -503,7 +488,6 @@ const CesiumComponent: React.FC<{}> = () => {
     };
     viewer.entities.add(baseStation);
     // setSatelliteList(ele => [...ele, `baseStation_${id}`])
-
     //添加矩形Entity
     let radius = 1;
     viewer.entities.add({
@@ -532,7 +516,6 @@ const CesiumComponent: React.FC<{}> = () => {
       },
     });
   };
-
   // 绘制线条测量距离
   const measureDistance = () => {
     if (!isDrawLine) return;
@@ -630,7 +613,6 @@ const CesiumComponent: React.FC<{}> = () => {
       };
       return _;
     })();
-
     //空间两点距离计算函数
     function getSpaceDistance(positions: string | any[]) {
       var distance = 0;
@@ -653,7 +635,6 @@ const CesiumComponent: React.FC<{}> = () => {
       return (distance / 1000).toFixed(2);
     }
   };
-
   const measureArea = () => {
     if (!isDrawPolygon) return;
     // 鼠标事件
@@ -680,7 +661,6 @@ const CesiumComponent: React.FC<{}> = () => {
         polygon = PolygonPrimitive(dynamicPositions);
       }
     }, CM.ScreenSpaceEventType.MOUSE_MOVE);
-
     //@ts-ignore
     handler.setInputAction(function (movement: { position: any }) {
       let ray = viewer.camera.getPickRay(movement.position);
@@ -734,7 +714,6 @@ const CesiumComponent: React.FC<{}> = () => {
       // handler.destroy();
       positions.pop();
       let curPositions = positions.slice(0);
-
       var textArea = getArea(tempPoints) + '平方公里';
       viewer.entities.add({
         name: '多边形面积',
@@ -750,13 +729,11 @@ const CesiumComponent: React.FC<{}> = () => {
           heightReference: CM.HeightReference.CLAMP_TO_GROUND,
         },
       });
-
       positions = [];
       tempPoints = [];
       polygon = null;
       cartesian = null;
     }, CM.ScreenSpaceEventType.RIGHT_CLICK);
-
     var radiansPerDegree = Math.PI / 180.0; //角度转化为弧度(rad)
     var degreesPerRadian = 180.0 / Math.PI; //弧度转化为角度
     //计算多边形面积
@@ -773,7 +750,6 @@ const CesiumComponent: React.FC<{}> = () => {
       }
       return (res / 1000000.0).toFixed(4);
     }
-
     /*角度*/
     function Angle(
       p1: { lat: number; lon: number },
@@ -831,7 +807,6 @@ const CesiumComponent: React.FC<{}> = () => {
       return s;
     }
   };
-
   const nowSatellitePostion = () => {
     let cartographic = null;
     cartographic = CM.Cartographic.fromCartesian(
@@ -841,7 +816,6 @@ const CesiumComponent: React.FC<{}> = () => {
     let y = CM.Math.toDegrees(cartographic.latitude);
     let z = Math.ceil(cartographic.height / 1000);
     let nowDate = new Date(viewer.clock.currentTime).toUTCString();
-
     // 时间没有暂停
     if (viewer.clock.shouldAnimate) {
       setNowSystemDate((prev) => {
@@ -852,9 +826,13 @@ const CesiumComponent: React.FC<{}> = () => {
       });
     }
   };
-
   // 绘制卫星锥体
-  const radarScanner = (position: any, height: number, radarId: string, bottomRadius : number) => {
+  const radarScanner = (
+    position: any,
+    height: number,
+    radarId: string,
+    bottomRadius: number
+  ) => {
     viewer.entities.add({
       id: radarId,
       show: false,
@@ -879,7 +857,6 @@ const CesiumComponent: React.FC<{}> = () => {
       },
     });
   };
-
   useEffect(() => {
     if (satellitePostionData.length !== 0) {
       let myChart = echarts.getInstanceByDom(
@@ -937,11 +914,9 @@ const CesiumComponent: React.FC<{}> = () => {
       myChart.resize();
     }
   }, [satellitePostionData, nowSystemDate]);
-
   useEffect(() => {
     for (let i of selectSatelliteList) {
       var pick = viewer.entities.getById(i[0]);
-
       let curradarScanner = viewer.entities.getById('radarScan_' + i[0]);
       curradarScanner.show = i[1];
       if (pick.id) {
@@ -951,18 +926,57 @@ const CesiumComponent: React.FC<{}> = () => {
       }
     }
   }, [selectSatelliteList]);
-
   useEffect(() => {
     if (init) {
+      // 监听摄像机高度变化
+      viewer.camera.changed.addEventListener(() => {
+        // 当前高度
+        let height = viewer.camera.positionCartographic.height;
+        let baseStationEntity = viewer.entities.getById(
+          `Facility/${curBaseStation?.name}`
+        );
+        // 当高度小于一定值 显示模型
+        if (height <= 1000) {
+          baseStationEntity.billboard.show = false;
+          if(baseStationEntity.model == undefined){
+            baseStationEntity.model = {
+              // 引入模型
+              uri: "./baseStation.gltf",
+              // 配置模型大小的最小值
+              minimumPixelSize: 0.05,
+              //配置模型大小的最大值
+              maximumScale: 0.05,
+              //配置模型轮廓的颜色
+              silhouetteColor: CM.Color.WHITE,
+              //配置轮廓的大小
+              silhouetteSize: 0,
+          }
+          }else{
+            baseStationEntity.model.show = true;
+          }
+        }else{
+          if(baseStationEntity.model != undefined){
+            baseStationEntity.model.show = false;
+            baseStationEntity.billboard.show = true;
+          }
+        }
+      });
       viewer.camera.flyTo({
         destination: CM.Cartesian3.fromDegrees(
-          curBaseStationPos[0],
-          curBaseStationPos[1],
-          1500000
+          curBaseStation?.pos[0],
+          curBaseStation?.pos[1],
+          100
         ),
+        orientation:{
+          // 指向
+          heading: CM.Math.toRadians(90,0),
+          // 视角
+          pitch: CM.Math.toRadians(-30),
+          roll: 0.0
+          }
       });
     }
-  }, [curBaseStationPos[0], curBaseStationPos[1]]);
+  }, [curBaseStation?.name]);
   return (
     <>
       <div id='satelliteList'>
@@ -1016,7 +1030,7 @@ const CesiumComponent: React.FC<{}> = () => {
           <div className='baseStation-wrap'>
             <BaseStationInfo
               baseStationList={baseStationList}
-              setBaseStationPos={setCurBaseStationPos}
+              setBaseStation={setCurBaseStation}
             />
           </div>
         </div>
@@ -1024,5 +1038,4 @@ const CesiumComponent: React.FC<{}> = () => {
     </>
   );
 };
-
 export default CesiumComponent;

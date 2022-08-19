@@ -5,11 +5,11 @@ import { BaseStation } from './types/type';
 
 type BaseStationInfoProp = {
     baseStationList : BaseStation[],
-    setBaseStationPos: SetState<number[]>
+    setBaseStation: SetState<BaseStation|null>
 }
 
 const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
-    const {baseStationList, setBaseStationPos} = props;
+    const {baseStationList, setBaseStation} = props;
     const [init, setInit] = useState<boolean>(false);
 
     useEffect(()=>{
@@ -25,7 +25,7 @@ return (<div id='baseStationList' style={{ width: '100%', height: '100%', overfl
        baseStationList.map((baseStation:BaseStation, index)=>{
         return(
             <Row className='row-style' onClick={()=>{
-                setBaseStationPos(baseStation.pos);
+                setBaseStation(baseStation);
             }}  key={index} style={{cursor:"pointer", borderBottom:"2px solid #4488bb"}}>
                 <Col span={4} >
                     <div className='baseStationIcon'></div>
