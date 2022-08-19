@@ -1,6 +1,6 @@
 export type BaseStation = {
     name: string,
-    desc: string,
+    desc?: string,
     pos: number[],
-    state: string
+    state?: string
 }
