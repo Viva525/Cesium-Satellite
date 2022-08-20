@@ -57,7 +57,7 @@ const SatelliteBar: React.FC<{}> = () => {
             axisLine: "none",
             axisLabel: {
               inside: true,
-              margin:70,
+              margin:20,
               align: "right",
             // padding:[0, 40, 0, 0]
               textStyle: {
