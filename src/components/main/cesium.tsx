@@ -1086,7 +1086,7 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         />
         <Box
-          title="卫星列表统计图"
+          title="卫星数量统计图"
           component={
             <SatelliteBar />
           }
