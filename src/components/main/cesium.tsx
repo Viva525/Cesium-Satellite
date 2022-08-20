@@ -5,12 +5,14 @@ import type { ColumnsType } from "antd/es/table";
 import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
 import * as CM from "cesium/Cesium";
-import * as echarts from "echarts";
-import SatelliteList from "../satelliteList";
+import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
 import { BaseStation } from "./types/type";
 import BaseStationInfo from "./baseStationInfo";
+import Box from "./box";
+import HeightChart from "../right/heightChart";
+import SatelliteBar from "../left/satelliteBar";
 
 //@ts-ignore
 let viewer: any;
@@ -51,7 +53,6 @@ const CesiumComponent: React.FC<{}> = () => {
   const [isPostion, setIsPostion] = useState<boolean>(false);
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
-  const chartRef = useRef(null);
   const [start, setStart] = useState(
     CM.JulianDate.fromIso8601("2022-08-17T07:10:35.930703+00:00")
   );
@@ -970,63 +971,6 @@ const CesiumComponent: React.FC<{}> = () => {
   };
 
   useEffect(() => {
-    if (satellitePostionData.length !== 0) {
-      let myChart = echarts.getInstanceByDom(
-        chartRef.current as unknown as HTMLDivElement
-      );
-      if (myChart == null) {
-        myChart = echarts.init(chartRef.current as unknown as HTMLDivElement);
-      }
-      let option = {
-        grid: {
-          left: "11%",
-          top: "15%",
-          right: "0%",
-          bottom: "15%",
-        },
-        xAxis: {
-          type: "category",
-          axisLabel: {
-            color: "#fff",
-            align: "left",
-          },
-          data: nowSystemDate,
-        },
-        yAxis: {
-          type: "value",
-          name: "height / km",
-          position: "left",
-          nameTextStyle: {
-            color: "#fff",
-          },
-          axisLabel: {
-            color: "#fff",
-          },
-          min: (value: any) => {
-            return value.min - 1;
-          },
-          max: (value: any) => {
-            return value.max + 1;
-          },
-        },
-        dataZoom: [
-          {
-            type: "inside",
-            orient: "vertical",
-          },
-        ],
-        series: [
-          {
-            data: satellitePostionData,
-            type: "line",
-          },
-        ],
-      };
-      myChart.setOption(option);
-      myChart.resize();
-    }
-  }, [satellitePostionData, nowSystemDate]);
-  useEffect(() => {
     for (let i of selectSatelliteList) {
       var pick = viewer.entities.getById(i[0]);
       let curradarScanner = viewer.entities.getById("radarScan_" + i[0]);
@@ -1047,10 +991,10 @@ const CesiumComponent: React.FC<{}> = () => {
         let baseStationEntity = viewer.entities.getById(
           `Facility/${curBaseStation?.name}`
         );
-        
+
         // baseStationEntity.orientation = new CM.VelocityOrientationProperty(baseStationEntity.position)
         // console.log(baseStationEntity);
-        
+
         // 当高度小于一定值 显示模型
         if (height <= 2000) {
           baseStationEntity.billboard.show = false;
@@ -1089,7 +1033,6 @@ const CesiumComponent: React.FC<{}> = () => {
         //   // roll: CM.Math.toRadians(360 || 0)
         // },
       });
-      
 
       // viewer.camera.moveUp(5000000)
 
@@ -1099,7 +1042,7 @@ const CesiumComponent: React.FC<{}> = () => {
         function (err, res) {
           let curWeather = res.result.realtime.skycon;
           console.log(res, curWeather);
-          
+
           if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
             addWeather();
           } else if (
@@ -1131,10 +1074,51 @@ const CesiumComponent: React.FC<{}> = () => {
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
   return (
     <>
-      <div id="satelliteList">
-        <SatelliteList
-          statelliteList={satelliteList}
-          setSelectSatelliteList={setSelectSatelliteList}
+      <div id="title">卫星态势仿真监控平台</div>
+      <div className="left-wrap">
+        <Box
+          title="卫星列表"
+          component={
+            <SatelliteList
+              statelliteList={satelliteList}
+              setSelectSatelliteList={setSelectSatelliteList}
+            />
+          }
+        />
+        <Box
+          title="卫星列表统计图"
+          component={
+            <SatelliteBar />
+          }
+        />
+      </div>
+      <div
+        id="cesiumContainer"
+        style={{
+          height: "100%",
+          width: "100%",
+          // backgroundImage: "url(./images/star.jpg)",
+        }}
+      ></div>
+      <div className="right-wrap">
+        <Box
+          title="卫星实时高度图"
+          component={
+            <HeightChart
+              satellitePostionData={satellitePostionData}
+              nowSystemDate={nowSystemDate}
+            />
+          }
+        />
+
+        <Box
+          title="地面基站信息列表"
+          component={
+            <BaseStationInfo
+              baseStationList={baseStationList}
+              setBaseStation={setCurBaseStation}
+            />
+          }
         />
       </div>
       <div id="toolbar">
@@ -1159,34 +1143,8 @@ const CesiumComponent: React.FC<{}> = () => {
           MeasureArea
         </button>
       </div>
-      <div id="title">卫星态势仿真监控平台</div>
-      <div
-        id="cesiumContainer"
-        style={{
-          height: "100%",
-          width: "100%",
-          // backgroundImage: "url(./images/star.jpg)",
-        }}
-      ></div>
-      <div className="left-wrap">
-        <div className="left-box">
-          <div className="box-title">
-            <span className="box-title-font">卫星实时高度图</span>
-            <div id="satellite" className="charts" ref={chartRef}></div>
-          </div>
-        </div>
-        <div className="left-box" style={{ height: "35vh" }}>
-          <div className="box-title">
-            <span className="box-title-font">地面基站信息列表</span>
-          </div>
-          <div className="baseStation-wrap">
-            <BaseStationInfo
-              baseStationList={baseStationList}
-              setBaseStation={setCurBaseStation}
-            />
-          </div>
-        </div>
-      </div>
+      <div id="left-border-line"></div>
+      <div id="right-border-line"></div>
     </>
   );
 };
