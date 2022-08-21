@@ -13,6 +13,7 @@ import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
 import HeightChart from "../right/heightChart";
 import SatelliteBar from "../left/satelliteBar";
+import SatelliteNumberChart from "../right/satelliteNumberChart";
 
 //@ts-ignore
 let viewer: any;
@@ -1110,7 +1111,6 @@ const CesiumComponent: React.FC<{}> = () => {
             />
           }
         />
-
         <Box
           title="地面基站信息列表"
           component={
@@ -1118,6 +1118,12 @@ const CesiumComponent: React.FC<{}> = () => {
               baseStationList={baseStationList}
               setBaseStation={setCurBaseStation}
             />
+          }
+        />
+        <Box
+          title="卫星数量变化图"
+          component={
+            <SatelliteNumberChart />
           }
         />
       </div>

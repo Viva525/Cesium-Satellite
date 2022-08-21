@@ -197,7 +197,6 @@ const SatelliteBar: React.FC<{}> = () => {
 
   return (
     <div ref={chartRef} style={{ width: "100%", height: "20vh" }}>
-           {" "}
     </div>
   );
 };
