@@ -94,10 +94,10 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
   };
 
   return <>
-  <div className='box-title'>
+  {/* <div className='box-title'>
     <span className='box-title-font'>卫星列表</span>
-  </div>
-  <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{simple: true, position:['bottomCenter']}}/>
+  </div> */}
+  <Table rowSelection={rowSelection} columns={columns} dataSource={data} size='small' pagination={{simple: true, position:['bottomCenter']}}/>
   </>;
 };
 

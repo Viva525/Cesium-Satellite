@@ -1,15 +1,20 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Table } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import type { TableRowSelection } from 'antd/es/table/interface';
+import React, { useEffect, useState, useRef } from "react";
+import Jsonp from "jsonp";
+import { Table } from "antd";
+import type { ColumnsType } from "antd/es/table";
+import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
-import * as CM from 'cesium/Cesium';
-import * as echarts from 'echarts';
-import SatelliteList from '../satelliteList';
-import 'antd/dist/antd.css';
-import './css/cesium.css';
-import { BaseStation } from './types/type';
-import BaseStationInfo from './baseStationInfo';
+import * as CM from "cesium/Cesium";
+import SatelliteList from "../left/satelliteList";
+import "antd/dist/antd.css";
+import "./css/cesium.css";
+import { BaseStation } from "./types/type";
+import BaseStationInfo from "./baseStationInfo";
+import Box from "./box";
+import HeightChart from "../right/heightChart";
+import SatelliteBar from "../left/satelliteBar";
+import SatelliteNumberChart from "../right/satelliteNumberChart";
+
 //@ts-ignore
 let viewer: any;
 var handler: {
@@ -24,6 +29,8 @@ var handler: {
   destroy: () => void;
 };
 let nowPicksatellite: any;
+let rain: any, snow: any, fog: any;
+let stages: any;
 // let satelliteList: {[key:string]:any []} = {};
 // let satelliteList: string[] = []
 const CesiumComponent: React.FC<{}> = () => {
@@ -47,12 +54,11 @@ const CesiumComponent: React.FC<{}> = () => {
   const [isPostion, setIsPostion] = useState<boolean>(false);
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
-  const chartRef = useRef(null);
   const [start, setStart] = useState(
-    CM.JulianDate.fromIso8601('2022-08-17T07:10:35.930703+00:00')
+    CM.JulianDate.fromIso8601("2022-08-17T07:10:35.930703+00:00")
   );
   const [stop, setStop] = useState(
-    CM.JulianDate.fromIso8601('2022-08-18T07:10:35.930703+00:00')
+    CM.JulianDate.fromIso8601("2022-08-18T07:10:35.930703+00:00")
   );
   const [baseStationList, setBaseStationList] = useState<BaseStation[]>([]);
   const [curBaseStation, setCurBaseStation] = useState<BaseStation | null>(
@@ -64,16 +70,16 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (isDrawPolygon) {
       //@ts-ignore
-      document.getElementById('measureArea').classList.add('btnSelected');
+      document.getElementById("measureArea").classList.add("btnSelected");
       //@ts-ignore
-      document.getElementById('measureDistance').disabled = true;
+      document.getElementById("measureDistance").disabled = true;
       //@ts-ignore
       measureArea(viewer);
     } else {
       //@ts-ignore
-      document.getElementById('measureArea').classList.remove('btnSelected');
+      document.getElementById("measureArea").classList.remove("btnSelected");
       //@ts-ignore
-      document.getElementById('measureDistance').disabled = false;
+      document.getElementById("measureDistance").disabled = false;
       if (handler) {
         handler.destroy();
       }
@@ -82,18 +88,18 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (isDrawLine) {
       //@ts-ignore
-      document.getElementById('measureDistance').classList.add('btnSelected');
+      document.getElementById("measureDistance").classList.add("btnSelected");
       //@ts-ignore
-      document.getElementById('measureArea').disabled = true;
+      document.getElementById("measureArea").disabled = true;
       //@ts-ignore
       measureDistance();
     } else {
       //@ts-ignore
       document
-        .getElementById('measureDistance')
-        .classList.remove('btnSelected');
+        .getElementById("measureDistance")
+        .classList.remove("btnSelected");
       //@ts-ignore
-      document.getElementById('measureArea').disabled = false;
+      document.getElementById("measureArea").disabled = false;
       if (handler) {
         handler.destroy();
       }
@@ -102,12 +108,11 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     if (init) {
       CM.Ion.defaultAccessToken =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY';
-      viewer = new CM.Viewer('cesiumContainer', {
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
+      viewer = new CM.Viewer("cesiumContainer", {
         shouldAnimate: true,
         infoBox: false, // 是否显示点击要素之后显示的信息
         // 去掉地球表面的大气效果黑圈问题
-        skyAtmosphere: false, // 关闭地球光环
         orderIndependentTranslucency: false,
         contextOptions: {
           webgl: {
@@ -116,17 +121,17 @@ const CesiumComponent: React.FC<{}> = () => {
         },
       });
       // 添加高德影像图
-      // let atLayer = new CM.UrlTemplateImageryProvider({
-      //   // url: 'https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}',
-      //   // minimumLevel: 3,
-      //   // maximumLevel: 18,
-      // });
+      let atLayer = new CM.UrlTemplateImageryProvider({
+        url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+        minimumLevel: 3,
+        maximumLevel: 18,
+      });
       // viewer.imageryLayers.addImageryProvider(atLayer);
       // 开启光照
       viewer.scene.globe.enableLighting = true;
       viewer.shadows = true;
       // 亮度设置
-      var stages = viewer.scene.postProcessStages;
+      stages = viewer.scene.postProcessStages;
       viewer.scene.brightness =
         viewer.scene.brightness ||
         stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
@@ -135,12 +140,12 @@ const CesiumComponent: React.FC<{}> = () => {
       // 更换天空盒
       let spaceSkybox = new CM.SkyBox({
         sources: {
-          negativeX: './images/Space_Skybox/starmap_2020_16k_mx.jpg',
-          positiveX: './images/Space_Skybox/starmap_2020_16k_px.jpg',
-          negativeY: './images/Space_Skybox/starmap_2020_16k_my.jpg',
-          positiveY: './images/Space_Skybox/starmap_2020_16k_py.jpg',
-          negativeZ: './images/Space_Skybox/starmap_2020_16k_mz.jpg',
-          positiveZ: './images/Space_Skybox/starmap_2020_16k_pz.jpg',
+          negativeX: "./images/Space_Skybox/starmap_2020_16k_mx.jpg",
+          positiveX: "./images/Space_Skybox/starmap_2020_16k_px.jpg",
+          negativeY: "./images/Space_Skybox/starmap_2020_16k_my.jpg",
+          positiveY: "./images/Space_Skybox/starmap_2020_16k_py.jpg",
+          negativeZ: "./images/Space_Skybox/starmap_2020_16k_mz.jpg",
+          positiveZ: "./images/Space_Skybox/starmap_2020_16k_pz.jpg",
         },
       });
       viewer.scene.skyBox = spaceSkybox;
@@ -174,7 +179,7 @@ const CesiumComponent: React.FC<{}> = () => {
           }
           document.body.className = document.body.className.replace(
             /(?:\s|^)sandcastle-loading(?:\s|$)/,
-            ' '
+            " "
           );
         },
         addToolbarButton: function (
@@ -184,9 +189,9 @@ const CesiumComponent: React.FC<{}> = () => {
         ) {
           //@ts-ignore
           Sandcastle.declare(onclick);
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.className = 'cesium-button';
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "cesium-button";
           button.onclick = function () {
             Sandcastle.reset();
             //@ts-ignore
@@ -195,7 +200,7 @@ const CesiumComponent: React.FC<{}> = () => {
           };
           button.textContent = text;
           //@ts-ignore
-          document.getElementById(toolbarID || 'toolbar').appendChild(button);
+          document.getElementById(toolbarID || "toolbar").appendChild(button);
         },
         addDefaultToolbarButton: function (
           text: string | null,
@@ -214,22 +219,22 @@ const CesiumComponent: React.FC<{}> = () => {
           defaultAction = options[0].onselect;
         },
         addToolbarMenu: function (options: string | any[], toolbarID: any) {
-          const menu = document.createElement('select');
-          menu.className = 'cesium-button';
+          const menu = document.createElement("select");
+          menu.className = "cesium-button";
           menu.onchange = function () {
             Sandcastle.reset();
             const item = options[menu.selectedIndex];
-            if (item && typeof item.onselect === 'function') {
+            if (item && typeof item.onselect === "function") {
               item.onselect();
             }
           };
           //@ts-ignore
-          document.getElementById(toolbarID || 'toolbar').appendChild(menu);
-          if (!defaultAction && typeof options[0].onselect === 'function') {
+          document.getElementById(toolbarID || "toolbar").appendChild(menu);
+          if (!defaultAction && typeof options[0].onselect === "function") {
             defaultAction = options[0].onselect;
           }
           for (let i = 0, len = options.length; i < len; ++i) {
-            const option = document.createElement('option');
+            const option = document.createElement("option");
             option.textContent = options[i].text;
             option.value = options[i].value;
             menu.appendChild(option);
@@ -238,10 +243,10 @@ const CesiumComponent: React.FC<{}> = () => {
         reset: function () {},
       };
       //@ts-ignore
-      Sandcastle.addDefaultToolbarButton('Satellites', function () {
+      Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = CM.CzmlDataSource.load(
-          './data/star-beidou-gps.czml'
+          "./data/star-beidou-gps.czml"
         );
         let nowSatelliteList: string[] = [];
         // 加载星链实体
@@ -261,7 +266,7 @@ const CesiumComponent: React.FC<{}> = () => {
                 pixelSize: 5,
               };
             } // 绘制雷达扫描
-            let radarId = 'radarScan_' + ele.id;
+            let radarId = "radarScan_" + ele.id;
             let postionValues = [...ele.position._property._values];
             let cartographic = CM.Cartographic.fromCartesian(
               new CM.Cartesian3(
@@ -375,9 +380,9 @@ const CesiumComponent: React.FC<{}> = () => {
           createBaseStation(lng, lat, i);
           baseStationTemp.push({
             name: `baseStation_${i}`,
-            desc: 'baseStation',
+            desc: "baseStation",
             pos: [lng, lat],
-            state: Math.random() > 0.5 ? 'working' : 'stoped',
+            state: Math.random() > 0.5 ? "working" : "stoped",
           });
         }
         setBaseStationList(baseStationTemp);
@@ -391,7 +396,7 @@ const CesiumComponent: React.FC<{}> = () => {
             pick.id._path.show = true;
             setIsPostion(true);
             let curradarScanner = viewer.entities.getById(
-              'radarScan_' + pick.id._id
+              "radarScan_" + pick.id._id
             );
             curradarScanner.show = true;
             if (nowPicksatellite) {
@@ -420,12 +425,24 @@ const CesiumComponent: React.FC<{}> = () => {
             // 删除雷达扫描实体
             // viewer.entities.removeById('radarScan_' + pick.id._id)
             let curradarScanner = viewer.entities.getById(
-              'radarScan_' + pick.id._id
+              "radarScan_" + pick.id._id
             );
             curradarScanner.show = false;
           }
         }
       }, CM.ScreenSpaceEventType.RIGHT_CLICK);
+
+      //监控相机高度
+      var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
+      handler.setInputAction(function () {
+        let height = viewer.camera.positionCartographic.height;
+        if (height > 200) {
+          snow && viewer.scene.postProcessStages.remove(snow); // 移除
+          rain && viewer.scene.postProcessStages.remove(rain); // 移除
+          fog && viewer.scene.postProcessStages.remove(fog); // 移除
+        }
+      }, CM.ScreenSpaceEventType.WHEEL);
+
       // 配置时间轴
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
       // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
@@ -466,7 +483,7 @@ const CesiumComponent: React.FC<{}> = () => {
         horizontalOrigin: CM.HorizontalOrigin.CENTER,
         // image:"./logo512.png",
         image:
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC',
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC",
         pixelOffset: new CM.Cartesian2(0, 0),
         scale: 1,
         show: true,
@@ -474,12 +491,12 @@ const CesiumComponent: React.FC<{}> = () => {
       },
       label: {
         fillColor: new CM.Color(244, 164, 96, 1),
-        font: '18px Lucida Console',
+        font: "18px Lucida Console",
         horizontalOrigin: CM.HorizontalOrigin.LEFT,
         // outlineColor: CM.Color.BLUE,
         outlineWidth: 0,
         pixelOffset: new CM.Cartesian2(12, 0),
-        show: true,
+        show: false,
         // style: CM.LabelStyle.FILL_AND_OUTLINE,
         text: `baseStation_${id}`,
         verticalOrigin: CM.VerticalOrigin.CENTER,
@@ -492,7 +509,7 @@ const CesiumComponent: React.FC<{}> = () => {
     let radius = 1;
     viewer.entities.add({
       id: `ShowRange_${id}`,
-      name: '选取范围',
+      name: "选取范围",
       polygon: {
         hierarchy: new CM.PolygonHierarchy(
           CM.Cartesian3.fromDegreesArray([
@@ -511,7 +528,7 @@ const CesiumComponent: React.FC<{}> = () => {
         outlineWidth: 4,
         fill: false,
         material: CM.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
+          "rgba(5, 39, 175, 0.3)"
         ).withAlpha(0.1),
       },
     });
@@ -527,7 +544,7 @@ const CesiumComponent: React.FC<{}> = () => {
     );
     var positions: any[] = [];
     var poly: any = null;
-    var distance: string | null = '0';
+    var distance: string | null = "0";
     var cartesian = null;
     var floatingPoint;
     //@ts-ignore
@@ -555,7 +572,7 @@ const CesiumComponent: React.FC<{}> = () => {
       }
       positions.push(cartesian);
       let curPositions = positions.slice(0);
-      var textDisance = distance + ' km';
+      var textDisance = distance + " km";
       floatingPoint = viewer.entities.add({
         name: `${GetWGS84FromDKR(curPositions[curPositions.length - 1], 0)}`,
         position: curPositions[curPositions.length - 1],
@@ -567,7 +584,7 @@ const CesiumComponent: React.FC<{}> = () => {
         },
         label: {
           text: textDisance,
-          font: '18px sans-serif',
+          font: "18px sans-serif",
           fillColor: CM.Color.GOLD,
           style: CM.LabelStyle.FILL_AND_OUTLINE,
           outlineWidth: 2,
@@ -581,13 +598,13 @@ const CesiumComponent: React.FC<{}> = () => {
       positions.pop(); // 最后一个点无效
       positions = [];
       poly = null;
-      distance = '0';
+      distance = "0";
       cartesian = null;
     }, CM.ScreenSpaceEventType.RIGHT_CLICK);
     var PolyLinePrimitive = (function () {
       function _(this: any, positions: any) {
         this.options = {
-          name: '直线',
+          name: "直线",
           polyline: {
             show: true,
             positions: [],
@@ -678,11 +695,11 @@ const CesiumComponent: React.FC<{}> = () => {
       var latitudeString = CM.Math.toDegrees(cartographic.latitude);
       var heightString = cartographic.height;
       var labelText =
-        '(' +
+        "(" +
         longitudeString.toFixed(2) +
-        ',' +
+        "," +
         latitudeString.toFixed(2) +
-        ')';
+        ")";
       // @ts-ignore
       tempPoints.push({
         lon: longitudeString,
@@ -690,7 +707,7 @@ const CesiumComponent: React.FC<{}> = () => {
         hei: heightString,
       });
       floatingPoint = viewer.entities.add({
-        name: '多边形面积',
+        name: "多边形面积",
         position: curPositions[curPositions.length - 1],
         point: {
           pixelSize: 5,
@@ -701,7 +718,7 @@ const CesiumComponent: React.FC<{}> = () => {
         },
         label: {
           text: labelText,
-          font: '18px sans-serif',
+          font: "18px sans-serif",
           fillColor: CM.Color.GOLD,
           style: CM.LabelStyle.FILL_AND_OUTLINE,
           outlineWidth: 2,
@@ -714,13 +731,13 @@ const CesiumComponent: React.FC<{}> = () => {
       // handler.destroy();
       positions.pop();
       let curPositions = positions.slice(0);
-      var textArea = getArea(tempPoints) + '平方公里';
+      var textArea = getArea(tempPoints) + "平方公里";
       viewer.entities.add({
-        name: '多边形面积',
+        name: "多边形面积",
         position: curPositions[curPositions.length - 1],
         label: {
           text: textArea,
-          font: '18px sans-serif',
+          font: "18px sans-serif",
           fillColor: CM.Color.RED,
           style: CM.LabelStyle.FILL_AND_OUTLINE,
           outlineWidth: 2,
@@ -857,67 +874,107 @@ const CesiumComponent: React.FC<{}> = () => {
       },
     });
   };
-  useEffect(() => {
-    if (satellitePostionData.length !== 0) {
-      let myChart = echarts.getInstanceByDom(
-        chartRef.current as unknown as HTMLDivElement
-      );
-      if (myChart == null) {
-        myChart = echarts.init(chartRef.current as unknown as HTMLDivElement);
+
+  const addWeather = (type?: string) => {
+    snow && viewer.scene.postProcessStages.remove(snow); // 移除
+    rain && viewer.scene.postProcessStages.remove(rain); // 移除
+    fog && viewer.scene.postProcessStages.remove(fog); // 移除
+    if (type === "snow") {
+      //定义下雪场景 着色器
+      function FS_Snow() {
+        return "uniform sampler2D colorTexture;\n\
+            varying vec2 v_textureCoordinates;\n\
+          \n\
+            float snow(vec2 uv,float scale)\n\
+            {\n\
+                float time = czm_frameNumber / 60.0;\n\
+                float w=smoothstep(1.,0.,-uv.y*(scale/10.));if(w<.1)return 0.;\n\
+                uv+=time/scale;uv.y+=time*2./scale;uv.x+=sin(uv.y+time*.5)/scale;\n\
+                uv*=scale;vec2 s=floor(uv),f=fract(uv),p;float k=3.,d;\n\
+                p=.5+.35*sin(11.*fract(sin((s+p+scale)*mat2(7,3,6,5))*5.))-f;d=length(p);k=min(d,k);\n\
+                k=smoothstep(0.,k,sin(f.x+f.y)*0.01);\n\
+                return k*w;\n\
+            }\n\
+          \n\
+            void main(void){\n\
+                vec2 resolution = czm_viewport.zw;\n\
+                vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+                vec3 finalColor=vec3(0);\n\
+                float c = 0.0;\n\
+                c+=snow(uv,30.)*.0;\n\
+                c+=snow(uv,20.)*.0;\n\
+                c+=snow(uv,15.)*.0;\n\
+                c+=snow(uv,10.);\n\
+                c+=snow(uv,8.);\n\
+            c+=snow(uv,6.);\n\
+                c+=snow(uv,5.);\n\
+                finalColor=(vec3(c)); \n\
+                gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), 0.5); \n\
+          \n\
+            }\n\
+          ";
       }
-      let option = {
-        grid: {
-          left: '11%',
-          top: '15%',
-          right: '0%',
-          bottom: '15%',
-        },
-        xAxis: {
-          type: 'category',
-          axisLabel: {
-            color: '#fff',
-            align: 'left',
-          },
-          data: nowSystemDate,
-        },
-        yAxis: {
-          type: 'value',
-          name: 'height / km',
-          position: 'left',
-          nameTextStyle: {
-            color: '#fff',
-          },
-          axisLabel: {
-            color: '#fff',
-          },
-          min: (value: any) => {
-            return value.min - 1;
-          },
-          max: (value: any) => {
-            return value.max + 1;
-          },
-        },
-        dataZoom: [
-          {
-            type: 'inside',
-            orient: 'vertical',
-          },
-        ],
-        series: [
-          {
-            data: satellitePostionData,
-            type: 'line',
-          },
-        ],
-      };
-      myChart.setOption(option);
-      myChart.resize();
+      let fs_snow = FS_Snow();
+      snow = new CM.PostProcessStage({
+        name: "czm_snow",
+        fragmentShader: fs_snow,
+      });
+      stages.add(snow);
+      viewer.scene.skyAtmosphere.hueShift = -0.8;
+      viewer.scene.skyAtmosphere.saturationShift = -0.7;
+      viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+      viewer.scene.fog.density = 0.8;
+      viewer.scene.fog.minimumBrightness = 0.8;
+    } else if (type === "rain") {
+      // 定义下雨场景 着色器
+      function FS_Rain() {
+        return "uniform sampler2D colorTexture;\n\
+            varying vec2 v_textureCoordinates;\n\
+        \n\
+            float hash(float x){\n\
+                return fract(sin(x*133.3)*13.13);\n\
+        }\n\
+        \n\
+        void main(void){\n\
+        \n\
+            float time = czm_frameNumber / 60.0;\n\
+        vec2 resolution = czm_viewport.zw;\n\
+        \n\
+        vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+        vec3 c=vec3(.6,.7,.8);\n\
+        \n\
+        float a=-.4;\n\
+        float si=sin(a),co=cos(a);\n\
+        uv*=mat2(co,-si,si,co);\n\
+        uv*=length(uv+vec2(0,4.9))*.3+1.;\n\
+        \n\
+        float v=1.-sin(hash(floor(uv.x*100.))*2.);\n\
+        float b=clamp(abs(sin(20.*time*v+uv.y*(5./(2.+v))))-.95,0.,1.)*20.;\n\
+        c*=v*b; \n\
+        \n\
+        gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), 0.5);  \n\
+        }\n\
+";
+      }
+      let fs_rain = FS_Rain();
+      rain = new CM.PostProcessStage({
+        name: "czm_rain",
+        fragmentShader: fs_rain,
+      });
+      stages.add(rain);
+      viewer.scene.skyAtmosphere.hueShift = -0.8;
+      viewer.scene.skyAtmosphere.saturationShift = -0.7;
+      viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+      viewer.scene.fog.density = 0.001;
+      viewer.scene.fog.minimumBrightness = 0.8;
+    } else if (type === "fog") {
     }
-  }, [satellitePostionData, nowSystemDate]);
+  };
+
   useEffect(() => {
     for (let i of selectSatelliteList) {
       var pick = viewer.entities.getById(i[0]);
-      let curradarScanner = viewer.entities.getById('radarScan_' + i[0]);
+      let curradarScanner = viewer.entities.getById("radarScan_" + i[0]);
       curradarScanner.show = i[1];
       if (pick.id) {
         if (pick._path != undefined) {
@@ -935,10 +992,14 @@ const CesiumComponent: React.FC<{}> = () => {
         let baseStationEntity = viewer.entities.getById(
           `Facility/${curBaseStation?.name}`
         );
+
+        // baseStationEntity.orientation = new CM.VelocityOrientationProperty(baseStationEntity.position)
+        // console.log(baseStationEntity);
+
         // 当高度小于一定值 显示模型
-        if (height <= 1000) {
+        if (height <= 2000) {
           baseStationEntity.billboard.show = false;
-          if(baseStationEntity.model == undefined){
+          if (baseStationEntity.model == undefined) {
             baseStationEntity.model = {
               // 引入模型
               uri: "./baseStation.gltf",
@@ -950,91 +1011,146 @@ const CesiumComponent: React.FC<{}> = () => {
               silhouetteColor: CM.Color.WHITE,
               //配置轮廓的大小
               silhouetteSize: 0,
-          }
-          }else{
+            };
+          } else {
             baseStationEntity.model.show = true;
           }
-        }else{
-          if(baseStationEntity.model != undefined){
+        } else {
+          if (baseStationEntity.model != undefined) {
             baseStationEntity.model.show = false;
             baseStationEntity.billboard.show = true;
           }
         }
       });
-      viewer.camera.flyTo({
+      viewer.camera.setView({
         destination: CM.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
           curBaseStation?.pos[1],
-          100
+          1000
         ),
-        orientation:{
-          // 指向
-          heading: CM.Math.toRadians(90,0),
-          // 视角
-          pitch: CM.Math.toRadians(-30),
-          roll: 0.0
-          }
+        // orientation: {
+        //   heading: CM.Math.toRadians(90, 0),
+        //   // pitch: CM.Math.toRadians(-30.5 || -CM.Math.PI_OVER_FOUR),
+        //   // roll: CM.Math.toRadians(360 || 0)
+        // },
       });
+
+      // viewer.camera.moveUp(5000000)
+
+      Jsonp(
+        `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
+        {},
+        function (err, res) {
+          let curWeather = res.result.realtime.skycon;
+          console.log(res, curWeather);
+
+          if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
+            addWeather();
+          } else if (
+            [
+              "LIGHT_RAIN",
+              "MODERATE_RAIN",
+              "HEAVY_RAIN",
+              "STORM_RAIN",
+            ].includes(curWeather)
+          ) {
+            addWeather("rain");
+          } else if (
+            [
+              "LIGHT_SNOW",
+              "MODERATE_SNOW",
+              "HEAVY_SNOW",
+              "STORM_SNOW",
+            ].includes(curWeather)
+          ) {
+            addWeather("snow");
+          } else if (["FOG"].includes(curWeather)) {
+            addWeather("fog");
+          } else {
+            addWeather();
+          }
+        }
+      );
     }
-  }, [curBaseStation?.name]);
+  }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
   return (
     <>
-      <div id='satelliteList'>
-        <SatelliteList
-          statelliteList={satelliteList}
-          setSelectSatelliteList={setSelectSatelliteList}
+      <div id="title">卫星态势仿真监控平台</div>
+      <div className="left-wrap">
+        <Box
+          title="卫星列表"
+          component={
+            <SatelliteList
+              statelliteList={satelliteList}
+              setSelectSatelliteList={setSelectSatelliteList}
+            />
+          }
+        />
+        <Box
+          title="卫星数量统计图"
+          component={
+            <SatelliteBar />
+          }
         />
       </div>
-      <div id='toolbar'>
-        <button
-          type='button'
-          id='measureDistance'
-          onClick={() => {
-            setIsDrawLine(!isDrawLine);
-          }}
-          className='cesium-button'
-        >
-          MeasureDistance
-        </button>
-        <button
-          type='button'
-          id='measureArea'
-          onClick={() => {
-            setIsDrawPolygon(!isDrawPolygon);
-          }}
-          className='cesium-button'
-        >
-          MeasureArea
-        </button>
-      </div>
-      <div id='title'>卫星态势仿真监控平台</div>
       <div
-        id='cesiumContainer'
+        id="cesiumContainer"
         style={{
-          height: '100%',
-          width: '100%',
+          height: "100%",
+          width: "100%",
           // backgroundImage: "url(./images/star.jpg)",
         }}
       ></div>
-      <div className='left-wrap'>
-        <div className='left-box'>
-          <div className='box-title'>
-            <span className='box-title-font'>卫星实时高度图</span>
-            <div id='satellite' className='charts' ref={chartRef}></div>
-          </div>
-        </div>
-        <div className='left-box' style={{ height: '35vh' }}>
-          <div className='box-title'>
-            <span className='box-title-font'>地面基站信息列表</span>
-          </div>
-          <div className='baseStation-wrap'>
+      <div className="right-wrap">
+        <Box
+          title="卫星实时高度图"
+          component={
+            <HeightChart
+              satellitePostionData={satellitePostionData}
+              nowSystemDate={nowSystemDate}
+            />
+          }
+        />
+        <Box
+          title="地面基站信息列表"
+          component={
             <BaseStationInfo
               baseStationList={baseStationList}
               setBaseStation={setCurBaseStation}
             />
-          </div>
-        </div>
+          }
+        />
+        <Box
+          title="卫星数量变化图"
+          component={
+            <SatelliteNumberChart />
+          }
+        />
       </div>
+      <div id="toolbar">
+        <button
+          type="button"
+          id="measureDistance"
+          onClick={() => {
+            setIsDrawLine(!isDrawLine);
+          }}
+          className="cesium-button"
+        >
+          MeasureDistance
+        </button>
+        <button
+          type="button"
+          id="measureArea"
+          onClick={() => {
+            setIsDrawPolygon(!isDrawPolygon);
+          }}
+          className="cesium-button"
+        >
+          MeasureArea
+        </button>
+      </div>
+      <div id="left-border-line"></div>
+      <div id="right-border-line"></div>
     </>
   );
 };

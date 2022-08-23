@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { SetState } from '../satelliteList';
+import { SetState } from '../left/satelliteList';
 import { BaseStation } from './types/type';
 
 type BaseStationInfoProp = {
@@ -20,13 +20,13 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
 
     },[init])
 
-return (<div id='baseStationList' style={{ width: '100%', height: '100%', overflowY:"scroll"}}>
+return (<div id='baseStationList' style={{ width: '100%', height: '35vh', overflowY:"scroll"}}>
     {
        baseStationList.map((baseStation:BaseStation, index)=>{
         return(
             <Row className='row-style' onClick={()=>{
                 setBaseStation(baseStation);
-            }}  key={index} style={{cursor:"pointer", borderBottom:"2px solid #4488bb"}}>
+            }}  key={index} style={{cursor:"pointer", borderBottom:"2px solid rgba(255, 255, 255, 0.5)"}}>
                 <Col span={4} >
                     <div className='baseStationIcon'></div>
                 </Col>
