@@ -270,16 +270,66 @@ const CesiumComponent: React.FC<{}> = () => {
           dataSource.entities._entities._array.forEach((ele: any) => {
             nowSatelliteList.push(ele.id);
             viewer.entities.add(ele);
-            // 1. 改成点
+            let entityColor;
+
+            // 1. 配置样式与路径
+            if (ele.label != undefined) {
+              ele.label.show = false;
+            }
+            if (ele.path != undefined) {
+              // 设置路径样式
+              let re_starlink = /Satellite\/STARLINK*/;
+              let re_beidou = /Satellite\/BEIDOU*/;
+              let re_gps = /Satellite\/GPS/;
+              if (re_starlink.exec(ele.id) != null) {
+                // 星链轨迹
+                entityColor = CM.Color.RED;
+                ele.path.width = 5;
+                ele.path.material = new CM.PolylineGlowMaterialProperty({
+                  glowPower: 0.2,
+                  color: entityColor,
+                });
+                // ele.path.material.color = CM.Color.RED;
+                // ele.path.material.glowPower = 0.8
+              }
+              if (re_beidou.exec(ele.id) != null) {
+                // 北斗轨迹
+                entityColor = CM.Color.GREEN;
+                ele.path.width = 5;
+                ele.path.material = new CM.PolylineGlowMaterialProperty({
+                  glowPower: 0.2,
+                  color: entityColor,
+                });
+                // ele.path.material.color = CM.Color.GREEN;
+                // ele.path.material.glowPower = 0.8
+              }
+              if (re_gps.exec(ele.id) != null) {
+                // gps轨迹
+                entityColor = CM.Color.YELLOW;
+                ele.path.width = 5;
+                ele.path.material = new CM.PolylineGlowMaterialProperty({
+                  glowPower: 0.2,
+                  color: entityColor,
+                });
+                // ele.path.material.color = CM.Color.YELLOW;
+                // ele.path.material.glowPower = 0.8
+              }
+              ele.path.show = false; // 设置路径不可看
+              //ele.path.material.color = CM.Color.WHITE;
+            }
+
+            // 2. 改成点
             if (ele.path != undefined) {
               ele.billboard = undefined;
               ele.point = {
                 show: true,
-                color: CM.Color.RED,
+                color: entityColor,
                 // outlineWidth: 4,
                 pixelSize: 5,
               };
-            } // 绘制雷达扫描
+            }
+
+            // 绘制雷达扫描
             let radarId = "radarScan_" + ele.id;
             let postionValues = [...ele.position._property._values];
             let cartographic = CM.Cartographic.fromCartesian(
@@ -326,7 +376,13 @@ const CesiumComponent: React.FC<{}> = () => {
                 ele.position._property._interpolationDegree;
               property._referenceFrame = CM.ReferenceFrame.INERTIAL;
             }
-            radarScanner(property, satelliteLenght, radarId, bottomRadius);
+            radarScanner(
+              property,
+              satelliteLenght,
+              radarId,
+              bottomRadius,
+              entityColor
+            );
             // 更改显示的时间
             // var timeInterval = new CM.TimeInterval({
             //   start: start,
@@ -354,48 +410,6 @@ const CesiumComponent: React.FC<{}> = () => {
             // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
             // //设置查看器，让模型动起来
             // viewer.clock.shouldAnimate = true;
-            // 3. 配置样式与路径
-            if (ele.label != undefined) {
-              ele.label.show = false;
-            }
-            if (ele.path != undefined) {
-              // 设置路径样式
-              let re_starlink = /Satellite\/STARLINK*/;
-              let re_beidou = /Satellite\/BEIDOU*/;
-              let re_gps = /Satellite\/GPS/;
-              if (re_starlink.exec(ele.id) != null) {
-                // 星链轨迹
-                ele.path.width = 5;
-                ele.path.material = new CM.PolylineGlowMaterialProperty({
-                  glowPower: 0.2,
-                  color: CM.Color.RED,
-                });
-                // ele.path.material.color = CM.Color.RED;
-                // ele.path.material.glowPower = 0.8
-              }
-              if (re_beidou.exec(ele.id) != null) {
-                // 北斗轨迹
-                ele.path.width = 5;
-                ele.path.material = new CM.PolylineGlowMaterialProperty({
-                  glowPower: 0.2,
-                  color: CM.Color.GREEN,
-                });
-                // ele.path.material.color = CM.Color.GREEN;
-                // ele.path.material.glowPower = 0.8
-              }
-              if (re_gps.exec(ele.id) != null) {
-                // gps轨迹
-                ele.path.width = 5;
-                ele.path.material = new CM.PolylineGlowMaterialProperty({
-                  glowPower: 0.2,
-                  color: CM.Color.YELLOW,
-                });
-                // ele.path.material.color = CM.Color.YELLOW;
-                // ele.path.material.glowPower = 0.8
-              }
-              ele.path.show = false; // 设置路径不可看
-              //ele.path.material.color = CM.Color.WHITE;
-            }
           });
 
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
@@ -469,11 +483,11 @@ const CesiumComponent: React.FC<{}> = () => {
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function () {
         let height = viewer.camera.positionCartographic.height;
-        // if (height > 200) {
-        //   snow && viewer.scene.postProcessStages.remove(snow); // 移除
-        //   rain && viewer.scene.postProcessStages.remove(rain); // 移除
-        //   fog && viewer.scene.postProcessStages.remove(fog); // 移除
-        // }
+        if (height > 500) {
+          snow && viewer.scene.postProcessStages.remove(snow); // 移除
+          rain && viewer.scene.postProcessStages.remove(rain); // 移除
+          fog && viewer.scene.postProcessStages.remove(fog); // 移除
+        }
         if (height > 10000000) {
           // setIsRotate(true);
         } else {
@@ -491,7 +505,6 @@ const CesiumComponent: React.FC<{}> = () => {
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
       // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
       // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
-      // addWeather("fog");
     }
   }, [init]);
 
@@ -902,7 +915,8 @@ const CesiumComponent: React.FC<{}> = () => {
     position: any,
     height: number,
     radarId: string,
-    bottomRadius: number
+    bottomRadius: number,
+    color: any
   ) => {
     viewer.entities.add({
       id: radarId,
@@ -914,8 +928,6 @@ const CesiumComponent: React.FC<{}> = () => {
         }),
       ]),
       position: position,
-      // position: new CM.Cartesian3.fromDegrees(lng, lat),
-      // orientation: new CM.VelocityOrientationProperty(entity_ty1p),
       cylinder: {
         length: height,
         topRadius: 0,
@@ -924,12 +936,12 @@ const CesiumComponent: React.FC<{}> = () => {
         // outline: !0,
         numberOfVerticalLines: 0,
         // outlineColor: CM.Color.RED.withAlpha(.8),
-        material: CM.Color.fromBytes(35, 170, 242, 80),
+        material: color.withAlpha(0.4),
       },
     });
   };
 
-  const addWeather = (type?: string) => {
+  const addWeather = (type?: string, strong?: number) => {
     snow && viewer.scene.postProcessStages.remove(snow); // 移除
     rain && viewer.scene.postProcessStages.remove(rain); // 移除
     fog && viewer.scene.postProcessStages.remove(fog); // 移除
@@ -937,7 +949,7 @@ const CesiumComponent: React.FC<{}> = () => {
     if (type === "snow") {
       //定义下雪场景 着色器
       function FS_Snow() {
-        return "uniform sampler2D colorTexture;\n\
+        return `uniform sampler2D colorTexture;\n\
             varying vec2 v_textureCoordinates;\n\
           \n\
             float snow(vec2 uv,float scale)\n\
@@ -964,10 +976,10 @@ const CesiumComponent: React.FC<{}> = () => {
             c+=snow(uv,6.);\n\
                 c+=snow(uv,5.);\n\
                 finalColor=(vec3(c)); \n\
-                gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), 0.5); \n\
+                gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), ${strong}); \n\
           \n\
             }\n\
-          ";
+          `;
       }
       let fs_snow = FS_Snow();
       snow = new CM.PostProcessStage({
@@ -983,7 +995,7 @@ const CesiumComponent: React.FC<{}> = () => {
     } else if (type === "rain") {
       // 定义下雨场景 着色器
       function FS_Rain() {
-        return "uniform sampler2D colorTexture;\n\
+        return `uniform sampler2D colorTexture;\n\
             varying vec2 v_textureCoordinates;\n\
         \n\
             float hash(float x){\n\
@@ -1007,9 +1019,9 @@ const CesiumComponent: React.FC<{}> = () => {
         float b=clamp(abs(sin(20.*time*v+uv.y*(5./(2.+v))))-.95,0.,1.)*20.;\n\
         c*=v*b; \n\
         \n\
-        gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), 0.5);  \n\
+        gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), ${strong});  \n\
         }\n\
-";
+`;
       }
       let fs_rain = FS_Rain();
       rain = new CM.PostProcessStage({
@@ -1038,7 +1050,7 @@ const CesiumComponent: React.FC<{}> = () => {
           "\n" +
           "      float f=(depthcolor.r-0.40)/0.2;\n" +
           "      if(f<0.0) f=0.0;\n" +
-          "      else if(f>1.0) f=1.0;\n" +
+          `      else if(f>1.0) f=${strong};\n` +
           "      gl_FragColor = mix(origcolor,fogcolor,f);\n" +
           "   }"
         );
@@ -1102,12 +1114,39 @@ const CesiumComponent: React.FC<{}> = () => {
             baseStationEntity.billboard.show = true;
           }
         }
+
+        if (height <= 1000) {
+          Jsonp(
+            `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
+            {},
+            function (err, res) {
+              let curWeather = res.result.realtime.skycon;
+
+              if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
+                addWeather();
+              } else if (["HEAVY_RAIN", "STORM_RAIN"].includes(curWeather)) {
+                addWeather("rain", 0.7);
+              } else if (["LIGHT_RAIN", "MODERATE_RAIN"].includes(curWeather)) {
+                addWeather("rain", 0.3);
+              } else if (["HEAVY_SNOW", "STORM_SNOW"].includes(curWeather)) {
+                addWeather("snow", 0.7);
+              } else if (["LIGHT_SNOW", "MODERATE_SNOW"].includes(curWeather)) {
+                addWeather("snow", 0.3);
+              } else if (["FOG"].includes(curWeather)) {
+                addWeather("fog");
+              } else {
+                addWeather();
+              }
+            }
+          );
+        }
       });
+
       viewer.camera.setView({
         destination: CM.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
           curBaseStation?.pos[1],
-          249
+          0
         ),
 
         // orientation: {
@@ -1118,41 +1157,8 @@ const CesiumComponent: React.FC<{}> = () => {
       });
 
       // setIsRotate(false);
-      // viewer.camera.moveUp(5000000)
-
-      // Jsonp(
-      //   `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
-      //   {},
-      //   function (err, res) {
-      //     let curWeather = res.result.realtime.skycon;
-
-      //     if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
-      //       addWeather();
-      //     } else if (
-      //       [
-      //         "LIGHT_RAIN",
-      //         "MODERATE_RAIN",
-      //         "HEAVY_RAIN",
-      //         "STORM_RAIN",
-      //       ].includes(curWeather)
-      //     ) {
-      //       addWeather("rain");
-      //     } else if (
-      //       [
-      //         "LIGHT_SNOW",
-      //         "MODERATE_SNOW",
-      //         "HEAVY_SNOW",
-      //         "STORM_SNOW",
-      //       ].includes(curWeather)
-      //     ) {
-      //       addWeather("snow");
-      //     } else if (["FOG"].includes(curWeather)) {
-      //       addWeather("fog");
-      //     } else {
-      //       addWeather();
-      //     }
-      //   }
-      // );
+      viewer.camera.lookDown(5000);
+      viewer.camera.moveBackward(500);
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
   return (
