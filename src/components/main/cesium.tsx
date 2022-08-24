@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import Jsonp from "jsonp";
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -14,6 +14,7 @@ import Box from "./box";
 import HeightChart from "../right/heightChart";
 import SatelliteBar from "../left/satelliteBar";
 import SatelliteNumberChart from "../right/satelliteNumberChart";
+import { randomInt } from "crypto";
 
 //@ts-ignore
 let viewer: any;
@@ -31,6 +32,7 @@ var handler: {
 let nowPicksatellite: any;
 let rain: any, snow: any, fog: any;
 let stages: any;
+let previousTime: any;
 // let satelliteList: {[key:string]:any []} = {};
 // let satelliteList: string[] = []
 const CesiumComponent: React.FC<{}> = () => {
@@ -40,6 +42,7 @@ const CesiumComponent: React.FC<{}> = () => {
   const [definitionChanged, setDefinitionChanged] = useState<any>(
     new CM.Event()
   );
+  const [isRotate, setIsRotate] = useState<boolean>(false);
   const [colorSubscription, setColorSubscription] = useState<any>(undefined);
   const [duration, setDuration] = useState<any>(undefined);
   const [color1, setColor1] = useState<any>(undefined);
@@ -67,6 +70,17 @@ const CesiumComponent: React.FC<{}> = () => {
   useEffect(() => {
     setInit(true);
   }, []);
+
+  useEffect(() => {
+    if (viewer !== undefined) {
+      if (isRotate) {
+        // viewer.clock.onTick.addEventListener(earthRotate)
+      } else {
+        // viewer.clock.onTick.removeEventListener(earthRotate)
+      }
+    }
+  }, [isRotate]);
+
   useEffect(() => {
     if (isDrawPolygon) {
       //@ts-ignore
@@ -281,9 +295,9 @@ const CesiumComponent: React.FC<{}> = () => {
             let earthHeight =
               (earthRadius * earthRadius) / (height + earthRadius);
             // 卫星底部的辐射半径
-            let bottomRadius = Math.sqrt(
-              earthRadius * earthRadius - earthHeight * earthHeight
-            );
+            let bottomRadius =
+              Math.sqrt(earthRadius * earthRadius - earthHeight * earthHeight) /
+              2;
             // 卫星辐射的长度
             let satelliteLenght = Math.abs(height + earthRadius - earthHeight);
             var property = new CM.SampledPositionProperty();
@@ -351,30 +365,49 @@ const CesiumComponent: React.FC<{}> = () => {
               let re_gps = /Satellite\/GPS/;
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
-                ele.path.material.color = CM.Color.RED;
+                ele.path.width = 5;
+                ele.path.material = new CM.PolylineGlowMaterialProperty({
+                  glowPower: 0.2,
+                  color: CM.Color.RED,
+                });
+                // ele.path.material.color = CM.Color.RED;
+                // ele.path.material.glowPower = 0.8
               }
               if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
-                ele.path.material.color = CM.Color.GREEN;
+                ele.path.width = 5;
+                ele.path.material = new CM.PolylineGlowMaterialProperty({
+                  glowPower: 0.2,
+                  color: CM.Color.GREEN,
+                });
+                // ele.path.material.color = CM.Color.GREEN;
+                // ele.path.material.glowPower = 0.8
               }
               if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
-                ele.path.material.color = CM.Color.YELLOW;
+                ele.path.width = 5;
+                ele.path.material = new CM.PolylineGlowMaterialProperty({
+                  glowPower: 0.2,
+                  color: CM.Color.YELLOW,
+                });
+                // ele.path.material.color = CM.Color.YELLOW;
+                // ele.path.material.glowPower = 0.8
               }
               ele.path.show = false; // 设置路径不可看
               //ele.path.material.color = CM.Color.WHITE;
             }
           });
+
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
-        // 随机生成基站
+        // // 随机生成基站
         viewer.camera.flyHome(0);
         const lngMin = -180;
         const lngMax = 180;
         const latMin = -90;
         const latMax = 90;
         let baseStationTemp: BaseStation[] = [];
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 10; i++) {
           let lng = Math.random() * (lngMax - lngMin + 1) + lngMin;
           let lat = Math.random() * (latMax - latMin + 1) + latMin;
           createBaseStation(lng, lat, i);
@@ -436,19 +469,40 @@ const CesiumComponent: React.FC<{}> = () => {
       var handler = new CM.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function () {
         let height = viewer.camera.positionCartographic.height;
-        if (height > 200) {
-          snow && viewer.scene.postProcessStages.remove(snow); // 移除
-          rain && viewer.scene.postProcessStages.remove(rain); // 移除
-          fog && viewer.scene.postProcessStages.remove(fog); // 移除
+        // if (height > 200) {
+        //   snow && viewer.scene.postProcessStages.remove(snow); // 移除
+        //   rain && viewer.scene.postProcessStages.remove(rain); // 移除
+        //   fog && viewer.scene.postProcessStages.remove(fog); // 移除
+        // }
+        if (height > 10000000) {
+          // setIsRotate(true);
+        } else {
+          // setIsRotate(false);
         }
       }, CM.ScreenSpaceEventType.WHEEL);
+
+      // 地球旋转
+      // viewer.clock.multiplier = 100; //速度
+      // viewer.clock.shouldAnimate = true;
+      // previousTime = viewer.clock.currentTime.secondsOfDay;
+      // setIsRotate(true);
 
       // 配置时间轴
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
       // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
       // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
+      // addWeather("fog");
     }
   }, [init]);
+
+  const earthRotate = useCallback(() => {
+    // var spinRate = 1;
+    // var currentTime = viewer.clock.currentTime.secondsOfDay;
+    // var delta = (currentTime - previousTime) / 1000;
+    // previousTime = currentTime;
+    // viewer.scene.camera.rotate(CM.Cartesian3.UNIT_Z, -spinRate * delta);
+  }, []);
+
   // 笛卡尔坐标系转经纬度
   const GetWGS84FromDKR = (coor: any, type: number) => {
     let cartographic = CM.Cartographic.fromCartesian(coor);
@@ -879,6 +933,7 @@ const CesiumComponent: React.FC<{}> = () => {
     snow && viewer.scene.postProcessStages.remove(snow); // 移除
     rain && viewer.scene.postProcessStages.remove(rain); // 移除
     fog && viewer.scene.postProcessStages.remove(fog); // 移除
+
     if (type === "snow") {
       //定义下雪场景 着色器
       function FS_Snow() {
@@ -923,7 +978,7 @@ const CesiumComponent: React.FC<{}> = () => {
       viewer.scene.skyAtmosphere.hueShift = -0.8;
       viewer.scene.skyAtmosphere.saturationShift = -0.7;
       viewer.scene.skyAtmosphere.brightnessShift = -0.33;
-      viewer.scene.fog.density = 0.8;
+      viewer.scene.fog.density = 0.001;
       viewer.scene.fog.minimumBrightness = 0.8;
     } else if (type === "rain") {
       // 定义下雨场景 着色器
@@ -968,6 +1023,35 @@ const CesiumComponent: React.FC<{}> = () => {
       viewer.scene.fog.density = 0.001;
       viewer.scene.fog.minimumBrightness = 0.8;
     } else if (type === "fog") {
+      function FS_Fog() {
+        return (
+          "  uniform sampler2D colorTexture;\n" +
+          "  uniform sampler2D depthTexture;\n" +
+          "  varying vec2 v_textureCoordinates;\n" +
+          "  void main(void)\n" +
+          "  {\n" +
+          "      vec4 origcolor=texture2D(colorTexture, v_textureCoordinates);\n" +
+          "      vec4 fogcolor=vec4(0.8,0.8,0.8,0.1);\n" +
+          "\n" +
+          "      float depth = czm_readDepth(depthTexture, v_textureCoordinates);\n" +
+          "      vec4 depthcolor=texture2D(depthTexture, v_textureCoordinates);\n" +
+          "\n" +
+          "      float f=(depthcolor.r-0.40)/0.2;\n" +
+          "      if(f<0.0) f=0.0;\n" +
+          "      else if(f>1.0) f=1.0;\n" +
+          "      gl_FragColor = mix(origcolor,fogcolor,f);\n" +
+          "   }"
+        );
+      }
+      let FogStage = CM.PostProcessStageLibrary.createBrightnessStage();
+      //this.FogStage.uniforms.brightness=2;//整个场景通过后期渲染变亮 1为保持不变 大于1变亮 0-1变暗 uniforms后面为对应glsl里面定义的uniform参数
+      var fs_fog = FS_Fog();
+      FogStage = new CM.PostProcessStage({
+        name: "self",
+        //sampleMode:PostProcessStageSampleMode.LINEAR,
+        fragmentShader: fs_fog,
+      });
+      stages.add(FogStage);
     }
   };
 
@@ -992,9 +1076,6 @@ const CesiumComponent: React.FC<{}> = () => {
         let baseStationEntity = viewer.entities.getById(
           `Facility/${curBaseStation?.name}`
         );
-
-        // baseStationEntity.orientation = new CM.VelocityOrientationProperty(baseStationEntity.position)
-        // console.log(baseStationEntity);
 
         // 当高度小于一定值 显示模型
         if (height <= 2000) {
@@ -1026,51 +1107,52 @@ const CesiumComponent: React.FC<{}> = () => {
         destination: CM.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
           curBaseStation?.pos[1],
-          1000
+          249
         ),
+
         // orientation: {
-        //   heading: CM.Math.toRadians(90, 0),
-        //   // pitch: CM.Math.toRadians(-30.5 || -CM.Math.PI_OVER_FOUR),
-        //   // roll: CM.Math.toRadians(360 || 0)
+        //   heading: CM.Math.toRadians(286.69615060171867),
+        //   pitch: CM.Math.toRadians(-5.205762977472191),
+        //   roll: CM.Math.toRadians(360 || 0)
         // },
       });
 
+      // setIsRotate(false);
       // viewer.camera.moveUp(5000000)
 
-      Jsonp(
-        `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
-        {},
-        function (err, res) {
-          let curWeather = res.result.realtime.skycon;
-          console.log(res, curWeather);
+      // Jsonp(
+      //   `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
+      //   {},
+      //   function (err, res) {
+      //     let curWeather = res.result.realtime.skycon;
 
-          if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
-            addWeather();
-          } else if (
-            [
-              "LIGHT_RAIN",
-              "MODERATE_RAIN",
-              "HEAVY_RAIN",
-              "STORM_RAIN",
-            ].includes(curWeather)
-          ) {
-            addWeather("rain");
-          } else if (
-            [
-              "LIGHT_SNOW",
-              "MODERATE_SNOW",
-              "HEAVY_SNOW",
-              "STORM_SNOW",
-            ].includes(curWeather)
-          ) {
-            addWeather("snow");
-          } else if (["FOG"].includes(curWeather)) {
-            addWeather("fog");
-          } else {
-            addWeather();
-          }
-        }
-      );
+      //     if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
+      //       addWeather();
+      //     } else if (
+      //       [
+      //         "LIGHT_RAIN",
+      //         "MODERATE_RAIN",
+      //         "HEAVY_RAIN",
+      //         "STORM_RAIN",
+      //       ].includes(curWeather)
+      //     ) {
+      //       addWeather("rain");
+      //     } else if (
+      //       [
+      //         "LIGHT_SNOW",
+      //         "MODERATE_SNOW",
+      //         "HEAVY_SNOW",
+      //         "STORM_SNOW",
+      //       ].includes(curWeather)
+      //     ) {
+      //       addWeather("snow");
+      //     } else if (["FOG"].includes(curWeather)) {
+      //       addWeather("fog");
+      //     } else {
+      //       addWeather();
+      //     }
+      //   }
+      // );
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
   return (
@@ -1086,12 +1168,7 @@ const CesiumComponent: React.FC<{}> = () => {
             />
           }
         />
-        <Box
-          title="卫星数量统计图"
-          component={
-            <SatelliteBar />
-          }
-        />
+        <Box title="卫星数量统计图" component={<SatelliteBar />} />
       </div>
       <div
         id="cesiumContainer"
@@ -1120,12 +1197,7 @@ const CesiumComponent: React.FC<{}> = () => {
             />
           }
         />
-        <Box
-          title="卫星数量变化图"
-          component={
-            <SatelliteNumberChart />
-          }
-        />
+        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
       </div>
       <div id="toolbar">
         <button
