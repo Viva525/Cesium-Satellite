@@ -90,6 +90,14 @@
     position: absolute;
 }
 
+.bottom-wrap{
+    width: 50vw;
+    height: 5vh;
+    left: 25vw;
+    bottom: 15vh;
+    position: absolute;
+}
+
 .box-title-font {
     color: #08acbd;
     margin-left: 150px;

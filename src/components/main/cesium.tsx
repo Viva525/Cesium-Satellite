@@ -13,8 +13,9 @@ import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
 import HeightChart from "../right/heightChart";
 import SatelliteBar from "../left/satelliteBar";
-import SatelliteNumberChart from "../right/satelliteNumberChart";
+import SatelliteNumberChart from "../left/satelliteNumberChart";
 import { randomInt } from "crypto";
+import SatelliteInfo from "../right/satelliteInfo";
 
 //@ts-ignore
 let viewer: any;
@@ -135,34 +136,44 @@ const CesiumComponent: React.FC<{}> = () => {
         },
       });
       // 添加高德影像图
-      let atLayer = new CM.UrlTemplateImageryProvider({
-        url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
-        minimumLevel: 3,
-        maximumLevel: 18,
-      });
+      // let atLayer = new CM.UrlTemplateImageryProvider({
+      //   url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+      //   minimumLevel: 3,
+      //   maximumLevel: 18,
+      // });
       // viewer.imageryLayers.addImageryProvider(atLayer);
+
       // 开启光照
       viewer.scene.globe.enableLighting = true;
       viewer.shadows = true;
       // 亮度设置
-      stages = viewer.scene.postProcessStages;
-      viewer.scene.brightness =
-        viewer.scene.brightness ||
-        stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
-      viewer.scene.brightness.enabled = true;
-      viewer.scene.brightness.uniforms.brightness = Number(1.2);
+      // stages = viewer.scene.postProcessStages;
+      // viewer.scene.brightness =
+      //   viewer.scene.brightness ||
+      //   stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
+      // viewer.scene.brightness.enabled = true;
+      // viewer.scene.brightness.uniforms.brightness = Number(1.2);
+
       // 更换天空盒
-      let spaceSkybox = new CM.SkyBox({
-        sources: {
-          negativeX: "./images/Space_Skybox/starmap_2020_16k_mx.jpg",
-          positiveX: "./images/Space_Skybox/starmap_2020_16k_px.jpg",
-          negativeY: "./images/Space_Skybox/starmap_2020_16k_my.jpg",
-          positiveY: "./images/Space_Skybox/starmap_2020_16k_py.jpg",
-          negativeZ: "./images/Space_Skybox/starmap_2020_16k_mz.jpg",
-          positiveZ: "./images/Space_Skybox/starmap_2020_16k_pz.jpg",
-        },
-      });
-      viewer.scene.skyBox = spaceSkybox;
+      // let spaceSkybox = new CM.SkyBox({
+      //   sources: {
+      //     negativeX: "./images/Space_Skybox/starmap_2020_16k_mx.jpg",
+      //     positiveX: "./images/Space_Skybox/starmap_2020_16k_px.jpg",
+      //     negativeY: "./images/Space_Skybox/starmap_2020_16k_my.jpg",
+      //     positiveY: "./images/Space_Skybox/starmap_2020_16k_py.jpg",
+      //     negativeZ: "./images/Space_Skybox/starmap_2020_16k_mz.jpg",
+      //     positiveZ: "./images/Space_Skybox/starmap_2020_16k_pz.jpg",
+      //   },
+      // });
+      // viewer.scene.skyBox = spaceSkybox;
+
+      // 背景切换为图片
+      // 去掉黑色星空背景
+      viewer.scene.skyBox.show = false;
+      // viewer.scene.sun.show = true
+      // viewer.scene.moon.show = true
+      viewer.scene.backgroundColor = new CM.Color(0.0, 0.0, 0.0, 0.0);
+
       // 尝试提高分辨率
       viewer._cesiumWidget._supportsImageRenderingPixelated =
         CM.FeatureDetection.supportsImageRenderingPixelated();
@@ -261,10 +272,10 @@ const CesiumComponent: React.FC<{}> = () => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = CM.CzmlDataSource.load(
-          './data/star-beidou-gps.czml'
+          "./data/star-beidou-gps.czml"
         );
-        let dronePromise_beidou = CM.CzmlDataSource.load('./data/beidou.czml');
-        let dronePromise_GPS = CM.CzmlDataSource.load('./data/gps.czml');
+        let dronePromise_beidou = CM.CzmlDataSource.load("./data/beidou.czml");
+        let dronePromise_GPS = CM.CzmlDataSource.load("./data/gps.czml");
         let nowSatelliteList: string[] = [];
         // 加载星链实体
         dronePromise.then((dataSource: any) => {
@@ -352,10 +363,11 @@ const CesiumComponent: React.FC<{}> = () => {
             // 卫星底部据地球中心的距离
             let earthHeight =
               (earthRadius * earthRadius) / (height + earthRadius);
+            earthHeight = earthHeight + ((earthRadius - earthHeight) * 2) / 3;
             // 卫星底部的辐射半径
-            let bottomRadius =
-              Math.sqrt(earthRadius * earthRadius - earthHeight * earthHeight) /
-              2;
+            let bottomRadius = Math.sqrt(
+              earthRadius * earthRadius - earthHeight * earthHeight
+            );
             // 卫星辐射的长度
             let satelliteLenght = Math.abs(height + earthRadius - earthHeight);
             var property = new CM.SampledPositionProperty();
@@ -427,15 +439,15 @@ const CesiumComponent: React.FC<{}> = () => {
               let re_starlink = /Satellite\/STARLINK*/;
               let re_beidou = /Satellite\/BEIDOU*/;
               let re_gps = /Satellite\/GPS/;
-              if(re_starlink.exec(ele.id) != null){
+              if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
                 ele.path.material.color = CM.Color.RED;
               }
-              if(re_beidou.exec(ele.id) != null){
+              if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
                 ele.path.material.color = CM.Color.GREEN;
               }
-              if(re_gps.exec(ele.id) != null){
+              if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
                 ele.path.material.color = CM.Color.YELLOW;
               }
@@ -1208,16 +1220,27 @@ const CesiumComponent: React.FC<{}> = () => {
           }
         />
         <Box title="卫星数量统计图" component={<SatelliteBar />} />
+        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
       </div>
       <div
         id="cesiumContainer"
         style={{
           height: "100%",
           width: "100%",
-          // backgroundImage: "url(./images/star.jpg)",
+          backgroundRepeat: "no-repeat ",
+          backgroundSize: "cover",
+          backgroundImage: "url(./images/star.jpg)",
         }}
       ></div>
       <div className="right-wrap">
+      <Box
+          title="卫星信息"
+          component={
+            <SatelliteInfo
+              
+            />
+          }
+        />
         <Box
           title="卫星实时高度图"
           component={
@@ -1236,8 +1259,10 @@ const CesiumComponent: React.FC<{}> = () => {
             />
           }
         />
-        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
       </div>
+      {/* <div className="bottom-wrap">
+        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
+      </div> */}
       <div id="toolbar">
         <button
           type="button"

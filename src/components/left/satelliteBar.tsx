@@ -33,16 +33,16 @@ const SatelliteBar: React.FC<{}> = () => {
         grid: [
           {
             left: "10%",
-            top: "12%",
+            top: "8%",
             right: "5%",
-            bottom: "8%",
+            bottom: "0",
             containLabel: true,
           },
           {
             left: "20%",
-            top: "12%",
+            top: "8%",
             right: "5%",
-            bottom: "8%",
+            bottom: "0",
             containLabel: true,
           },
         ],
@@ -196,7 +196,7 @@ const SatelliteBar: React.FC<{}> = () => {
   }, [init]);
 
   return (
-    <div ref={chartRef} style={{ width: "100%", height: "20vh" }}>
+    <div ref={chartRef} style={{ width: "100%", height: "12vh" }}>
     </div>
   );
 };

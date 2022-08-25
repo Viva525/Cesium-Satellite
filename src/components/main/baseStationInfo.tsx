@@ -19,7 +19,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
     useEffect(()=>{
     },[init])
 
-return (<div id='baseStationList' style={{ width: '100%', height: '35vh', overflowY:"scroll"}}>
+return (<div id='baseStationList' style={{ width: '100%', height: '39vh', overflowY:"scroll"}}>
     {
        baseStationList.map((baseStation:BaseStation, index)=>{
         return(
