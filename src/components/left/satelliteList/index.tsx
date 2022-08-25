@@ -46,7 +46,6 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     }
     else {
       let nowSelectKey = selectedRowKeys.concat(newSelectedRowKeys).filter(item => !newSelectedRowKeys.includes(item))
-      console.log(nowSelectKey)
       for (let i of nowSelectKey) {
         nowSelectList.push([i, false])
       }
@@ -64,7 +63,7 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
       Table.SELECTION_INVERT,
       Table.SELECTION_NONE,
       {
-        key: 'even',
+        key: 'BEIDOU',
         text: 'Select BEIDOU',
         onSelect: changableRowKeys => {
           let newSelectedRowKeys = [];
@@ -74,11 +73,11 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
             }
             return false;
           });
-          setSelectedRowKeys(newSelectedRowKeys);
+          onSelectChange(newSelectedRowKeys);
         },
       },
       {
-        key: 'even',
+        key: 'GPS',
         text: 'Select GPS',
         onSelect: changableRowKeys => {
           let newSelectedRowKeys = [];
@@ -88,17 +87,17 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
             }
             return false;
           });
-          setSelectedRowKeys(newSelectedRowKeys);
+          onSelectChange(newSelectedRowKeys);
         },
       },
     ],
   };
 
   return <>
-  <div className='box-title'>
+  {/* <div className='box-title'>
     <span className='box-title-font'>卫星列表</span>
-  </div>
-  <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={{simple: true, position:['bottomCenter']}}/>
+  </div> */}
+  <Table rowSelection={rowSelection} columns={columns} dataSource={data} size='small' pagination={{simple: true, position:['bottomCenter']}}/>
   </>;
 };
 

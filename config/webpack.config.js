@@ -783,6 +783,9 @@ module.exports = function (webpackEnv) {
           CESIUM_BASE_URL: JSON.stringify('/'),
         }),
     ].filter(Boolean),
+    externals:{
+      'BMap':'BMap'
+    },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
     performance: false,

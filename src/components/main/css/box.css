@@ -1,0 +1,23 @@
+.box{
+    margin-bottom: 50px;
+}
+
+.boxTitle{
+    height: 36px;
+    background: rgba(48, 49, 53, 0.785);
+    border-top: 1px solid #eee;
+    color: white;
+    font-size: 22px;
+    vertical-align: middle;
+    box-sizing: border-box;
+    /* padding-left: 15px; */
+}
+.cube {
+    display: inline-block;
+    width: 5px;
+    height: 36px;
+    background-color: #ffff00;
+    margin-right: 15px;
+}
+
+
