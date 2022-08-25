@@ -1,11 +1,10 @@
-.box{
+#box{
     margin-bottom: 20px;
 }
-
 .boxTitle{
     height: 32px;
     /* background: rgba(26, 147, 199, 0.6); */
-    background:repeating-linear-gradient(to right,#0284a8,#7cb0be);
+    background:linear-gradient(to right, rgba(26, 147, 199, 0.6), rgba(124, 176, 190, 0.5));
     /* background-image: url("../assets/1.png"); */
     background-size: contain;
     background-repeat: no-repeat;
@@ -31,7 +30,7 @@
 }
 
 /*图片替换*/
-img {
+#box-img {
     width: 180px;
     height: 32px;
     background-image: url('../assets/1.png');

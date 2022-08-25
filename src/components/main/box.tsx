@@ -1,5 +1,5 @@
-import React, { ReactElement, useEffect, useRef } from 'react';
-import './css/box.css';
+import React, { ReactElement, useEffect, useRef } from "react";
+import "./css/box.css";
 
 type BoxProps = {
   component?: ReactElement<any, any>;
@@ -21,14 +21,13 @@ const Box: React.FC<BoxProps> = (props) => {
     // console.log(clientWidth, clientHeight);
   });
   return (
-    <div className='box'
-      ref={boxRef}>
-      <div className='boxTitle'>
-        {/* <img /> */}
-        <span className='cube'>&nbsp;</span>
+    <div id="box" ref={boxRef}>
+      <div className="boxTitle">
+        {/* <img id = 'box-img'/> */}
+        <span className="cube">&nbsp;</span>
         {props.title}
       </div>
-      <div className='boxContent'>{props.component}</div>
+      <div className="boxContent">{props.component}</div>
     </div>
   );
 };
