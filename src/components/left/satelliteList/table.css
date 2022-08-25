@@ -15,3 +15,8 @@
 .ant-pagination-item-ellipsis, .ant-select-arrow, .ant-pagination-slash, .ant-pagination-simple-pager{
     color: #fff !important;
 }
+
+.ant-table-tbody>tr.ant-table-row-selected>td {
+    background: #e6f7ff; 
+    border-color: rgba(255,255,255,1) !important
+}

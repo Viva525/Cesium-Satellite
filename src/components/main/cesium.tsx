@@ -180,8 +180,8 @@ const CesiumComponent: React.FC<{}> = () => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () {},
-        highlight: function () {},
+        declare: function () { },
+        highlight: function () { },
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -255,7 +255,7 @@ const CesiumComponent: React.FC<{}> = () => {
             menu.appendChild(option);
           }
         },
-        reset: function () {},
+        reset: function () { },
       };
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
@@ -352,10 +352,10 @@ const CesiumComponent: React.FC<{}> = () => {
             // 卫星底部据地球中心的距离
             let earthHeight =
               (earthRadius * earthRadius) / (height + earthRadius);
+            earthHeight = earthHeight + (earthRadius - earthHeight) * 2 / 3
             // 卫星底部的辐射半径
             let bottomRadius =
-              Math.sqrt(earthRadius * earthRadius - earthHeight * earthHeight) /
-              2;
+              Math.sqrt(earthRadius * earthRadius - earthHeight * earthHeight)
             // 卫星辐射的长度
             let satelliteLenght = Math.abs(height + earthRadius - earthHeight);
             var property = new CM.SampledPositionProperty();
@@ -427,15 +427,15 @@ const CesiumComponent: React.FC<{}> = () => {
               let re_starlink = /Satellite\/STARLINK*/;
               let re_beidou = /Satellite\/BEIDOU*/;
               let re_gps = /Satellite\/GPS/;
-              if(re_starlink.exec(ele.id) != null){
+              if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
                 ele.path.material.color = CM.Color.RED;
               }
-              if(re_beidou.exec(ele.id) != null){
+              if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
                 ele.path.material.color = CM.Color.GREEN;
               }
-              if(re_gps.exec(ele.id) != null){
+              if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
                 ele.path.material.color = CM.Color.YELLOW;
               }
@@ -744,7 +744,7 @@ const CesiumComponent: React.FC<{}> = () => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -892,7 +892,7 @@ const CesiumComponent: React.FC<{}> = () => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -918,7 +918,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
