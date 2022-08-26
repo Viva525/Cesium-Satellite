@@ -150,8 +150,8 @@ const CesiumComponent: React.FC<{}> = () => {
       // 亮度设置
       // stages = viewer.scene.postProcessStages;
       // viewer.scene.brightness =
-      //   viewer.scene.brightness ||
-      //   stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
+      // viewer.scene.brightness ||
+      // stages.add(CM.PostProcessStageLibrary.createBrightnessStage());
       // viewer.scene.brightness.enabled = true;
       // viewer.scene.brightness.uniforms.brightness = Number(1.2);
 
@@ -364,7 +364,7 @@ const CesiumComponent: React.FC<{}> = () => {
             // 卫星底部据地球中心的距离
             let earthHeight =
               (earthRadius * earthRadius) / (height + earthRadius);
-            earthHeight = earthHeight + ((earthRadius - earthHeight) * 2) / 3;
+            earthHeight = earthHeight + ((earthRadius - earthHeight) * 8) / 9;
             // 卫星底部的辐射半径
             let bottomRadius = Math.sqrt(
               earthRadius * earthRadius - earthHeight * earthHeight
@@ -559,7 +559,7 @@ const CesiumComponent: React.FC<{}> = () => {
           rain && viewer.scene.postProcessStages.remove(rain); // 移除
           fog && viewer.scene.postProcessStages.remove(fog); // 移除
         }
-        if (height > 10000000) {
+        if (height > 10000000 && (viewer.scene.mode == CM.SceneMode.SCENE3D)) {
           setIsRotate(true);
         } else {
           setIsRotate(false);
@@ -578,6 +578,15 @@ const CesiumComponent: React.FC<{}> = () => {
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
       // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
       // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
+      // 监听2d切换事件
+      viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(() => {
+        setIsRotate(false);
+      });
+      viewer.sceneModePicker.viewModel.morphTo3D.afterExecute.addEventListener(() => {
+        setTimeout(()=>{
+          setIsRotate(true);
+        },1000)
+      });
     }
   }, [init]);
 
@@ -1461,7 +1470,7 @@ const CesiumComponent: React.FC<{}> = () => {
           width: '100%',
           backgroundRepeat: 'no-repeat ',
           backgroundSize: 'cover',
-          backgroundImage: 'url(./images/star.jpg)',
+          backgroundImage: 'url(./images/star_blue.png)',
         }}
       ></div>
       <div className='right-wrap'>

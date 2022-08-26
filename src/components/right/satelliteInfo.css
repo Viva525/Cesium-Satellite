@@ -1,7 +1,6 @@
 #satellite-info{
     width: 100%;
     height:15vh;
-    display: inline-block
 }
 #sate-model{
     float:left;
@@ -38,15 +37,21 @@
 #bottom{
     width: 100%;
     height: 55%;
-    font-size: 10px;
+    text-align: center;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+.item {
+    margin-top: 4px;
 }
 
 .name-item{
-    font-size: 10px;
+    font-size: 18px;
     margin-top: 10px;
 }
 .name-sate{
-    font-size: 14px;
+    font-size: 24px;
     font-weight: bold;
 }
 
@@ -70,11 +75,6 @@
 }
 
 .sate-info-img{
-    width: 30px;
-    height:10px;
-    margin-left: 15px;
-}
-
-.item, .item-value{
-    text-align: center;
+    width: 60px;
+    height:20px;
 }
