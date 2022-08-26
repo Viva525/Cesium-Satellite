@@ -51,6 +51,7 @@
     "react": "^18.2.0",
     "react-app-polyfill": "^3.0.0",
     "react-bmapgl": "^0.2.7",
+    "react-color": "^2.19.3",
     "react-dev-utils": "^12.0.1",
     "react-dom": "^18.2.0",
     "react-refresh": "^0.11.0",
@@ -147,5 +148,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "@types/react-color": "^3.0.6"
   }
 }

@@ -192,8 +192,8 @@ const CesiumComponent: React.FC<{}> = () => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () {},
-        highlight: function () {},
+        declare: function () { },
+        highlight: function () { },
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -267,7 +267,7 @@ const CesiumComponent: React.FC<{}> = () => {
             menu.appendChild(option);
           }
         },
-        reset: function () {},
+        reset: function () { },
       };
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton('Satellites', function () {
@@ -566,7 +566,7 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       }, CM.ScreenSpaceEventType.WHEEL);
 
-      
+
 
       // 地球旋转
       viewer.clock.multiplier = 100; //速度
@@ -583,9 +583,9 @@ const CesiumComponent: React.FC<{}> = () => {
         setIsRotate(false);
       });
       viewer.sceneModePicker.viewModel.morphTo3D.afterExecute.addEventListener(() => {
-        setTimeout(()=>{
+        setTimeout(() => {
           setIsRotate(true);
-        },1000)
+        }, 1000)
       });
     }
   }, [init]);
@@ -988,7 +988,7 @@ const CesiumComponent: React.FC<{}> = () => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -1136,7 +1136,7 @@ const CesiumComponent: React.FC<{}> = () => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -1162,7 +1162,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
@@ -1347,23 +1347,31 @@ const CesiumComponent: React.FC<{}> = () => {
     let count = 0,
       current = '';
     for (let i of selectSatelliteList) {
-      var pick = viewer.entities.getById(i[0]);
-      let curradarScanner = viewer.entities.getById('radarScan_' + i[0]);
-      if (i[1] === true) {
-        count += 1;
-        current = i[0];
-      }
-      curradarScanner.show = i[1];
-      if (pick.id) {
-        if (pick._path != undefined) {
-          pick._path.show = i[1];
+      var pick = viewer.entities.getById(i[1]);
+      let curradarScanner = viewer.entities.getById('radarScan_' + i[1]);
+
+      if (i[0] === 0) {
+        if (i[1] === true) {
+          count += 1;
+          current = i[1];
         }
+        curradarScanner.show = i[2];
+        if (pick.id) {
+          if (pick._path != undefined) {
+            pick._path.show = i[2];
+          }
+        }
+      }
+      else if (i[0] === 1) {
+        curradarScanner.cylinder.material = new CM.Color(i[2].r/255, i[2].g/255, i[2].b/255, 0.4)
+        console.log(curradarScanner)
       }
     }
 
     if (count === 1) {
       setCurSatellite(current.split('/')[1]);
     }
+
   }, [selectSatelliteList]);
   useEffect(() => {
     if (init) {
