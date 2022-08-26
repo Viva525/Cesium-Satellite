@@ -612,14 +612,18 @@ const CesiumComponent: React.FC<{}> = () => {
       polygon: {
         hierarchy: new CM.PolygonHierarchy(
           CM.Cartesian3.fromDegreesArray([
-            lng - radius,
-            lat + radius,
             lng + radius,
-            lat + radius,
-            lng + radius,
-            lat - radius,
+            lat,
+            lng + radius / 2,
+            lat + radius / 2 * Math.sqrt(3),
+            lng - radius / 2,
+            lat + radius / 2 * Math.sqrt(3),
             lng - radius,
-            lat - radius,
+            lat,
+            lng - radius / 2,
+            lat - radius / 2 * Math.sqrt(3),
+            lng + radius / 2,
+            lat - radius / 2 * Math.sqrt(3),
           ])
         ),
         outline: true,
@@ -631,6 +635,196 @@ const CesiumComponent: React.FC<{}> = () => {
         ).withAlpha(0.1),
       },
     });
+    // 右边的六边形
+    let lng2 = lng
+    let lat2 = lat + radius * Math.sqrt(3)
+    viewer.entities.add({
+      id: `ShowRange_${id}1`,
+      name: "选取范围",
+      polygon: {
+        hierarchy: new CM.PolygonHierarchy(
+          CM.Cartesian3.fromDegreesArray([
+            lng2 + radius,
+            lat2,
+            lng2 + radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius,
+            lat2,
+            lng2 - radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+            lng2 + radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+          ])
+        ),
+        outline: true,
+        outlineColor: CM.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: CM.Color.fromCssColorString(
+          "rgba(5, 39, 175, 0.3)"
+        ).withAlpha(0.1),
+      },
+    });
+    // 左边的六边形
+    lat2 = lat - radius * Math.sqrt(3)
+    viewer.entities.add({
+      id: `ShowRange_${id}2`,
+      name: "选取范围",
+      polygon: {
+        hierarchy: new CM.PolygonHierarchy(
+          CM.Cartesian3.fromDegreesArray([
+            lng2 + radius,
+            lat2,
+            lng2 + radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius,
+            lat2,
+            lng2 - radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+            lng2 + radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+          ])
+        ),
+        outline: true,
+        outlineColor: CM.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: CM.Color.fromCssColorString(
+          "rgba(5, 39, 175, 0.3)"
+        ).withAlpha(0.1),
+      },
+    });
+    // 左上角六边形
+    lng2 = lng + radius * 3 / 2
+    lat2 = lat - radius * Math.sqrt(3) / 2
+    viewer.entities.add({
+      id: `ShowRange_${id}3`,
+      name: "选取范围",
+      polygon: {
+        hierarchy: new CM.PolygonHierarchy(
+          CM.Cartesian3.fromDegreesArray([
+            lng2 + radius,
+            lat2,
+            lng2 + radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius,
+            lat2,
+            lng2 - radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+            lng2 + radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+          ])
+        ),
+        outline: true,
+        outlineColor: CM.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: CM.Color.fromCssColorString(
+          "rgba(5, 39, 175, 0.3)"
+        ).withAlpha(0.1),
+      },
+    });
+    //左下角六边形
+    lng2 = lng - radius * 3 / 2
+    viewer.entities.add({
+      id: `ShowRange_${id}4`,
+      name: "选取范围",
+      polygon: {
+        hierarchy: new CM.PolygonHierarchy(
+          CM.Cartesian3.fromDegreesArray([
+            lng2 + radius,
+            lat2,
+            lng2 + radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius,
+            lat2,
+            lng2 - radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+            lng2 + radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+          ])
+        ),
+        outline: true,
+        outlineColor: CM.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: CM.Color.fromCssColorString(
+          "rgba(5, 39, 175, 0.3)"
+        ).withAlpha(0.1),
+      },
+    });
+    //右上角六边形
+    lng2 = lng + radius * 3 / 2
+    lat2 = lat + radius * Math.sqrt(3) / 2
+    viewer.entities.add({
+      id: `ShowRange_${id}5`,
+      name: "选取范围",
+      polygon: {
+        hierarchy: new CM.PolygonHierarchy(
+          CM.Cartesian3.fromDegreesArray([
+            lng2 + radius,
+            lat2,
+            lng2 + radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius,
+            lat2,
+            lng2 - radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+            lng2 + radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+          ])
+        ),
+        outline: true,
+        outlineColor: CM.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: CM.Color.fromCssColorString(
+          "rgba(5, 39, 175, 0.3)"
+        ).withAlpha(0.1),
+      },
+    });
+    //右下角六边形
+    lng2 = lng - radius * 3 / 2
+    viewer.entities.add({
+      id: `ShowRange_${id}6`,
+      name: "选取范围",
+      polygon: {
+        hierarchy: new CM.PolygonHierarchy(
+          CM.Cartesian3.fromDegreesArray([
+            lng2 + radius,
+            lat2,
+            lng2 + radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius / 2,
+            lat2 + radius / 2 * Math.sqrt(3),
+            lng2 - radius,
+            lat2,
+            lng2 - radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+            lng2 + radius / 2,
+            lat2 - radius / 2 * Math.sqrt(3),
+          ])
+        ),
+        outline: true,
+        outlineColor: CM.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: CM.Color.fromCssColorString(
+          "rgba(5, 39, 175, 0.3)"
+        ).withAlpha(0.1),
+      },
+    });
+
   };
   // 绘制线条测量距离
   const measureDistance = () => {
