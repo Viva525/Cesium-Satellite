@@ -265,7 +265,8 @@ const CesiumComponent: React.FC<{}> = () => {
                 // outlineWidth: 4,
                 pixelSize: 5,
               };
-            } // 绘制雷达扫描
+            } 
+            // 绘制雷达扫描
             let radarId = "radarScan_" + ele.id;
             let postionValues = [...ele.position._property._values];
             let cartographic = CM.Cartographic.fromCartesian(
@@ -321,7 +322,7 @@ const CesiumComponent: React.FC<{}> = () => {
             //   isStopIncluded: true,
             // });
             // ele.availability = new CM.TimeIntervalCollection([timeInterval])
-            // // 2. 添加和配置运动实体的模型
+            // 2. 添加和配置运动实体的模型
             // ele.model = {
             //   // 引入模型
             //   uri: "./Satellite.gltf",
@@ -334,12 +335,12 @@ const CesiumComponent: React.FC<{}> = () => {
             //   //配置轮廓的大小
             //   silhouetteSize: 0,
             // };
-            // //设置方向,根据实体的位置来配置方向
-            // ele.orientation = new CM.VelocityOrientationProperty(ele.position);
-            // //设置模型初始的位置
-            // ele.viewFrom = new CM.Cartesian3(0, -30, 30);
-            // //设置查看器，让模型动起来
-            // viewer.clock.shouldAnimate = true;
+            //设置方向,根据实体的位置来配置方向
+            ele.orientation = new CM.VelocityOrientationProperty(ele.position);
+            //设置模型初始的位置
+            ele.viewFrom = new CM.Cartesian3(0, -30, 30);
+            //设置查看器，让模型动起来
+            viewer.clock.shouldAnimate = true;
             // 3. 配置样式与路径
             if (ele.label != undefined) {
               ele.label.show = false;
@@ -1040,7 +1041,7 @@ const CesiumComponent: React.FC<{}> = () => {
       Jsonp(
         `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
         {},
-        function (err, res) {
+        function (err: any, res: { result: { realtime: { skycon: any; }; }; }) {
           let curWeather = res.result.realtime.skycon;
           console.log(res, curWeather);
 
