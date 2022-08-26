@@ -19,6 +19,22 @@ const columns: ColumnsType<DataType> = [
   {
     title: 'satelliteName',
     dataIndex: 'key',
+    filters: [
+      {
+        text: '星链',
+        value: 'STARLINK',
+      },
+      {
+        text: '北斗',
+        value: 'BEIDOU',
+      },
+      {
+        text: 'gps',
+        value: 'GPS',
+      }
+    ],
+    //@ts-ignore
+    onFilter: (value, record) => record.key.includes(value),
   },
 ];
 
