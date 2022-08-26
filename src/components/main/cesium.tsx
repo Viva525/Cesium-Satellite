@@ -502,31 +502,31 @@ const CesiumComponent: React.FC<{}> = () => {
             }
             viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
             setCurSatellite(pick.id._id.split('/')[1]);
-            // if (pick.id.model == undefined) {
-            //   // 将点换成模型
-            //   pick.id.model = {
-            //     // 引入模型
-            //     uri: './Satellite.gltf',
-            //     // 配置模型大小的最小值
-            //     minimumPixelSize: 50,
-            //     //配置模型大小的最大值
-            //     maximumScale: 50,
-            //     //配置模型轮廓的颜色
-            //     silhouetteColor: CM.Color.WHITE,
-            //     //配置轮廓的大小
-            //     silhouetteSize: 0,
-            //   };
-            //   //设置方向,根据实体的位置来配置方向
-            //   pick.id.orientation = new CM.VelocityOrientationProperty(
-            //     pick.id.position
-            //   );
-            //   //设置模型初始的位置
-            //   pick.id.viewFrom = new CM.Cartesian3(0, -30, 30);
-            //   //设置查看器，让模型动起来
-            //   viewer.clock.shouldAnimate = true;
-            // } else {
-            //   pick.id.model.show = true;
-            // }
+            if (pick.id.model == undefined) {
+              // 将点换成模型
+              pick.id.model = {
+                // 引入模型
+                uri: './Satellite.gltf',
+                // 配置模型大小的最小值
+                minimumPixelSize: 50,
+                //配置模型大小的最大值
+                maximumScale: 50,
+                //配置模型轮廓的颜色
+                silhouetteColor: CM.Color.WHITE,
+                //配置轮廓的大小
+                silhouetteSize: 0,
+              };
+              //设置方向,根据实体的位置来配置方向
+              pick.id.orientation = new CM.VelocityOrientationProperty(
+                pick.id.position
+              );
+              //设置模型初始的位置
+              pick.id.viewFrom = new CM.Cartesian3(0, -30, 30);
+              //设置查看器，让模型动起来
+              viewer.clock.shouldAnimate = true;
+            } else {
+              pick.id.model.show = true;
+            }
           }
         }
       }, CM.ScreenSpaceEventType.LEFT_CLICK);
@@ -589,6 +589,19 @@ const CesiumComponent: React.FC<{}> = () => {
       });
     }
   }, [init]);
+
+  useEffect(()=>{
+    if(init){
+      viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function(e: any) {
+        if(curSatellite!=""){
+          let curSatelliteEntity = viewer.entities.getById(`Satellite/${curSatellite}`);
+          if(curSatelliteEntity.model!=undefined){
+            curSatelliteEntity.model.show = false;
+          }
+        }
+      });
+    }
+  },[curSatellite])
 
   const earthRotate = useCallback(() => {
     var spinRate = 1;
@@ -1371,80 +1384,76 @@ const CesiumComponent: React.FC<{}> = () => {
       viewer.camera.changed.addEventListener(() => {
         // 当前高度
         let height = viewer.camera.positionCartographic.height;
-        let baseStationEntity = viewer.entities.getById(
-          `Facility/${curBaseStation?.name}`
-        );
-
-        // 当高度小于一定值 显示模型
-        if (height <= 2000) {
-          baseStationEntity.billboard.show = false;
-          if (baseStationEntity.model == undefined) {
-            baseStationEntity.model = {
-              // 引入模型
-              uri: './baseStation.gltf',
-              // 配置模型大小的最小值
-              minimumPixelSize: 0.05,
-              //配置模型大小的最大值
-              maximumScale: 0.05,
-              //配置模型轮廓的颜色
-              silhouetteColor: CM.Color.WHITE,
-              //配置轮廓的大小
-              silhouetteSize: 0,
-            };
-          } else {
-            baseStationEntity.model.show = true;
-          }
-        } else {
-          if (baseStationEntity.model != undefined) {
-            baseStationEntity.model.show = false;
-            baseStationEntity.billboard.show = true;
-          }
-        }
-
-        if (height <= 1000) {
-          Jsonp(
-            `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
-            {},
-            function (err, res) {
-              let curWeather = res.result.realtime.skycon;
-
-              if (['CLEAR_DAY', 'CLEAR_NIGHT'].includes(curWeather)) {
-                addWeather();
-              } else if (['HEAVY_RAIN', 'STORM_RAIN'].includes(curWeather)) {
-                addWeather('rain', 0.7);
-              } else if (['LIGHT_RAIN', 'MODERATE_RAIN'].includes(curWeather)) {
-                addWeather('rain', 0.3);
-              } else if (['HEAVY_SNOW', 'STORM_SNOW'].includes(curWeather)) {
-                addWeather('snow', 0.7);
-              } else if (['LIGHT_SNOW', 'MODERATE_SNOW'].includes(curWeather)) {
-                addWeather('snow', 0.3);
-              } else if (['FOG'].includes(curWeather)) {
-                addWeather('fog');
-              } else {
-                addWeather();
-              }
-            }
+        if(curBaseStation != null){
+          let baseStationEntity = viewer.entities.getById(
+            `Facility/${curBaseStation?.name}`
           );
+          // 当高度小于一定值 显示模型
+          if (height <= 2000) {
+            baseStationEntity.billboard.show = false;
+            if (baseStationEntity.model == undefined) {
+              baseStationEntity.model = {
+                // 引入模型
+                uri: './baseStation.gltf',
+                // 配置模型大小的最小值
+                minimumPixelSize: 0.05,
+                //配置模型大小的最大值
+                maximumScale: 0.05,
+                //配置模型轮廓的颜色
+                silhouetteColor: CM.Color.WHITE,
+                //配置轮廓的大小
+                silhouetteSize: 0,
+              };
+            } else {
+              baseStationEntity.model.show = true;
+            }
+          } else {
+            if (baseStationEntity.model != undefined) {
+              baseStationEntity.model.show = false;
+              baseStationEntity.billboard.show = true;
+            }
+          }
+          if (height <= 1000) {
+            Jsonp(
+              `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
+              {},
+              function (err, res) {
+                let curWeather = res.result.realtime.skycon;
+                if (['CLEAR_DAY', 'CLEAR_NIGHT'].includes(curWeather)) {
+                  addWeather();
+                } else if (['HEAVY_RAIN', 'STORM_RAIN'].includes(curWeather)) {
+                  addWeather('rain', 0.7);
+                } else if (['LIGHT_RAIN', 'MODERATE_RAIN'].includes(curWeather)) {
+                  addWeather('rain', 0.3);
+                } else if (['HEAVY_SNOW', 'STORM_SNOW'].includes(curWeather)) {
+                  addWeather('snow', 0.7);
+                } else if (['LIGHT_SNOW', 'MODERATE_SNOW'].includes(curWeather)) {
+                  addWeather('snow', 0.3);
+                } else if (['FOG'].includes(curWeather)) {
+                  addWeather('fog');
+                } else {
+                  addWeather();
+                }
+              }
+            );
+          }
+          viewer.camera.setView({
+            destination: CM.Cartesian3.fromDegrees(
+              curBaseStation?.pos[0],
+              curBaseStation?.pos[1],
+              0
+            ),
+            // orientation: {
+            //   heading: CM.Math.toRadians(286.69615060171867),
+            //   pitch: CM.Math.toRadians(-5.205762977472191),
+            //   roll: CM.Math.toRadians(360 || 0)
+            // },
+          });
+          // setIsRotate(false);
+          viewer.camera.lookDown(5000);
+          viewer.camera.moveBackward(500);
         }
       });
-
-      viewer.camera.setView({
-        destination: CM.Cartesian3.fromDegrees(
-          curBaseStation?.pos[0],
-          curBaseStation?.pos[1],
-          0
-        ),
-
-        // orientation: {
-        //   heading: CM.Math.toRadians(286.69615060171867),
-        //   pitch: CM.Math.toRadians(-5.205762977472191),
-        //   roll: CM.Math.toRadians(360 || 0)
-        // },
-      });
-
-      // setIsRotate(false);
-      viewer.camera.lookDown(5000);
-      viewer.camera.moveBackward(500);
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
   return (
