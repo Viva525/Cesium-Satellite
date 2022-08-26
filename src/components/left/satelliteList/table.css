@@ -50,3 +50,9 @@ tbody td{
     color: #fff;
     background-color: transparent  ! important;
 }
+
+.hue-horizontal {
+    width: 90%;
+    height: 50%;
+    margin-left: 10%;
+}

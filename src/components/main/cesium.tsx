@@ -1377,7 +1377,6 @@ const CesiumComponent: React.FC<{}> = () => {
       }
       else if (i[0] === 1) {
         curradarScanner.cylinder.material = new CM.Color(i[2].r/255, i[2].g/255, i[2].b/255, 0.4)
-        console.log(curradarScanner)
       }
     }
 
