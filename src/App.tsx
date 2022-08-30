@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import CesiumComponent from './components/main/cesium';
+import CesiumComponent from './components/main/main';
 
 function App() {
   return (

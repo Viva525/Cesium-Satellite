@@ -17,8 +17,6 @@ type satelliteListType = {
   setSelectSatelliteList: SetState<any[]>
 }
 
-
-
 const SatelliteList: React.FC<satelliteListType> = (props) => {
 
   const { statelliteList, setSelectSatelliteList } = props
