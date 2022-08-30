@@ -31,6 +31,8 @@ var handler: {
   ) => void;
   destroy: () => void;
 };
+
+let c = true
 let nowPicksatellite: any;
 let rain: any, snow: any, fog: any;
 let stages: any;
@@ -302,6 +304,7 @@ const CesiumComponent: React.FC<{}> = () => {
               ele.label.show = false;
             }
             if (ele.path != undefined) {
+              ele.path.show = false; // 设置路径不可看
               // 设置路径样式
               let re_starlink = /Satellite\/STARLINK*/;
               let re_beidou = /Satellite\/BEIDOU*/;
@@ -314,14 +317,13 @@ const CesiumComponent: React.FC<{}> = () => {
                 //   glowPower: 0.2,
                 //   color: entityColor,
                 // });
-
-                
-                
                 // ele.path.material.color = Cesium.Color.RED;
                 // ele.path.material.glowPower = 0.8
+
               }
               if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
+
                 entityColor = Cesium.Color.GREEN;
                 ele.path.width = 5;
                 ele.path.material = new Cesium.PolylineGlowMaterialProperty({
@@ -342,7 +344,6 @@ const CesiumComponent: React.FC<{}> = () => {
                 // ele.path.material.color = Cesium.Color.YELLOW;
                 // ele.path.material.glowPower = 0.8
               }
-              ele.path.show = false; // 设置路径不可看
               //ele.path.material.color = Cesium.Color.WHITE;
             }
 
@@ -355,6 +356,16 @@ const CesiumComponent: React.FC<{}> = () => {
                 // outlineWidth: 4,
                 pixelSize: 5,
               };
+
+              // ele.polyline = {
+              //       material: new Cesium.LineFlowMaterialProperty({
+              //         color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+              //         speed: 1,
+              //         percent: 0.1,
+              //         gradient: 0.01,
+              //       }),
+              //     }
+              
             }
 
             // 绘制雷达扫描 
@@ -381,12 +392,15 @@ const CesiumComponent: React.FC<{}> = () => {
             // 卫星辐射的长度
             let satelliteLenght = Math.abs(height + earthRadius - earthHeight);
             var property = new Cesium.SampledPositionProperty();
+            var lineProperty = new Cesium.SampledPositionProperty();
             let radarHeight: number = 0;
             for (var i = 0; i < postionValues.length / 3; i++) {
               let time = Cesium.JulianDate.clone(
                 ele.position._property._times[i]
               );
               let radarHeight = earthHeight + satelliteLenght / 2 - earthRadius;
+              let flowHeight = height;
+              
               // @ts-ignore
               let [lng, lat] = GetWGS84FromDKR(
                 new Cesium.Cartesian3(
@@ -396,11 +410,35 @@ const CesiumComponent: React.FC<{}> = () => {
                 ),
                 1
               );
+
+              lineFlowPosition.push(new Cesium.Cartesian3(
+                postionValues[i * 3],
+                postionValues[i * 3 + 1],
+                postionValues[i * 3 + 2]
+              ))
+
               let radarPosition = Cesium.Cartesian3.fromDegrees(
                 eval(lng),
                 eval(lat),
                 radarHeight
               ); 
+
+
+
+              let a = []
+              a.push(new Cesium.Cartesian3(
+                postionValues[i * 3],
+                postionValues[i * 3 + 1],
+                postionValues[i * 3 + 2]
+              ))
+              if(i  < postionValues.length / 3){
+                a.push(new Cesium.Cartesian3(
+                  postionValues[(i+1) * 3],
+                  postionValues[(i+1) * 3 + 1],
+                  postionValues[(i+1) * 3 + 2]
+                ))
+              }
+              
               // 添加位置，和时间对应
               property.addSample(time, radarPosition);
               property._property._interpolationAlgorithm.type =
@@ -409,11 +447,19 @@ const CesiumComponent: React.FC<{}> = () => {
                 ele.position._property._interpolationDegree;
               property._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
 
-              lineFlowPosition.push(new Cesium.Cartesian3(
-                postionValues[i * 3],
-                postionValues[i * 3 + 1],
-                postionValues[i * 3 + 2]
-              ))
+
+              let flowPosition = Cesium.Cartesian3.fromDegrees(
+                eval(lng),
+                eval(lat),
+                flowHeight
+              ); 
+              lineProperty.addSample(time, flowPosition);
+              lineProperty._property._interpolationAlgorithm.type =
+                ele.position._property._interpolationAlgorithm.type;
+                lineProperty._property._interpolationDegree =
+                ele.position._property._interpolationDegree;
+                lineProperty._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
+
             }
             radarScanner(
               property,
@@ -422,10 +468,13 @@ const CesiumComponent: React.FC<{}> = () => {
               bottomRadius,
               entityColor
             );
+            
+            if(c){
+              
+            lineFlow('lineFlow' + ele.id, lineFlowPosition)
+            }
+            c = false
 
-
-            console.log(property);  
-            lineFlow('lineFlow' + ele.id, position)
             // 更改显示的时间
             // var timeInterval = new Cesium.TimeInterval({
             //   start: start,
@@ -658,6 +707,7 @@ const CesiumComponent: React.FC<{}> = () => {
         }),
       },
     });
+    
   }
 
   // 笛卡尔坐标系转经纬度
