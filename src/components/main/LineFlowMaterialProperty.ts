@@ -1,5 +1,4 @@
-//@ts-ignore
-import * as Cesium from 'cesium/Cesium';
+//@ts-nocheck
 /*
  * @Description: 飞线效果（参考开源代码）
  * @Version: 1.0
@@ -12,12 +11,12 @@ export default class LineFlowMaterialProperty {
     color: any;
     speed: any;
     percent: any;
+    gradient: any;
     _definitionChanged: any;
     _color: undefined;
     _speed: undefined;
     _percent: undefined;
     _gradient: undefined;
-    gradient: any;
 
     constructor(options: { color: any; speed: any; percent: any; gradient: any; }) {
         this._definitionChanged = new Cesium.Event();
