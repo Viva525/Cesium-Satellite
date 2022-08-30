@@ -1,10 +1,11 @@
+// @ts-nocheck
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import Jsonp from 'jsonp';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 //@ts-ignore
-import * as Cesium from 'cesium/Cesium';
+// import * as Cesium from 'cesium/Cesium';
 import SatelliteList from '../left/satelliteList';
 import 'antd/dist/antd.css';
 import './css/cesium.css';
@@ -16,7 +17,7 @@ import SatelliteBar from '../left/satelliteBar';
 import SatelliteNumberChart from '../left/satelliteNumberChart';
 import { randomInt } from 'crypto';
 import SatelliteInfo from '../right/satelliteInfo';
-// import {LineFlowMaterialProperty} from './LineFlowMaterialProperty';
+import "./LineFlowMaterialProperty"
 //@ts-ignore
 let viewer: any;
 var handler: {
@@ -308,11 +309,14 @@ const CesiumComponent: React.FC<{}> = () => {
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
                 entityColor = Cesium.Color.RED;
-                ele.path.width = 5;
-                ele.path.material = new Cesium.PolylineGlowMaterialProperty({
-                  glowPower: 0.2,
-                  color: entityColor,
-                });
+                // ele.path.width = 5;
+                // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
+                //   glowPower: 0.2,
+                //   color: entityColor,
+                // });
+
+                
+                
                 // ele.path.material.color = Cesium.Color.RED;
                 // ele.path.material.glowPower = 0.8
               }
@@ -353,7 +357,8 @@ const CesiumComponent: React.FC<{}> = () => {
               };
             }
 
-            // 绘制雷达扫描
+            // 绘制雷达扫描 
+            let lineFlowPosition = []
             let radarId = 'radarScan_' + ele.id;
             let postionValues = [...ele.position._property._values];
             let cartographic = Cesium.Cartographic.fromCartesian(
@@ -395,13 +400,20 @@ const CesiumComponent: React.FC<{}> = () => {
                 eval(lng),
                 eval(lat),
                 radarHeight
-              ); // 添加位置，和时间对应
+              ); 
+              // 添加位置，和时间对应
               property.addSample(time, radarPosition);
               property._property._interpolationAlgorithm.type =
                 ele.position._property._interpolationAlgorithm.type;
               property._property._interpolationDegree =
                 ele.position._property._interpolationDegree;
               property._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
+
+              lineFlowPosition.push(new Cesium.Cartesian3(
+                postionValues[i * 3],
+                postionValues[i * 3 + 1],
+                postionValues[i * 3 + 2]
+              ))
             }
             radarScanner(
               property,
@@ -410,6 +422,10 @@ const CesiumComponent: React.FC<{}> = () => {
               bottomRadius,
               entityColor
             );
+
+
+            console.log(property);  
+            lineFlow('lineFlow' + ele.id, position)
             // 更改显示的时间
             // var timeInterval = new Cesium.TimeInterval({
             //   start: start,
@@ -581,9 +597,6 @@ const CesiumComponent: React.FC<{}> = () => {
       previousTime = viewer.clock.currentTime.secondsOfDay;
       setIsRotate(true);
 
-      // console.log(Cesium.);
-
-      // drawFlowingLineHandler()
       // 配置时间轴
       // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
       // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
@@ -602,7 +615,8 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       );
       // 抛物飞线效果
-      // parabolaFlowInit(viewer, 3);
+        
+      parabolaFlowInit(viewer, 30);
     }
   }, [init]);
 
@@ -630,6 +644,21 @@ const CesiumComponent: React.FC<{}> = () => {
     previousTime = currentTime;
     viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
   }, []);
+
+  const lineFlow = (id, position) => {
+    viewer.entities.add({
+      id: id,
+      polyline: {
+        positions: position,
+        material: new Cesium.LineFlowMaterialProperty({
+          color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+          speed: 1,
+          percent: 0.1,
+          gradient: 0.01,
+        }),
+      },
+    });
+  }
 
   // 笛卡尔坐标系转经纬度
   const GetWGS84FromDKR = (coor: any, type: number) => {
@@ -1377,127 +1406,92 @@ const CesiumComponent: React.FC<{}> = () => {
     }
   };
 
-  // // 绘制光流效果
-  // function drawFlowingLineHandler() {
-  //   viewer.entities.add({
-  //     id: 'test',
-  //     name: 'test',
-  //     polyline: {
-  //       positions: Cesium.Cartesian3.fromDegreesArrayHeights([
-  //         50, -10, 500000, 140, -10, 500000,
-  //       ]),
-  //       width: 10,
-  //       material: new Cesium.LineFlowMaterialProperty(
-  //         Cesium.Color.YELLOW,
-  //         3000 //ms
-  //       ), //修改抛物线材质
-  //     }
-  //   })
-  //   }
+  
 
-  //   // 清除所有实体
-  //   function clearAllEntitiesHandler() {
-  //     viewer.entities.removeAll()
-  //   }
+  // 抛物飞线效果
+  function parabolaFlowInit(_viewer, _num) {
+    console.log(Cesium, _viewer);
+    
+    let _center = [113.9236839, 22.528061];
+    let _positions = [
+      [113.8236839, 22.528061],
+      [114.0236839, 22.528061],
+      [113.9236839, 22.428061],
+      [113.9236839, 22.628061],
+      [113.8236839, 22.428061],
+      [114.0236839, 22.628061],
+      [113.8236839, 22.628061],
+      [114.0236839, 22.428061],
+    ];
+    _positions.forEach((item) => {
+      let _siglePositions = parabola(_center, item, 5000);
+      
+      // 创建飞线
+      for (let i = 0; i < _num; i++) {
+        _viewer.entities.add({
+          polyline: {
+            positions: _siglePositions,
+            material: new Cesium.LineFlowMaterialProperty({
+              color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+              speed: 15 * Math.random(),
+              percent: 0.1,
+              gradient: 0.01,
+            }),
+          },
+        });
+      }
+    });
 
-  // /**
-  //  * @description: 抛物飞线效果初始化
-  //  * @param {*} _viewer
-  //  * @param {*} _num :每条线上的飞线数量
-  //  * @return {*}
-  //  */
-  // function parabolaFlowInit(_viewer: any, _num: number) {
-  //   let _center = [113.9236839, 22.528061];
-  //   let _positions = [
-  //     [113.8236839, 22.528061],
-  //     [114.0236839, 22.528061],
-  //     [113.9236839, 22.428061],
-  //     [113.9236839, 22.628061],
-  //     [113.8236839, 22.428061],
-  //     [114.0236839, 22.628061],
-  //     [113.8236839, 22.628061],
-  //     [114.0236839, 22.428061],
-  //   ];
-  //   _positions.forEach((item) => {
-  //     let _siglePositions = parabola(_center, item, 5000);
-  //     // 创建飞线
-  //     for (let i = 0; i < _num; i++) {
-  //       _viewer.entities.add({
-  //         polyline: {
-  //           positions: _siglePositions,
-  //           material: new Cesium.LineFlowMaterialProperty({
-  //             color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-  //             speed: 15 * Math.random(),
-  //             percent: 0.1,
-  //             gradient: 0.01,
-  //           }),
-  //         },
-  //       });
-  //     }
-  //     // 创建轨迹线
-  //     _viewer.entities.add({
-  //       polyline: {
-  //         positions: _siglePositions,
-  //         material: new Cesium.Color(1.0, 1.0, 0.0, 0.2),
-  //       },
-  //     });
-  //   });
-
-  //   /**
-  //    * @description: 抛物线构造函数（参考开源代码）
-  //    * @param {*}
-  //    * @return {*}
-  //    */
-  //   function parabola(
-  //     startPosition: number[],
-  //     endPosition: number[],
-  //     height = 0,
-  //     count = 50
-  //   ) {
-  //     //方程 y=-(4h/L^2)*x^2+h h:顶点高度 L：横纵间距较大者
-  //     let result = [];
-  //     height = Math.max(+height, 100);
-  //     count = Math.max(+count, 50);
-  //     let diffLon = Math.abs(startPosition[0] - endPosition[0]);
-  //     let diffLat = Math.abs(startPosition[1] - endPosition[1]);
-  //     let L = Math.max(diffLon, diffLat);
-  //     let dlt = L / count;
-  //     if (diffLon > diffLat) {
-  //       //base on lon
-  //       let delLat = (endPosition[1] - startPosition[1]) / count;
-  //       if (startPosition[0] - endPosition[0] > 0) {
-  //         dlt = -dlt;
-  //       }
-  //       for (let i = 0; i < count; i++) {
-  //         let h =
-  //           height -
-  //           (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
-  //             Math.pow(L, 2);
-  //         let lon = startPosition[0] + dlt * i;
-  //         let lat = startPosition[1] + delLat * i;
-  //         let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
-  //         result.push(point);
-  //       }
-  //     } else {
-  //       //base on lat
-  //       let delLon = (endPosition[0] - startPosition[0]) / count;
-  //       if (startPosition[1] - endPosition[1] > 0) {
-  //         dlt = -dlt;
-  //       }
-  //       for (let i = 0; i < count; i++) {
-  //         let h =
-  //           height -
-  //           (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
-  //             Math.pow(L, 2);
-  //         let lon = startPosition[0] + delLon * i;
-  //         let lat = startPosition[1] + dlt * i;
-  //         let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
-  //         result.push(point);
-  //       }
-  //     }
-  //     return result;
-  //   }
-  // }
+    /**
+     * @description: 抛物线构造函数（参考开源代码）
+     * @param {*}
+     * @return {*}
+     */
+    function parabola(startPosition, endPosition, height = 0, count = 50) {
+      //方程 y=-(4h/L^2)*x^2+h h:顶点高度 L：横纵间距较大者
+      let result = [];
+      height = Math.max(+height, 100);
+      count = Math.max(+count, 50);
+      let diffLon = Math.abs(startPosition[0] - endPosition[0]);
+      let diffLat = Math.abs(startPosition[1] - endPosition[1]);
+      let L = Math.max(diffLon, diffLat);
+      let dlt = L / count;
+      if (diffLon > diffLat) {
+        //base on lon
+        let delLat = (endPosition[1] - startPosition[1]) / count;
+        if (startPosition[0] - endPosition[0] > 0) {
+          dlt = -dlt;
+        }
+        for (let i = 0; i < count; i++) {
+          let h =
+            height -
+            (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
+              Math.pow(L, 2);
+          let lon = startPosition[0] + dlt * i;
+          let lat = startPosition[1] + delLat * i;
+          let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
+          result.push(point);
+        }
+      } else {
+        //base on lat
+        let delLon = (endPosition[0] - startPosition[0]) / count;
+        if (startPosition[1] - endPosition[1] > 0) {
+          dlt = -dlt;
+        }
+        for (let i = 0; i < count; i++) {
+          let h =
+            height -
+            (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
+              Math.pow(L, 2);
+          let lon = startPosition[0] + delLon * i;
+          let lat = startPosition[1] + dlt * i;
+          let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
+          result.push(point);
+        }
+      }
+      return result;
+    }
+  }
 
   useEffect(() => {
     let count = 0,
@@ -1614,101 +1608,7 @@ const CesiumComponent: React.FC<{}> = () => {
       });
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
-  // 将图片作为材质添加到cesium中，供绘制流动的线段使用
-  function polylineTrailLinkMaterialProperty() {
-    // 流动线纹理
-    function PolylineTrailLinkMaterialProperty(
-      this: any,
-      color: any,
-      duration: any
-    ) {
-      this._definitionChanged = new Cesium.Event();
-      this._color = undefined;
-      this._colorSubscription = undefined;
-      this.color = color;
-      this.duration = duration;
-      this._time = new Date().getTime();
-    }
 
-    Object.defineProperties(PolylineTrailLinkMaterialProperty.prototype, {
-      isConstant: {
-        get: function () {
-          return false;
-        },
-      },
-      definitionChanged: {
-        get: function () {
-          return this._definitionChanged;
-        },
-      },
-      color: Cesium.createPropertyDescriptor('color'),
-    });
-
-    PolylineTrailLinkMaterialProperty.prototype.getType = function (time: any) {
-      return 'PolylineTrailLink';
-    };
-    PolylineTrailLinkMaterialProperty.prototype.getValue = function (
-      time: any,
-      result: { color?: any; image?: any; time?: any }
-    ) {
-      if (!Cesium.defined(result)) {
-        result = {};
-      }
-      result.color = Cesium.Property.getValueOrClonedDefault(
-        this._color,
-        time,
-        Cesium.Color.WHITE,
-        result.color
-      );
-      result.image = Cesium.Material.PolylineTrailLinkImage;
-      result.time =
-        ((new Date().getTime() - this._time) % this.duration) / this.duration;
-      return result;
-    };
-    PolylineTrailLinkMaterialProperty.prototype.equals = function (other: {
-      _color: any;
-    }) {
-      return (
-        this === other ||
-        (other instanceof PolylineTrailLinkMaterialProperty &&
-          Cesium.Property.equals(this._color, other._color))
-      );
-    };
-
-    Cesium.Material._materialCache.addMaterial(
-      Cesium.Material.PolylineTrailLinkType,
-      {
-        fabric: {
-          type: Cesium.Material.PolylineTrailLinkType,
-          uniforms: {
-            color: new Cesium.Color(255.0, 255.0, 255.0, 1),
-            image: Cesium.Material.PolylineTrailLinkImage,
-            time: 0,
-          },
-          source: Cesium.Material.PolylineTrailLinkSource,
-        },
-        translucent: function (material: any) {
-          return true;
-        },
-      }
-    );
-
-    Cesium.PolylineTrailLinkMaterialProperty =PolylineTrailLinkMaterialProperty;
-    console.log(Cesium);
-    Cesium.Material.PolylineTrailLinkType = 'PolylineTrailLink';
-    Cesium.Material.PolylineTrailLinkImage =
-      'data:image/png;base64,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'; //图片 图片为箭头
-    Cesium.Material.PolylineTrailLinkSource =
-      'czm_material czm_getMaterial(czm_materialInput materialInput)\n\
-{\n\
-    czm_material material = czm_getDefaultMaterial(materialInput);\n\
-    vec2 st = materialInput.st;\n\
-    vec4 colorImage = texture2D(image, vec2(fract(st.s - time), st.t));\n\
-    material.alpha = colorImage.a * color.a;\n\
-    material.diffuse = (colorImage.rgb+color.rgb)/2.0;\n\
-    return material;\n\
-}';
-  }
   return (
     <>
       <div id='title'>卫星态势仿真监控平台</div>
