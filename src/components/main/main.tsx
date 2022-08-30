@@ -196,8 +196,8 @@ const CesiumComponent: React.FC<{}> = () => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () {},
-        highlight: function () {},
+        declare: function () { },
+        highlight: function () { },
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -271,7 +271,7 @@ const CesiumComponent: React.FC<{}> = () => {
             menu.appendChild(option);
           }
         },
-        reset: function () {},
+        reset: function () { },
       };
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton('Satellites', function () {
@@ -315,8 +315,8 @@ const CesiumComponent: React.FC<{}> = () => {
                 //   color: entityColor,
                 // });
 
-                
-                
+
+
                 // ele.path.material.color = Cesium.Color.RED;
                 // ele.path.material.glowPower = 0.8
               }
@@ -400,7 +400,7 @@ const CesiumComponent: React.FC<{}> = () => {
                 eval(lng),
                 eval(lat),
                 radarHeight
-              ); 
+              );
               // 添加位置，和时间对应
               property.addSample(time, radarPosition);
               property._property._interpolationAlgorithm.type =
@@ -424,7 +424,7 @@ const CesiumComponent: React.FC<{}> = () => {
             );
 
 
-            console.log(property);  
+            console.log(property);
             lineFlow('lineFlow' + ele.id, position)
             // 更改显示的时间
             // var timeInterval = new Cesium.TimeInterval({
@@ -615,7 +615,7 @@ const CesiumComponent: React.FC<{}> = () => {
         }
       );
       // 抛物飞线效果
-        
+
       parabolaFlowInit(viewer, 30);
     }
   }, [init]);
@@ -718,224 +718,7 @@ const CesiumComponent: React.FC<{}> = () => {
     // setSatelliteList(ele => [...ele, `baseStation_${id}`])
     //添加矩形Entity
     let radius = 1;
-    viewer.entities.add({
-      id: `ShowRange_${id}`,
-      name: '选取范围',
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray([
-            lng + radius,
-            lat,
-            lng + radius / 2,
-            lat + (radius / 2) * Math.sqrt(3),
-            lng - radius / 2,
-            lat + (radius / 2) * Math.sqrt(3),
-            lng - radius,
-            lat,
-            lng - radius / 2,
-            lat - (radius / 2) * Math.sqrt(3),
-            lng + radius / 2,
-            lat - (radius / 2) * Math.sqrt(3),
-          ])
-        ),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 4,
-        fill: false,
-        material: Cesium.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
-        ).withAlpha(0.1),
-      },
-    });
-    // 右边的六边形
-    let lng2 = lng;
-    let lat2 = lat + radius * Math.sqrt(3);
-    viewer.entities.add({
-      id: `ShowRange_${id}1`,
-      name: '选取范围',
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray([
-            lng2 + radius,
-            lat2,
-            lng2 + radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius,
-            lat2,
-            lng2 - radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-            lng2 + radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-          ])
-        ),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 4,
-        fill: false,
-        material: Cesium.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
-        ).withAlpha(0.1),
-      },
-    });
-    // 左边的六边形
-    lat2 = lat - radius * Math.sqrt(3);
-    viewer.entities.add({
-      id: `ShowRange_${id}2`,
-      name: '选取范围',
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray([
-            lng2 + radius,
-            lat2,
-            lng2 + radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius,
-            lat2,
-            lng2 - radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-            lng2 + radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-          ])
-        ),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 4,
-        fill: false,
-        material: Cesium.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
-        ).withAlpha(0.1),
-      },
-    });
-    // 左上角六边形
-    lng2 = lng + (radius * 3) / 2;
-    lat2 = lat - (radius * Math.sqrt(3)) / 2;
-    viewer.entities.add({
-      id: `ShowRange_${id}3`,
-      name: '选取范围',
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray([
-            lng2 + radius,
-            lat2,
-            lng2 + radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius,
-            lat2,
-            lng2 - radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-            lng2 + radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-          ])
-        ),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 4,
-        fill: false,
-        material: Cesium.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
-        ).withAlpha(0.1),
-      },
-    });
-    //左下角六边形
-    lng2 = lng - (radius * 3) / 2;
-    viewer.entities.add({
-      id: `ShowRange_${id}4`,
-      name: '选取范围',
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray([
-            lng2 + radius,
-            lat2,
-            lng2 + radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius,
-            lat2,
-            lng2 - radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-            lng2 + radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-          ])
-        ),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 4,
-        fill: false,
-        material: Cesium.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
-        ).withAlpha(0.1),
-      },
-    });
-    //右上角六边形
-    lng2 = lng + (radius * 3) / 2;
-    lat2 = lat + (radius * Math.sqrt(3)) / 2;
-    viewer.entities.add({
-      id: `ShowRange_${id}5`,
-      name: '选取范围',
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray([
-            lng2 + radius,
-            lat2,
-            lng2 + radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius,
-            lat2,
-            lng2 - radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-            lng2 + radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-          ])
-        ),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 4,
-        fill: false,
-        material: Cesium.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
-        ).withAlpha(0.1),
-      },
-    });
-    //右下角六边形
-    lng2 = lng - (radius * 3) / 2;
-    viewer.entities.add({
-      id: `ShowRange_${id}6`,
-      name: '选取范围',
-      polygon: {
-        hierarchy: new Cesium.PolygonHierarchy(
-          Cesium.Cartesian3.fromDegreesArray([
-            lng2 + radius,
-            lat2,
-            lng2 + radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius / 2,
-            lat2 + (radius / 2) * Math.sqrt(3),
-            lng2 - radius,
-            lat2,
-            lng2 - radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-            lng2 + radius / 2,
-            lat2 - (radius / 2) * Math.sqrt(3),
-          ])
-        ),
-        outline: true,
-        outlineColor: Cesium.Color.RED,
-        outlineWidth: 4,
-        fill: false,
-        material: Cesium.Color.fromCssColorString(
-          'rgba(5, 39, 175, 0.3)'
-        ).withAlpha(0.1),
-      },
-    });
+    addHexagonAll(lat, lng, radius, id, 1)
   };
   // 绘制线条测量距离
   const measureDistance = () => {
@@ -1051,7 +834,7 @@ const CesiumComponent: React.FC<{}> = () => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -1199,7 +982,7 @@ const CesiumComponent: React.FC<{}> = () => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -1225,7 +1008,7 @@ const CesiumComponent: React.FC<{}> = () => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
@@ -1406,12 +1189,10 @@ const CesiumComponent: React.FC<{}> = () => {
     }
   };
 
-  
-
   // 抛物飞线效果
   function parabolaFlowInit(_viewer, _num) {
     console.log(Cesium, _viewer);
-    
+
     let _center = [113.9236839, 22.528061];
     let _positions = [
       [113.8236839, 22.528061],
@@ -1425,7 +1206,7 @@ const CesiumComponent: React.FC<{}> = () => {
     ];
     _positions.forEach((item) => {
       let _siglePositions = parabola(_center, item, 5000);
-      
+
       // 创建飞线
       for (let i = 0; i < _num; i++) {
         _viewer.entities.add({
@@ -1466,7 +1247,7 @@ const CesiumComponent: React.FC<{}> = () => {
           let h =
             height -
             (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
-              Math.pow(L, 2);
+            Math.pow(L, 2);
           let lon = startPosition[0] + dlt * i;
           let lat = startPosition[1] + delLat * i;
           let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
@@ -1482,7 +1263,7 @@ const CesiumComponent: React.FC<{}> = () => {
           let h =
             height -
             (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
-              Math.pow(L, 2);
+            Math.pow(L, 2);
           let lon = startPosition[0] + delLon * i;
           let lat = startPosition[1] + dlt * i;
           let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
@@ -1491,6 +1272,86 @@ const CesiumComponent: React.FC<{}> = () => {
       }
       return result;
     }
+  }
+
+  // 添加六边形
+  function addHexagonAll(lat, lng, radius, id, index) {
+    // 最大添加次数
+    if(index >= 6){
+      return 
+    }
+    addOneHexagon(lat, lng, radius, id + index)
+    // 右边的六边形
+    let lng2 = lng;
+    let lat2 = lat + radius * Math.sqrt(3);
+    addOneHexagon(lat2, lng2, radius, id + index + "1")
+    if(Math.floor(Math.random()*10) > 2){
+      addHexagonAll(lat2, lng2, radius, id + "index" + "1", index + 1)
+    }
+    // 左边的六边形
+    lat2 = lat - radius * Math.sqrt(3);
+    addOneHexagon(lat2, lng2, radius, id + index + "2")
+    if(Math.floor(Math.random()*10) > 2){
+      addHexagonAll(lat2, lng2, radius, id + "index" + "2", index + 1)
+    }
+    // 左上角六边形
+    lng2 = lng + (radius * 3) / 2;
+    lat2 = lat - (radius * Math.sqrt(3)) / 2;
+    addOneHexagon(lat2, lng2, radius, id + index + "3")
+    if(Math.floor(Math.random()*10) > 2){
+      addHexagonAll(lat2, lng2, radius, id + "index" + "3", index + 1)
+    }
+    //左下角六边形
+    lng2 = lng - (radius * 3) / 2;
+    addOneHexagon(lat2, lng2, radius, id + index + "4")
+    if(Math.floor(Math.random()*10) > 2){
+      addHexagonAll(lat2, lng2, radius, id + "index" + "4", index + 1)
+    }
+    //右上角六边形
+    lng2 = lng + (radius * 3) / 2;
+    lat2 = lat + (radius * Math.sqrt(3)) / 2;
+    addOneHexagon(lat2, lng2, radius, id + index + "5")
+    if(Math.floor(Math.random()*10) > 2){
+      addHexagonAll(lat2, lng2, radius, id + "index" + "5", index + 1)
+    }
+    //右下角六边形
+    lng2 = lng - (radius * 3) / 2;
+    addOneHexagon(lat2, lng2, radius, id + index + "6")
+    if(Math.floor(Math.random()*10) > 2){
+      addHexagonAll(lat2, lng2, radius, id + "index" + "6", index + 1)
+    }
+  }
+  // 添加一个六边形
+  function addOneHexagon(lat, lng, radius, id) {
+    viewer.entities.add({
+      id: `ShowRange_${id}`,
+      name: '选取范围',
+      polygon: {
+        hierarchy: new Cesium.PolygonHierarchy(
+          Cesium.Cartesian3.fromDegreesArray([
+            lng + radius,
+            lat,
+            lng + radius / 2,
+            lat + (radius / 2) * Math.sqrt(3),
+            lng - radius / 2,
+            lat + (radius / 2) * Math.sqrt(3),
+            lng - radius,
+            lat,
+            lng - radius / 2,
+            lat - (radius / 2) * Math.sqrt(3),
+            lng + radius / 2,
+            lat - (radius / 2) * Math.sqrt(3),
+          ])
+        ),
+        outline: true,
+        outlineColor: Cesium.Color.RED,
+        outlineWidth: 4,
+        fill: false,
+        material: Cesium.Color.fromCssColorString(
+          'rgba(5, 39, 175, 0.3)'
+        ).withAlpha(0.1),
+      },
+    });
   }
 
   useEffect(() => {
