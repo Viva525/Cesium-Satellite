@@ -1620,6 +1620,18 @@ const CesiumComponent: React.FC<{}> = () => {
         >
           MeasureArea
         </button>
+        <button
+          type="button"
+          id="measureArea"
+          style={{float:"right", marginRight:"2vw"}}
+          onClick={() => {
+            //debugger;
+            window.location="http://localhost:3000/satelliteDashboard"
+          }}
+          className="cesium-button"
+        >
+          Satellite Situation
+        </button>
       </div>
       <div id="left-border-line"></div>
       <div id="right-border-line"></div>

@@ -1,0 +1,62 @@
+.dashboard-container{
+    background-color: #1c1d1f;
+}
+
+.dashboard-title{
+    height: 5vh;
+    padding-left: 2vw;
+    background: #222;
+    box-shadow: 2px 8px 16px rgba(0 , 0, 0, 0.5);
+}
+
+.dashboard-title p{
+    display: inline-block;
+    line-height: 5vh;
+    color: #eee;
+    font-size: 24px;
+    letter-spacing: 3px;
+}
+
+.dashboard-button {
+    height: 3vh;
+    color: #bb731c;
+    font-size: 18px;
+    letter-spacing: 2px;
+    float: right;
+    margin: 1vh 2vw 0 0;
+    border: none;
+    cursor: pointer;
+    background-color: #222;
+}
+
+.charts-container{
+    height: 95vh;
+    width: 100%;
+}
+
+.ground-info{
+    height: 40%;
+    width: 100%;
+    padding-top: 1vh;
+}
+
+.satellite-info{
+    height: 60%;
+    width: 100%;
+    padding-top: 1vh;
+}
+
+.ground-info p, .satellite-info p {
+    color: #eee;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-left: 2vw;
+}
+
+.chart-list {
+    height: 90%;
+    padding-top: 1vh;
+    padding-left: 2vw;
+    display: flex;
+    flex-direction: row;
+}
