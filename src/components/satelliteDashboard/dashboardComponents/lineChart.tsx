@@ -54,7 +54,8 @@ const LineChart: React.FC<LineChartProps> = (props) => {
         name: legend[i],
         type: "bar",
         barWidth: 3,
-        data: yData[i],
+        //@ts-ignore
+        data: yData[i].slice(0, 20),
         itemStyle: {
           color: {
             x: 0,
@@ -76,6 +77,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
           },
         },
       };
+      
       tmpSeries.push(t);
     }
     let option = {
@@ -85,21 +87,21 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       },
       grid: {
         top: "16%",
-        left: "10%",
-        right: "2%",
+        left: "5%",
+        right: "5%",
         bottom: "15%",
       },
       legend: {
         align: "left",
         right: "5%",
-        top: "5%",
+        top: "1%",
         type: "plain",
         textStyle: {
           color: "white",
           fontSize: 12,
         },
         itemGap: 5,
-        itemWidth: 15,
+        // itemWidth: 15,
         data: legend,
       },
       calculable: true,
@@ -132,7 +134,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
           axisTick: {
             show: false,
           },
-          data: xData,
+          data: xData.slice(0, 20),
         },
       ],
       yAxis: [
@@ -221,7 +223,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       legend: {
         align: "left",
         right: "5%",
-        top: "5%",
+        top: "1%",
         type: "plain",
         textStyle: {
           color: "white",
@@ -234,8 +236,8 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       },
       grid: {
         top: "16%",
-        left: "10%",
-        right: "2%",
+        left: "5%",
+        right: "5%",
         bottom: "15%",
       },
       xAxis: [
@@ -267,7 +269,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
           axisTick: {
             show: false,
           },
-          data: xData,
+          data: xData.slice(0, 20),
         },
       ],
       yAxis: [
@@ -357,7 +359,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
               shadowBlur: 20, //shadowBlur设图形阴影的模糊大小。配合shadowColor,shadowOffsetX/Y, 设置图形的阴影效果。
             },
           },
-          data: yData,
+          data: yData.slice(0, 20),
         },
       ],
     };

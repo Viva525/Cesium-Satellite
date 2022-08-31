@@ -139,38 +139,38 @@ const SatelliteDashboard: React.FC<{}> = () => {
                 yData={groundStabilityState["AvgTime"]}
                 legend={["AvgTime"]}
               />
-            )}
+            )}                                                                                
           </div>
         </div>
 
         <div className="satellite-info">
           <p>卫星节点运行效能</p>
           <div className="chart-list">
-            <TextCard
+            {/* <TextCard
               title={"卫星覆盖率"}
               width={300}
               height={"100%"}
               content={"————"}
-            />
+            /> */}
             <TextCard
               title={"卫星平均工作时间"}
               width={300}
               height={"100%"}
               content={"22.31"}
             />
-            <TextCard
+            {/* <TextCard
               title={"卫星频率利用率"}
               width={300}
               height={"100%"}
               content={"————"}
-            />
+            /> */}
             {satelliteCoverageState === null ? (
               <></>
             ) : (
               <LineChart
                 title={"satelliteCoverage"}
                 type={"Bar"}
-                width={550}
+                width={"30%"}
                 height={"100%"}
                 xData={satelliteCoverageState["DateTime"]}
                 yData={[
