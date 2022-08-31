@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import * as echarts from "echarts";
 
 type LineChartProps = {
     title:string,
@@ -20,12 +21,22 @@ const LineChart: React.FC<LineChartProps> = (props) => {
 
     useEffect(()=>{
         if(init){
+            let myChart = echarts.getInstanceByDom(chartRef.current as unknown as HTMLDivElement)
+            if(type === 'Bar'){
+                initBarChart()
+            }else if(type === 'Line'){
+                initLineChart()
+            }
             console.log(xData);
             console.log(yData);
         }
     },[init])
 
-    const initChart = ()=>{
+    const initBarChart = ()=>{
+
+    }
+
+    const initLineChart = () => {
 
     }
 
