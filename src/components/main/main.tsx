@@ -143,23 +143,27 @@ const CesiumComponent: React.FC<{}> = () => {
         animation: false,
       });
       // 添加高德影像图
+      const imageryLayers = viewer.imageryLayers;
+        imageryLayers.remove(imageryLayers.get(0));
       let atLayer = new Cesium.ArcGisMapServerImageryProvider({
         url: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
         minimumLevel: 3,
         maximumLevel: 18,
       });
-      viewer.imageryLayers.addImageryProvider(atLayer);
+      imageryLayers.addImageryProvider(atLayer);
 
-      // 开启光照
+      // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = true;
       viewer.shadows = true;
-      // 亮度设置
       // stages = viewer.scene.postProcessStages;
       // viewer.scene.brightness =
       // viewer.scene.brightness ||
       // stages.add(Cesium.PostProcessStageLibrary.createBrightnessStage());
       // viewer.scene.brightness.enabled = true;
-      // viewer.scene.brightness.uniforms.brightness = Number(2.5);
+      // viewer.scene.brightness.uniforms.brightness = Number(2);
+
+      let layer = imageryLayers.get(0)
+      layer['brightness'] = 6
 
       // 更换天空盒
       // let spaceSkybox = new Cesium.SkyBox({
@@ -170,12 +174,18 @@ const CesiumComponent: React.FC<{}> = () => {
       //     positiveY: "./images/Space_Skybox/starmap_2020_16k_py.jpg",
       //     negativeZ: "./images/Space_Skybox/starmap_2020_16k_mz.jpg",
       //     positiveZ: "./images/Space_Skybox/starmap_2020_16k_pz.jpg",
+      //     // negativeX: "./images/star_blue_mx.png",
+      //     // positiveX: "./images/star_blue_px.png",
+      //     // negativeY: "./images/star_blue_my.png",
+      //     // positiveY: "./images/star_blue_py.png",
+      //     // negativeZ: "./images/star_blue_mz.png",
+      //     // positiveZ: "./images/star_blue_pz.png",
       //   },
       // });
       // viewer.scene.skyBox = spaceSkybox;
 
       // 背景切换为图片 
-                                // 去掉黑色星空背景
+      // 去掉黑色星空背景
       viewer.scene.skyBox.show = false;
       // viewer.scene.sun.show = true
       // viewer.scene.moon.show = true
@@ -658,18 +668,27 @@ const CesiumComponent: React.FC<{}> = () => {
       viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(
         () => {
           setIsRotate(false);
+          let layer = viewer.imageryLayers.get(0)
+          layer['brightness'] = 4
         }
       );
+
       viewer.sceneModePicker.viewModel.morphTo3D.afterExecute.addEventListener(
         () => {
           setTimeout(() => {
             setIsRotate(true);
-          }, 1000);
+            let layer = viewer.imageryLayers.get(0)
+            layer['brightness'] = 6
+          }, 2000);
         }
       );
       // 抛物飞线效果
 
-      parabolaFlowInit(viewer, 30);
+      console.log(viewer.imageryLayers._layers);
+      
+
+
+
     }
   }, [init]);
 
