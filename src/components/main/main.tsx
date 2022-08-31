@@ -32,7 +32,7 @@ var handler: {
   destroy: () => void;
 };
 
-let c = true;
+// let c = true;
 let nowPicksatellite: any;
 let rain: any, snow: any, fog: any;
 let stages: any;
@@ -159,7 +159,7 @@ const CesiumComponent: React.FC<{}> = () => {
       // viewer.scene.brightness ||
       // stages.add(Cesium.PostProcessStageLibrary.createBrightnessStage());
       // viewer.scene.brightness.enabled = true;
-      // viewer.scene.brightness.uniforms.brightness = Number(1.2);
+      // viewer.scene.brightness.uniforms.brightness = Number(2.5);
 
       // 更换天空盒
       // let spaceSkybox = new Cesium.SkyBox({
@@ -174,8 +174,8 @@ const CesiumComponent: React.FC<{}> = () => {
       // });
       // viewer.scene.skyBox = spaceSkybox;
 
-      // 背景切换为图片
-      // 去掉黑色星空背景
+      // 背景切换为图片 
+                                // 去掉黑色星空背景
       viewer.scene.skyBox.show = false;
       // viewer.scene.sun.show = true
       // viewer.scene.moon.show = true
@@ -474,10 +474,10 @@ const CesiumComponent: React.FC<{}> = () => {
               entityColor
             );
 
-            if (c) {
-              lineFlow("lineFlow_" + ele.id, lineProperty);
-            }
-            c = false;
+            // if (c) {
+            //   lineFlow("lineFlow_" + ele.id, lineProperty);
+            // }
+            // c = false;
 
             // 更改显示的时间
             // var timeInterval = new Cesium.TimeInterval({
@@ -698,35 +698,35 @@ const CesiumComponent: React.FC<{}> = () => {
     viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
   }, []);
 
-  const lineFlow = (id, position) => {
-    // viewer.entities.add({
-    //   id: id,
-    //   polyline: {
-    //     positions: position,
-    //     material: new Cesium.LineFlowMaterialProperty({
-    //       color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-    //       speed: 1,
-    //       percent: 0.1,
-    //       gradient: 0.01,
-    //     }),
-    //   },
-    // });
+  // const lineFlow = (id, position) => {
+  //   // viewer.entities.add({
+  //   //   id: id,
+  //   //   polyline: {
+  //   //     positions: position,
+  //   //     material: new Cesium.LineFlowMaterialProperty({
+  //   //       color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+  //   //       speed: 1,
+  //   //       percent: 0.1,
+  //   //       gradient: 0.01,
+  //   //     }),
+  //   //   },
+  //   // });
 
-    viewer.entities.add({
-      id: id,
-      position: position,
-      box: {
-        dimensions: new Cesium.Cartesian3(1000000.0, 100000.0, 1),
-        // material: Cesium.Color.BLUE,
-        material: new Cesium.LineFlowMaterialProperty({
-          color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-          speed: 10,
-          percent: 0.1,
-          gradient: 0.1,
-        }),
-      },
-    });
-  };
+  //   viewer.entities.add({
+  //     id: id,
+  //     position: position,
+  //     box: {
+  //       dimensions: new Cesium.Cartesian3(1000000.0, 100000.0, 1),
+  //       // material: Cesium.Color.BLUE,
+  //       material: new Cesium.LineFlowMaterialProperty({
+  //         color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+  //         speed: 10,
+  //         percent: 0.1,
+  //         gradient: 0.1,
+  //       }),
+  //     },
+  //   });
+  // };
 
   // 笛卡尔坐标系转经纬度
   const GetWGS84FromDKR = (coor: any, type: number) => {
