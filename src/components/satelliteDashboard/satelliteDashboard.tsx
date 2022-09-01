@@ -1,4 +1,3 @@
-import { Row } from 'antd';
 import React, { useEffect, useState } from 'react';
 import "./css/dashboard.css"
 import LineChart from './dashboardComponents/lineChart';
@@ -17,7 +16,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
             fetch("./data/groundData/groundBusiness.json").then((res)=>res.json()).then((data)=>{
                 console.log(data);
                 setGroundBusiniessState(data);
-            })
+            });
         }
     },[init]);
 
@@ -33,9 +32,6 @@ const SatelliteDashboard: React.FC<{}> = () => {
         <div className='ground-info'>
             <p>地面节点运行效能</p>
             <div className='chart-list'>
-                <TextCard title={'平均在网时长'} width={300} height={"100%"} content={"19.24 小时"}/>
-                <TextCard title={'平均入网次数'} width={300} height={"100%"} content={"2.54 次"}/>
-                <TextCard title={'平均退网次数'} width={300} height={"100%"} content={"1.82 次"}/>
                 {groundBusinessState===null?<></>:
                 <LineChart title={'123'} type={"Bar"}
                 width={550} 
@@ -43,6 +39,10 @@ const SatelliteDashboard: React.FC<{}> = () => {
                 xData={groundBusinessState["DateTime"]}
                 yData={[groundBusinessState["Time percent"],groundBusinessState["SendTeraBytes"],groundBusinessState["RecTeraBytes"]]}
                 />}
+                <TextCard title={'平均在网时长'} width={300} height={"100%"} content={"19.24 小时"}/>
+                <TextCard title={'平均入网次数'} width={300} height={"100%"} content={"2.54 次"}/>
+                <TextCard title={'平均退网次数'} width={300} height={"100%"} content={"1.82 次"}/>
+  
 
             </div>
         </div>
