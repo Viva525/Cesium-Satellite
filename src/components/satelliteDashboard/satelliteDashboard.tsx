@@ -2,6 +2,7 @@ import { Row } from "antd";
 import React, { useEffect, useState } from "react";
 import "./css/dashboard.css";
 import DashBoardChart from "./dashboardComponents/dashboardChart";
+import HourChart from "./dashboardComponents/hourChart";
 import TextCard from "./dashboardComponents/textCard";
 
 const SatelliteDashboard: React.FC<{}> = () => {
@@ -75,21 +76,21 @@ const SatelliteDashboard: React.FC<{}> = () => {
         <div className="ground-info">
           <p>地面节点运行效能</p>
           <div className="chart-list">
-            <TextCard
+            <HourChart
               title={"平均在网时长"}
-              width={300}
+              data={19.24}
+              width={380}
               height={"100%"}
-              content={"19.24 小时"}
             />
             <TextCard
               title={"平均入网次数"}
-              width={300}
+              width={220}
               height={"100%"}
               content={"2.54 次"}
             />
             <TextCard
               title={"平均退网次数"}
-              width={300}
+              width={220}
               height={"100%"}
               content={"1.82 次"}
             />
@@ -99,7 +100,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <DashBoardChart
                 title={"groundBusiness"}
                 type={"Bar"}
-                width={550}
+                width={"20%"}
                 height={"100%"}
                 xData={groundBusinessState["DateTime"]}
                 yData={[
@@ -116,7 +117,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <DashBoardChart
                 title={"groundReliability"}
                 type={"Bar"}
-                width={550}
+                width={"20%"}
                 height={"100%"}
                 xData={groundReliabilityState["DateTime"]}
                 yData={[
@@ -133,7 +134,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <DashBoardChart
                 title={"groundStability"}
                 type={"Line"}
-                width={550}
+                width={"24%"}
                 height={"100%"}
                 xData={groundStabilityState["DateTime"]}
                 yData={[groundStabilityState["AvgTime"]]}
@@ -146,31 +147,25 @@ const SatelliteDashboard: React.FC<{}> = () => {
         <div className="satellite-info">
           <p>卫星节点运行效能</p>
           <div className="chart-list">
-            {/* <TextCard
-              title={"卫星覆盖率"}
-              width={300}
-              height={"100%"}
-              content={"————"}
-            /> */}
-            <TextCard
-              title={"卫星平均工作时间"}
-              width={300}
+            <HourChart
+              title={"无故障工作时间"}
+              width={380}
               height={"60%"}
-              content={"22.31 小时"}
+              data = {22.31}
             />
-            {/* <TextCard
-              title={"卫星频率利用率"}
-              width={300}
-              height={"100%"}
-              content={"————"}
-            /> */}
+            <TextCard
+              title={"自我恢复能力"}
+              width={220}
+              height={"60%"}
+              content={"92.54"}
+            />
             {satelliteCoverageState === null ? (
               <></>
             ) : (
               <DashBoardChart
                 title={"satelliteCoverage"}
                 type={"Bar"}
-                width={"28%"}
+                width={"24%"}
                 height={"60%"}
                 xData={satelliteCoverageState["DateTime"]}
                 yData={[
@@ -195,7 +190,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <DashBoardChart
                 title={"groundRelsatelliteStabilityStateiability"}
                 type={"Line"}
-                width={"28%"}
+                width={"24%"}
                 height={"60%"}
                 xData={satelliteStabilityState["DateTime"]}
                 yData={[
@@ -212,7 +207,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <DashBoardChart
                 title={"satelliteUseRateState"}
                 type={"Bar"}
-                width={"28%"}
+                width={"24%"}
                 height={"60%"}
                 xData={satelliteUseRateState["DateTime"]}
                 yData={[
