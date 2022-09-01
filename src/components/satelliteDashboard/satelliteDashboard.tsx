@@ -1,7 +1,7 @@
 import { Row } from "antd";
 import React, { useEffect, useState } from "react";
 import "./css/dashboard.css";
-import LineChart from "./dashboardComponents/lineChart";
+import DashBoardChart from "./dashboardComponents/dashboardChart";
 import TextCard from "./dashboardComponents/textCard";
 
 const SatelliteDashboard: React.FC<{}> = () => {
@@ -96,7 +96,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
             {groundBusinessState === null ? (
               <></>
             ) : (
-              <LineChart
+              <DashBoardChart
                 title={"groundBusiness"}
                 type={"Bar"}
                 width={550}
@@ -113,7 +113,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
             {groundReliabilityState === null ? (
               <></>
             ) : (
-              <LineChart
+              <DashBoardChart
                 title={"groundReliability"}
                 type={"Bar"}
                 width={550}
@@ -130,13 +130,13 @@ const SatelliteDashboard: React.FC<{}> = () => {
             {groundStabilityState === null ? (
               <></>
             ) : (
-              <LineChart
+              <DashBoardChart
                 title={"groundStability"}
                 type={"Line"}
                 width={550}
                 height={"100%"}
                 xData={groundStabilityState["DateTime"]}
-                yData={groundStabilityState["AvgTime"]}
+                yData={[groundStabilityState["AvgTime"]]}
                 legend={["AvgTime"]}
               />
             )}                                                                                
@@ -155,8 +155,8 @@ const SatelliteDashboard: React.FC<{}> = () => {
             <TextCard
               title={"卫星平均工作时间"}
               width={300}
-              height={"100%"}
-              content={"22.31"}
+              height={"60%"}
+              content={"22.31 小时"}
             />
             {/* <TextCard
               title={"卫星频率利用率"}
@@ -167,11 +167,11 @@ const SatelliteDashboard: React.FC<{}> = () => {
             {satelliteCoverageState === null ? (
               <></>
             ) : (
-              <LineChart
+              <DashBoardChart
                 title={"satelliteCoverage"}
                 type={"Bar"}
-                width={"30%"}
-                height={"100%"}
+                width={"28%"}
+                height={"60%"}
                 xData={satelliteCoverageState["DateTime"]}
                 yData={[
                   satelliteCoverageState["GlobalBeamCoverage"],
@@ -192,11 +192,11 @@ const SatelliteDashboard: React.FC<{}> = () => {
             {satelliteStabilityState === null ? (
               <></>
             ) : (
-              <LineChart
+              <DashBoardChart
                 title={"groundRelsatelliteStabilityStateiability"}
-                type={"Bar"}
-                width={550}
-                height={"100%"}
+                type={"Line"}
+                width={"28%"}
+                height={"60%"}
                 xData={satelliteStabilityState["DateTime"]}
                 yData={[
                   satelliteStabilityState["normal"],
@@ -209,11 +209,11 @@ const SatelliteDashboard: React.FC<{}> = () => {
             {satelliteUseRateState === null ? (
               <></>
             ) : (
-              <LineChart
+              <DashBoardChart
                 title={"satelliteUseRateState"}
                 type={"Bar"}
-                width={550}
-                height={"100%"}
+                width={"28%"}
+                height={"60%"}
                 xData={satelliteUseRateState["DateTime"]}
                 yData={[
                   satelliteUseRateState["WorkTimePercent"],

@@ -11,8 +11,8 @@ type LineChartProps = {
   legend: Array<String>;
 };
 
-let myChart: echarts.EChartsType | undefined;
 const LineChart: React.FC<LineChartProps> = (props) => {
+  let myChart: echarts.EChartsType | undefined;
   const { title, type, xData, yData, width, height, legend } = props;
   const [init, setInit] = useState<boolean>(false);
   const chartRef = useRef(null);
@@ -33,10 +33,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
 
   useEffect(() => {
     if (init) {
-      myChart = echarts.getInstanceByDom(
-        chartRef.current as unknown as HTMLDivElement
-      );
-      if (myChart == null) {
+      if (myChart == undefined) {
         myChart = echarts.init(chartRef.current as unknown as HTMLDivElement);
       }
       if (type === "Bar") {
@@ -53,9 +50,9 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       let t = {
         name: legend[i],
         type: "bar",
-        barWidth: 3,
+        barWidth: 5,
         //@ts-ignore
-        data: yData[i].slice(0, 20),
+        data: yData[i],
         itemStyle: {
           color: {
             x: 0,
@@ -81,9 +78,14 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       tmpSeries.push(t);
     }
     let option = {
-      backgroundColor: "rgba(255,255,255,0.1)",
+      backgroundColor: "rgba(255,255,255,0)",
       tooltip: {
         trigger: "axis",
+        backgroundColor: "#212124",
+        textStyle: {
+          color: "#fff",
+          fontSize: 11,
+        }
       },
       grid: {
         top: "16%",
@@ -91,6 +93,16 @@ const LineChart: React.FC<LineChartProps> = (props) => {
         right: "5%",
         bottom: "15%",
       },
+      dataZoom: [
+        {
+          type: "inside",
+          orient: "horizontal",
+          start:0,
+          end: 1,
+          minValueSpan: 10,
+          maxValueSpan: 10
+        },
+      ],
       legend: {
         align: "left",
         right: "5%",
@@ -108,7 +120,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       xAxis: [
         {
           type: "category",
-          boundaryGap: false,
+          boundaryGap: ["5%","5%"],
           axisLine: {
             show: true,
             lineStyle: {
@@ -120,6 +132,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
               color: "#fff",
               padding: 2,
               fontSize: 8,
+              align: "center",
             },
             formatter: function (data: any) {
               return data;
@@ -134,7 +147,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
           axisTick: {
             show: false,
           },
-          data: xData.slice(0, 20),
+          data: xData,
         },
       ],
       yAxis: [
@@ -179,13 +192,66 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       ],
       series: tmpSeries,
     };
+
     myChart?.setOption(option);
   };
 
   const initLineChart = () => {
+    let tempSeries = [];
+    for(let i = 0; i < yData.length; i++){
+      let t = {
+        name: legend[i],
+        type: "line",
+        symbol: "circle", // 默认是空心圆（中间是白色的），改成实心圆
+        showAllSymbol: true,
+        symbolSize: 0,
+        smooth: true,
+        lineStyle: {
+          normal: {
+            width: 0.9,
+            color: color[i][0], // 线条颜色
+          },
+          borderColor: "rgba(0,0,0,.4)",
+        },
+        itemStyle: {
+          color: color[i][0],
+          borderWidth: 0,
+        },
+        tooltip: {
+          show: true,
+        },
+        areaStyle: {
+          //区域填充样式
+          normal: {
+            //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
+            color: new echarts.graphic.LinearGradient(
+              0,
+              0,
+              0,
+              1,
+              [
+                {
+                  offset: 0,
+                  color: `${color[i][0]}22`,
+                },
+                {
+                  offset: 1,
+                  color: "rgba(25,163,223, 0)",
+                },
+              ],
+              false
+            ),
+            shadowColor: "rgba(25,163,223, 0.5)", //阴影颜色
+            shadowBlur: 20, //shadowBlur设图形阴影的模糊大小。配合shadowColor,shadowOffsetX/Y, 设置图形的阴影效果。
+          },
+        },
+        data: yData[i],
+      }
+      tempSeries.push(t);
+    }
     let option = {
       // title: title,
-      backgroundColor: "rgba(255,255,255,0.1)",
+      backgroundColor: "rgba(255,255,255,0)",
       tooltip: {
         trigger: "axis",
         backgroundColor: "transparent",
@@ -240,6 +306,16 @@ const LineChart: React.FC<LineChartProps> = (props) => {
         right: "5%",
         bottom: "15%",
       },
+      dataZoom: [
+        {
+          type: "inside",
+          orient: "horizontal",
+          start:0,
+          end: 10,
+          // minValueSpan: 10,
+          // maxValueSpan: 10
+        },
+      ],
       xAxis: [
         {
           type: "category",
@@ -255,6 +331,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
               color: "#fff",
               padding: 2,
               fontSize: 8,
+              align: "left",
             },
             formatter: function (data: any) {
               return data;
@@ -269,7 +346,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
           axisTick: {
             show: false,
           },
-          data: xData.slice(0, 20),
+          data: xData,
         },
       ],
       yAxis: [
@@ -312,59 +389,27 @@ const LineChart: React.FC<LineChartProps> = (props) => {
           },
         },
       ],
-      series: [
-        {
-          name: legend[0],
-          type: "line",
-          symbol: "circle", // 默认是空心圆（中间是白色的），改成实心圆
-          showAllSymbol: true,
-          symbolSize: 0,
-          smooth: true,
-          lineStyle: {
-            normal: {
-              width: 0.9,
-              color: "rgba(25,163,223,1)", // 线条颜色
-            },
-            borderColor: "rgba(0,0,0,.4)",
-          },
-          itemStyle: {
-            color: "rgba(25,163,223,1)",
-            borderWidth: 0,
-          },
-          tooltip: {
-            show: true,
-          },
-          areaStyle: {
-            //区域填充样式
-            normal: {
-              //线性渐变，前4个参数分别是x0,y0,x2,y2(范围0~1);相当于图形包围盒中的百分比。如果最后一个参数是‘true’，则该四个值是绝对像素位置。
-              color: new echarts.graphic.LinearGradient(
-                0,
-                0,
-                0,
-                1,
-                [
-                  {
-                    offset: 0,
-                    color: "rgba(25,163,223,.3)",
-                  },
-                  {
-                    offset: 1,
-                    color: "rgba(25,163,223, 0)",
-                  },
-                ],
-                false
-              ),
-              shadowColor: "rgba(25,163,223, 0.5)", //阴影颜色
-              shadowBlur: 20, //shadowBlur设图形阴影的模糊大小。配合shadowColor,shadowOffsetX/Y, 设置图形的阴影效果。
-            },
-          },
-          data: yData.slice(0, 20),
-        },
-      ],
+      series: tempSeries,
     };
     //@ts-ignore
     myChart.setOption(option);
+    
+    let endVal = 10, startVal = 0;
+    setInterval(() => {
+      if (endVal == 100) {
+        endVal = 10;
+        startVal = 0;
+      } else {
+        endVal = endVal + 1;
+        startVal = startVal + 1;
+      }
+      myChart?.dispatchAction({
+        type: "dataZoom",
+        dataZoomIndex: [0, 1],
+        start: startVal,
+        end: endVal,
+      });
+    }, 1000);
   };
 
   return (
