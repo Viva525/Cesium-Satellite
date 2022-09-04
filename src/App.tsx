@@ -27,7 +27,7 @@ function App() {
 
           {/* 配合useNavigator使用 */}
           <Route
-            path="/satelliteDashboard/"
+            path="/satelliteDashboard"
             element={<SatelliteDashboard />}
           ></Route>
 

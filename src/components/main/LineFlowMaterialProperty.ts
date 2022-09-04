@@ -7,6 +7,7 @@
  * @LastEditors: Julian
  * @LastEditTime: 2022-03-05 17:39:38
  */
+
 export default class LineFlowMaterialProperty {
     color: any;
     speed: any;

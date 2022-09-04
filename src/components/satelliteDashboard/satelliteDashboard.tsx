@@ -24,7 +24,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
   const { state } = useLocation();
 
   //@ts-ignore
-  const type = state ? state.type : "satellite";
+  const type = state ? state.type : "baseStation";
   //@ts-ignore
   const id = state ? state.id : "";
 
@@ -36,37 +36,34 @@ const SatelliteDashboard: React.FC<{}> = () => {
     if (init) {
       if (type === "baseStation") {
         fetch("http://localhost:3000/data/groundData/groundBusiness.json")
-          .then((res) => {
-            console.log(41, res);
-            return res.json();
-          })
+          .then((res) => res.json())
           .then((data) => {
             setGroundBusiniessState(data);
           });
         fetch("http://localhost:3000/data/groundData/groundReliability.json")
           .then((res) => res.json())
           .then((data) => {
-            console.log(48, data);
             setGroundReliabilityState(data);
           });
         fetch("http://localhost:3000/data/groundData/groundStability.json")
           .then((res) => res.json())
           .then((data) => {
-            console.log(54, data);
             setGroundStabilityState(data);
           });
       } else {
-        fetch("./data/satelliteData/satelliteCoverage.json")
+        fetch("http://localhost:3000/data/satelliteData/satelliteCoverage.json")
           .then((res) => res.json())
           .then((data) => {
             setSatelliteCoverage(data);
           });
-        fetch("./data/satelliteData/satelliteStability.json")
+        fetch(
+          "http://localhost:3000/data/satelliteData/satelliteStability.json"
+        )
           .then((res) => res.json())
           .then((data) => {
             setSatelliteStability(data);
           });
-        fetch("./data/satelliteData/satelliteUseRate.json")
+        fetch("http://localhost:3000/data/satelliteData/satelliteUseRate.json")
           .then((res) => res.json())
           .then((data) => {
             setSatelliteUseRate(data);
@@ -97,7 +94,8 @@ const SatelliteDashboard: React.FC<{}> = () => {
           className="dashboard-button"
           onClick={() => {
             //@ts-ignore
-            window.location = "http://localhost:3000";
+            // window.location = "http://localhost:3000";
+            window.history.go(-1);
           }}
         >
           返回监测平台

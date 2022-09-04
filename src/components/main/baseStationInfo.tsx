@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BaseStation, Dashboard, SetState } from "../../types/type";
 
 type BaseStationInfoProp = {
@@ -67,12 +67,18 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
               span={4}
               onClick={() => {
                 // setDashboard({ type: "baseStation", id: baseStation.name });
-                // 使用useNavigator解决
-                to("/satelliteDashboard/", {
-                  state: { type: "baseStation", id: baseStation.name },
-                });
+                // 使用useNavigator解决;
+                //@ts-ignore
+                // to("/satelliteDashboard/", {
+                //   state: { type: "baseStation", id: baseStation.name },
+                // });
+
+                window.open(`/satelliteDashboard/`, "_blank");
               }}
             >
+              {/* <Link to="/satelliteDashboard/baseStation/age">
+                satelliteDashboard
+              </Link> */}
               <div className="dashboardIcon"></div>
             </Col>
           </Row>
