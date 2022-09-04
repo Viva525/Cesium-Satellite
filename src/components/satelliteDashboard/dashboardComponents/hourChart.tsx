@@ -387,7 +387,7 @@ const HourChart: React.FC<HourChartProps> = (props) => {
         background: "#212124",
         border: "1px solid #333",
         boxShadow: "2px 8px 16px rgba(0,0,0,0.2)",
-        margin: "10px",
+        marginRight: "10px",
       }}
     >
       <div

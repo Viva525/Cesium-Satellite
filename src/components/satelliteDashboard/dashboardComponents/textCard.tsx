@@ -10,7 +10,7 @@ type textCardProps = {
 const TextCard: React.FC<textCardProps> = (props) => {
   const { title, width, height, content } = props;
   return (
-    <div style={{ width: `${typeof(width)==="string"?width:width+"px"}`, height: `${typeof(height)==="string"?height:height+"px"}`, background:"#212124", border:"1px solid #333", boxShadow:"2px 8px 16px rgba(0,0,0,0.2)", margin:"10px"}}>
+    <div style={{ width: `${typeof(width)==="string"?width:width+"px"}`, height: `${typeof(height)==="string"?height:height+"px"}`, background:"#212124", border:"1px solid #333", boxShadow:"2px 8px 16px rgba(0,0,0,0.2)", marginRight:"10px"}}>
       <div
         style={{
           height: '20%',

@@ -9,15 +9,16 @@ import type { TableRowSelection } from "antd/es/table/interface";
 import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
-import { BaseStation } from "./types/type";
+import { BaseStation } from "../../types/type";
 import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
 import HeightChart from "../right/heightChart";
 import SatelliteBar from "../left/satelliteBar";
 import SatelliteNumberChart from "../left/satelliteNumberChart";
-import { randomInt } from "crypto";
 import SatelliteInfo from "../right/satelliteInfo";
 import "./LineFlowMaterialProperty";
+import {CesiumComponentType}  from "../../types/type"
+
 //@ts-ignore
 let viewer: any;
 var handler: {
@@ -39,7 +40,8 @@ let stages: any;
 let previousTime: any;
 // let satelliteList: {[key:string]:any []} = {};
 // let satelliteList: string[] = []
-const CesiumComponent: React.FC<{}> = () => {
+const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
+  const {setDashboard} = props;
   const [init, setInit] = useState<boolean>(false);
   const [isDrawLine, setIsDrawLine] = useState<boolean>(false);
   const [isDrawPolygon, setIsDrawPolygon] = useState<boolean>(false);

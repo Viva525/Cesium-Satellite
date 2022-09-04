@@ -144,6 +144,17 @@
     background-repeat: no-repeat;
 }
 
+.dashboardIcon {
+    width: 32px;
+    height: 32px;
+    float: right;
+    margin-top: 28%;
+    box-sizing: border-box;
+    background-image: url("../assets/dot_32.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
 .baseStationText {
     color: #fff;
     font-size: 14px;

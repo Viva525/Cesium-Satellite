@@ -50,7 +50,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       let t = {
         name: legend[i],
         type: "bar",
-        barWidth: 5,
+        barWidth: 3,
         //@ts-ignore
         data: yData[i],
         itemStyle: {
@@ -77,7 +77,12 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       
       tmpSeries.push(t);
     }
+    let zoomEnd = 2, zoomStart = 0
     let option = {
+      title:{
+        show: true,
+        text: title
+      },
       backgroundColor: "rgba(255,255,255,0)",
       tooltip: {
         trigger: "axis",
@@ -97,10 +102,10 @@ const LineChart: React.FC<LineChartProps> = (props) => {
         {
           type: "inside",
           orient: "horizontal",
-          start:0,
-          end: 1,
-          minValueSpan: 10,
-          maxValueSpan: 10
+          start:zoomStart,
+          end: zoomEnd,
+          // minValueSpan: 10,
+          // maxValueSpan: 50
         },
       ],
       legend: {
@@ -249,18 +254,19 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       }
       tempSeries.push(t);
     }
+    let zoomEnd = 60, zoomStart = 0
     let option = {
       title: {
         show: true,
         text:title,
         textAlign: 'left',
-        textStyle: {
-          color: "#fff", // 主标题文字的颜色。
-          fontStyle: "normal", // 主标题文字字体的风格。 'normal'  'italic'  'oblique'
-          fontWeight: "normal", // 主标题文字字体的粗细。 'normal' 'bold'  'bolder'  'lighter' 500|600
-          fontFamily: "sans-serif", // 主标题文字的字体系列。
-          fontSize: 18, // 字体大小
-        }
+        // textStyle: {
+        //   color: "#fff", // 主标题文字的颜色。
+        //   fontStyle: "normal", // 主标题文字字体的风格。 'normal'  'italic'  'oblique'
+        //   fontWeight: "normal", // 主标题文字字体的粗细。 'normal' 'bold'  'bolder'  'lighter' 500|600
+        //   fontFamily: "sans-serif", // 主标题文字的字体系列。
+        //   fontSize: 18, // 字体大小
+        // }
       },
       backgroundColor: "rgba(255,255,255,0)",
       tooltip: {
@@ -313,18 +319,18 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       },
       grid: {
         top: "16%",
-        left: "5%",
-        right: "5%",
+        left: "3%",
+        right: "3%",
         bottom: "15%",
       },
       dataZoom: [
         {
           type: "inside",
           orient: "horizontal",
-          start:0,
-          end: 10,
+          start: zoomStart,
+          end: zoomEnd,
           // minValueSpan: 10,
-          // maxValueSpan: 10
+          // maxValueSpan: 40
         },
       ],
       xAxis: [
@@ -405,11 +411,11 @@ const LineChart: React.FC<LineChartProps> = (props) => {
     //@ts-ignore
     myChart.setOption(option);
     
-    let endVal = 10, startVal = 0;
+    let endVal = zoomEnd, startVal = zoomStart;
     setInterval(() => {
       if (endVal == 100) {
-        endVal = 10;
-        startVal = 0;
+        endVal = zoomEnd;
+        startVal = zoomStart;
       } else {
         endVal = endVal + 1;
         startVal = startVal + 1;
@@ -432,7 +438,7 @@ const LineChart: React.FC<LineChartProps> = (props) => {
         background: "#212124",
         border: "1px solid #333",
         boxShadow: "2px 8px 16px rgba(0,0,0,0.2)",
-        margin: "10px",
+        marginRight: "10px",
       }}
     ></div>
   );

@@ -35,28 +35,48 @@
 }
 
 .ground-info{
-    height: 40%;
+    height: 100%;
     width: 100%;
     padding-top: 1vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .satellite-info{
-    height: 60%;
+    height: 100%;
     width: 100%;
     padding-top: 1vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.ground-info p, .satellite-info p {
+.chart-list-up{
+    height:50%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.chart-list-bottom{
+    height:50%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.subtitle{
+    width: 98vw;
+    height:6%;
     color: #eee;
     font-size: 18px;
     letter-spacing: 2px;
     margin-left: 2vw;
+    font-weight: bold;
 }
 
 .chart-list {
     height: 90%;
-    padding-top: 1vh;
-    padding-left: 2vw;
+    width: 98vw;
+    margin-left: 2vw;
     display: flex;
     flex-direction: row;
 }

@@ -1,7 +1,7 @@
 import { Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
-import { SetState } from "../left/satelliteList";
-import { BaseStation } from "./types/type";
+
+import { BaseStation, SetState } from "../../types/type";
 
 type BaseStationInfoProp = {
   baseStationList: BaseStation[];
@@ -27,9 +27,6 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
         return (
           <Row
             className="row-style"
-            onClick={() => {
-              setBaseStation(baseStation);
-            }}
             key={index}
             style={{
               cursor: "pointer",
@@ -39,7 +36,13 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
             <Col span={4}>
               <div className="baseStationIcon"></div>
             </Col>
-            <Col span={20} style={{ paddingLeft: "5px" }}>
+            <Col
+              span={16}
+              style={{ paddingLeft: "5px" }}
+              onClick={() => {
+                setBaseStation(baseStation);
+              }}
+            >
               <p className="baseStationText">
                 基站名: &nbsp;{baseStation.name}
               </p>
@@ -57,6 +60,9 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
                   {baseStation.state}
                 </span>
               </p>
+            </Col>
+            <Col span={4}>
+              <div className="dashboardIcon"></div>
             </Col>
           </Row>
         );
