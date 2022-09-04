@@ -3,8 +3,8 @@
 }
 .boxTitle{
     height: 32px;
-    /* background: rgba(26, 147, 199, 0.6); */
-    background:linear-gradient(to right, rgba(26, 147, 199, 0.6), rgba(124, 176, 190, 0.5));
+    /* background: rgba(13, 126, 222, 1); */
+    background:linear-gradient(to right, rgba(13, 126, 222, 1), rgba(13, 125, 222, 0.322));
     /* background-image: url("../assets/1.png"); */
     background-size: contain;
     background-repeat: no-repeat;
@@ -21,7 +21,7 @@
     display: inline-block;
     width: 5px;
     height: 32px;
-    background-color: #ffff00;
+    background-color: rgba(210, 51, 90, 1);
     margin-right: 15px;
 }
 
