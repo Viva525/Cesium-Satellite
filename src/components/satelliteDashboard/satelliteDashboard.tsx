@@ -115,7 +115,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <></>
             ) : (
               <DashBoardChart
-                title={"groundReliability"}
+                title={"可靠性"}
                 type={"Bar"}
                 width={"20%"}
                 height={"100%"}
@@ -132,7 +132,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <></>
             ) : (
               <DashBoardChart
-                title={"groundStability"}
+                title={"稳定性"}
                 type={"Line"}
                 width={"24%"}
                 height={"100%"}
@@ -163,7 +163,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <></>
             ) : (
               <DashBoardChart
-                title={"satelliteCoverage"}
+                title={"恢复能力"}
                 type={"Bar"}
                 width={"24%"}
                 height={"60%"}
@@ -188,7 +188,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <></>
             ) : (
               <DashBoardChart
-                title={"groundRelsatelliteStabilityStateiability"}
+                title={"稳定性"}
                 type={"Line"}
                 width={"24%"}
                 height={"60%"}
@@ -205,7 +205,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
               <></>
             ) : (
               <DashBoardChart
-                title={"satelliteUseRateState"}
+                title={"使用率"}
                 type={"Bar"}
                 width={"24%"}
                 height={"60%"}

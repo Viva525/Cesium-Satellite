@@ -250,7 +250,18 @@ const LineChart: React.FC<LineChartProps> = (props) => {
       tempSeries.push(t);
     }
     let option = {
-      // title: title,
+      title: {
+        show: true,
+        text:title,
+        textAlign: 'left',
+        textStyle: {
+          color: "#fff", // 主标题文字的颜色。
+          fontStyle: "normal", // 主标题文字字体的风格。 'normal'  'italic'  'oblique'
+          fontWeight: "normal", // 主标题文字字体的粗细。 'normal' 'bold'  'bolder'  'lighter' 500|600
+          fontFamily: "sans-serif", // 主标题文字的字体系列。
+          fontSize: 18, // 字体大小
+        }
+      },
       backgroundColor: "rgba(255,255,255,0)",
       tooltip: {
         trigger: "axis",
