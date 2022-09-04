@@ -4,10 +4,10 @@ import "./css/dashboard.css";
 import DashBoardChart from "./dashboardComponents/dashboardChart";
 import HourChart from "./dashboardComponents/hourChart";
 import TextCard from "./dashboardComponents/textCard";
-import {Dashboard} from "../../types/type"
-import { useParams } from "react-router-dom";
+import { Dashboard } from "../../types/type";
+import { useParams, useLocation } from "react-router-dom";
 
-const SatelliteDashboard: React.FC<Dashboard> = (props) => {
+const SatelliteDashboard: React.FC<{}> = () => {
   const [init, setInit] = useState<boolean>(false);
   const [groundBusinessState, setGroundBusiniessState] = useState<any>(null);
   const [groundReliabilityState, setGroundReliabilityState] =
@@ -16,51 +16,75 @@ const SatelliteDashboard: React.FC<Dashboard> = (props) => {
   const [satelliteCoverageState, setSatelliteCoverage] = useState<any>(null);
   const [satelliteStabilityState, setSatelliteStability] = useState<any>(null);
   const [satelliteUseRateState, setSatelliteUseRate] = useState<any>(null);
-  const { type, id } = props;
-  // const {type, id} = useParams<{type:string,id:string}>();
-  // console.log(type, id);
+
+  // let type = "satellite";
+  // let a = useParams();
+  // console.log(a);
+
+  const { state } = useLocation();
+
+  //@ts-ignore
+  const type = state ? state.type : "satellite";
+  //@ts-ignore
+  const id = state ? state.id : "";
+
   useEffect(() => {
     setInit(true);
   }, []);
 
   useEffect(() => {
     if (init) {
-      
-      
-      fetch("./data/groundData/groundBusiness.json")
-        .then((res) => res.json())
-        .then((data) => {
-          setGroundBusiniessState(data);
-        });
-      fetch("./data/groundData/groundReliability.json")
-        .then((res) => res.json())
-        .then((data) => {
-          setGroundReliabilityState(data);
-        });
-      fetch("./data/groundData/groundStability.json")
-        .then((res) => res.json())
-        .then((data) => {
-          setGroundStabilityState(data);
-        });
-      fetch("./data/satelliteData/satelliteCoverage.json")
-        .then((res) => res.json())
-        .then((data) => {
-          setSatelliteCoverage(data);
-        });
-      fetch("./data/satelliteData/satelliteStability.json")
-        .then((res) => res.json())
-        .then((data) => {
-          setSatelliteStability(data);
-        });
-      fetch("./data/satelliteData/satelliteUseRate.json")
-        .then((res) => res.json())
-        .then((data) => {
-          setSatelliteUseRate(data);
-        });
+      if (type === "baseStation") {
+        fetch("http://localhost:3000/data/groundData/groundBusiness.json")
+          .then((res) => {
+            console.log(41, res);
+            return res.json();
+          })
+          .then((data) => {
+            setGroundBusiniessState(data);
+          });
+        fetch("http://localhost:3000/data/groundData/groundReliability.json")
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(48, data);
+            setGroundReliabilityState(data);
+          });
+        fetch("http://localhost:3000/data/groundData/groundStability.json")
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(54, data);
+            setGroundStabilityState(data);
+          });
+      } else {
+        fetch("./data/satelliteData/satelliteCoverage.json")
+          .then((res) => res.json())
+          .then((data) => {
+            setSatelliteCoverage(data);
+          });
+        fetch("./data/satelliteData/satelliteStability.json")
+          .then((res) => res.json())
+          .then((data) => {
+            setSatelliteStability(data);
+          });
+        fetch("./data/satelliteData/satelliteUseRate.json")
+          .then((res) => res.json())
+          .then((data) => {
+            setSatelliteUseRate(data);
+          });
+      }
     }
   }, [init]);
 
-  function aaa() {}
+  useEffect(() => {
+    if (init) {
+      console.log(
+        75,
+        groundBusinessState,
+        groundReliabilityState,
+        groundStabilityState
+      );
+    }
+  }, [groundBusinessState, groundReliabilityState, groundStabilityState]);
 
   return (
     <div
@@ -199,98 +223,100 @@ const SatelliteDashboard: React.FC<Dashboard> = (props) => {
                   content={"92.54"}
                 />
                 {satelliteStabilityState === null ? (
-                <></>
-              ) : (
-                <DashBoardChart
-                  title={"稳定性"}
-                  type={"Line"}
-                  width={"65%"}
-                  height={"100%"}
-                  xData={satelliteStabilityState["DateTime"]}
-                  yData={[
-                    satelliteStabilityState["normal"],
-                    satelliteStabilityState["major fault"],
-                    satelliteStabilityState["minor fault"],
-                  ]}
-                  legend={["normal", "major fault", "minor fault"]}
-                />
-              )}
+                  <></>
+                ) : (
+                  <DashBoardChart
+                    title={"稳定性"}
+                    type={"Line"}
+                    width={"65%"}
+                    height={"100%"}
+                    xData={satelliteStabilityState["DateTime"]}
+                    yData={[
+                      satelliteStabilityState["normal"],
+                      satelliteStabilityState["major fault"],
+                      satelliteStabilityState["minor fault"],
+                    ]}
+                    legend={["normal", "major fault", "minor fault"]}
+                  />
+                )}
               </div>
             </div>
             <div className="chart-list-bottom">
-            <div className="subtitle">
-              <p>运行历史</p>
-            </div>
-            <div className="chart-list">
-              {satelliteCoverageState === null ? (
-                <></>
-              ) : (
-                <DashBoardChart
-                  title={"恢复能力"}
-                  type={"Bar"}
-                  width={"40%"}
-                  height={"100%"}
-                  xData={satelliteCoverageState["DateTime"]}
-                  yData={[
-                    satelliteCoverageState["GlobalBeamCoverage"],
-                    satelliteCoverageState["RegionalBeamCoverage"],
-                    satelliteCoverageState["SpotBeamCoverage"],
-                    satelliteCoverageState["RegionalBeamMobility"],
-                    satelliteCoverageState["SpotBeamMobility"],
-                  ]}
-                  legend={[
-                    "GlobalBeamCoverage",
-                    "RegionalBeamCoverage",
-                    "SpotBeamCoverage",
-                    "RegionalBeamMobility",
-                    "SpotBeamMobility",
-                  ]}
-                />
-              )}
-              
-              {satelliteUseRateState === null ? (
-                <></>
-              ) : (
-                <>
-                <DashBoardChart
-                  title={"使用率"}
-                  type={"Bar"}
-                  width={"30%"}
-                  height={"100%"}
-                  xData={satelliteUseRateState["DateTime"]}
-                  yData={[
-                    satelliteUseRateState["WorkTimePercent"],
-                    satelliteUseRateState["SatelliteFrequencyUtilization"],
-                    satelliteUseRateState["TransponderFrequencyUtilization"],
-                    satelliteUseRateState["BeamFrequencyUtilization"]
-                  ]}
-                  legend={[
-                    "WorkTimePercent",
-                    "SatelliteFrequencyUtilization",
-                    "TransponderFrequencyUtilization",
-                    "BeamFrequencyUtilization"
-                  ]}
-                />
-                <DashBoardChart
-                  title={"使用率"}
-                  type={"Bar"}
-                  width={"30%"}
-                  height={"100%"}
-                  xData={satelliteUseRateState["DateTime"]}
-                  yData={[
-                    satelliteUseRateState["BandFrequencyUtilization"],
-                    satelliteUseRateState["SatellitePowerUtilization"],
-                    satelliteUseRateState["AmplifierPowerUtilization"],
-                  ]}
-                  legend={[
-                    "BandFrequencyUtilization",
-                    "SatellitePowerUtilization",
-                    "AmplifierPowerUtilization",
-                  ]}
-                />
-                </>
-              )}
-            </div>
+              <div className="subtitle">
+                <p>运行历史</p>
+              </div>
+              <div className="chart-list">
+                {satelliteCoverageState === null ? (
+                  <></>
+                ) : (
+                  <DashBoardChart
+                    title={"恢复能力"}
+                    type={"Bar"}
+                    width={"40%"}
+                    height={"100%"}
+                    xData={satelliteCoverageState["DateTime"]}
+                    yData={[
+                      satelliteCoverageState["GlobalBeamCoverage"],
+                      satelliteCoverageState["RegionalBeamCoverage"],
+                      satelliteCoverageState["SpotBeamCoverage"],
+                      satelliteCoverageState["RegionalBeamMobility"],
+                      satelliteCoverageState["SpotBeamMobility"],
+                    ]}
+                    legend={[
+                      "GlobalBeamCoverage",
+                      "RegionalBeamCoverage",
+                      "SpotBeamCoverage",
+                      "RegionalBeamMobility",
+                      "SpotBeamMobility",
+                    ]}
+                  />
+                )}
+
+                {satelliteUseRateState === null ? (
+                  <></>
+                ) : (
+                  <>
+                    <DashBoardChart
+                      title={"使用率"}
+                      type={"Bar"}
+                      width={"30%"}
+                      height={"100%"}
+                      xData={satelliteUseRateState["DateTime"]}
+                      yData={[
+                        satelliteUseRateState["WorkTimePercent"],
+                        satelliteUseRateState["SatelliteFrequencyUtilization"],
+                        satelliteUseRateState[
+                          "TransponderFrequencyUtilization"
+                        ],
+                        satelliteUseRateState["BeamFrequencyUtilization"],
+                      ]}
+                      legend={[
+                        "WorkTimePercent",
+                        "SatelliteFrequencyUtilization",
+                        "TransponderFrequencyUtilization",
+                        "BeamFrequencyUtilization",
+                      ]}
+                    />
+                    <DashBoardChart
+                      title={"使用率"}
+                      type={"Bar"}
+                      width={"30%"}
+                      height={"100%"}
+                      xData={satelliteUseRateState["DateTime"]}
+                      yData={[
+                        satelliteUseRateState["BandFrequencyUtilization"],
+                        satelliteUseRateState["SatellitePowerUtilization"],
+                        satelliteUseRateState["AmplifierPowerUtilization"],
+                      ]}
+                      legend={[
+                        "BandFrequencyUtilization",
+                        "SatellitePowerUtilization",
+                        "AmplifierPowerUtilization",
+                      ]}
+                    />
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}

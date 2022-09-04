@@ -1,17 +1,18 @@
 import { Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { BaseStation, Dashboard, SetState } from "../../types/type";
 
 type BaseStationInfoProp = {
   baseStationList: BaseStation[];
   setBaseStation: SetState<BaseStation | null>;
-  setDashboard: SetState<Dashboard | undefined>
+  setDashboard: SetState<Dashboard | undefined>;
 };
 
 const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
   const { baseStationList, setBaseStation, setDashboard } = props;
   const [init, setInit] = useState<boolean>(false);
+  const to = useNavigate();
 
   useEffect(() => {
     setInit(true);
@@ -65,8 +66,11 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
             <Col
               span={4}
               onClick={() => {
-                setDashboard({type: 'baseStation', id: baseStation.name});
-
+                // setDashboard({ type: "baseStation", id: baseStation.name });
+                // 使用useNavigator解决
+                to("/satelliteDashboard/", {
+                  state: { type: "baseStation", id: baseStation.name },
+                });
               }}
             >
               <div className="dashboardIcon"></div>
