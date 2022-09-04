@@ -133,7 +133,7 @@ const CesiumComponent: React.FC<{}> = () => {
         shouldAnimate: true,
         infoBox: false, // 是否显示点击要素之后显示的信息
         // 去掉地球表面的大气效果黑圈问题
-        orderIndependentTranslucency: false,
+        orderIndependentTranslucency: true,
         contextOptions: {
           webgl: {
             alpha: true,
@@ -142,28 +142,26 @@ const CesiumComponent: React.FC<{}> = () => {
         timeline: false,
         animation: false,
       });
-      // 添加高德影像图
+      // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
-        imageryLayers.remove(imageryLayers.get(0));
-      let atLayer = new Cesium.ArcGisMapServerImageryProvider({
-        url: "http://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer",
-        minimumLevel: 3,
-        maximumLevel: 18,
-      });
-      imageryLayers.addImageryProvider(atLayer);
+      let imageryProvider = new Cesium.UrlTemplateImageryProvider({
+        url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+        layer: "tdtVecBasicLayer",
+        style: "default",
+        format: "image/png",
+        tileMatrixSetID: "GoogleMapsCompatible",
+        show: false
+        });
+    imageryLayers.addImageryProvider(imageryProvider);
+
+
 
       // 开启光照 & 亮度设置: 两种方式
-      viewer.scene.globe.enableLighting = true;
-      viewer.shadows = true;
-      // stages = viewer.scene.postProcessStages;
-      // viewer.scene.brightness =
-      // viewer.scene.brightness ||
-      // stages.add(Cesium.PostProcessStageLibrary.createBrightnessStage());
-      // viewer.scene.brightness.enabled = true;
-      // viewer.scene.brightness.uniforms.brightness = Number(2);
+      viewer.scene.globe.enableLighting = false;
+      viewer.shadows = false;
 
       let layer = imageryLayers.get(0)
-      layer['brightness'] = 6
+      layer['brightness'] = 1
 
       // 更换天空盒
       // let spaceSkybox = new Cesium.SkyBox({
@@ -804,7 +802,7 @@ const CesiumComponent: React.FC<{}> = () => {
     viewer.entities.add(baseStation);
     // setSatelliteList(ele => [...ele, `baseStation_${id}`])
     //添加矩形Entity
-    let radius = 1;
+    let radius = 1.5;
     addHexagonAll(lat, lng, radius, id, 1);
   };
   // 绘制线条测量距离
@@ -1276,91 +1274,6 @@ const CesiumComponent: React.FC<{}> = () => {
     }
   };
 
-  // 抛物飞线效果
-  function parabolaFlowInit(_viewer, _num) {
-    console.log(Cesium, _viewer);
-
-    let _center = [113.9236839, 22.528061];
-    let _positions = [
-      [113.8236839, 22.528061],
-      [114.0236839, 22.528061],
-      [113.9236839, 22.428061],
-      [113.9236839, 22.628061],
-      [113.8236839, 22.428061],
-      [114.0236839, 22.628061],
-      [113.8236839, 22.628061],
-      [114.0236839, 22.428061],
-    ];
-    _positions.forEach((item) => {
-      let _siglePositions = parabola(_center, item, 5000);
-
-      // 创建飞线
-      for (let i = 0; i < _num; i++) {
-        _viewer.entities.add({
-          polyline: {
-            positions: _siglePositions,
-            material: new Cesium.LineFlowMaterialProperty({
-              color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-              speed: 15 * Math.random(),
-              percent: 0.1,
-              gradient: 0.01,
-            }),
-          },
-        });
-      }
-    });
-
-    /**
-     * @description: 抛物线构造函数（参考开源代码）
-     * @param {*}
-     * @return {*}
-     */
-    function parabola(startPosition, endPosition, height = 0, count = 50) {
-      //方程 y=-(4h/L^2)*x^2+h h:顶点高度 L：横纵间距较大者
-      let result = [];
-      height = Math.max(+height, 100);
-      count = Math.max(+count, 50);
-      let diffLon = Math.abs(startPosition[0] - endPosition[0]);
-      let diffLat = Math.abs(startPosition[1] - endPosition[1]);
-      let L = Math.max(diffLon, diffLat);
-      let dlt = L / count;
-      if (diffLon > diffLat) {
-        //base on lon
-        let delLat = (endPosition[1] - startPosition[1]) / count;
-        if (startPosition[0] - endPosition[0] > 0) {
-          dlt = -dlt;
-        }
-        for (let i = 0; i < count; i++) {
-          let h =
-            height -
-            (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
-              Math.pow(L, 2);
-          let lon = startPosition[0] + dlt * i;
-          let lat = startPosition[1] + delLat * i;
-          let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
-          result.push(point);
-        }
-      } else {
-        //base on lat
-        let delLon = (endPosition[0] - startPosition[0]) / count;
-        if (startPosition[1] - endPosition[1] > 0) {
-          dlt = -dlt;
-        }
-        for (let i = 0; i < count; i++) {
-          let h =
-            height -
-            (Math.pow(-0.5 * L + Math.abs(dlt) * i, 2) * 4 * height) /
-              Math.pow(L, 2);
-          let lon = startPosition[0] + delLon * i;
-          let lat = startPosition[1] + dlt * i;
-          let point = new Cesium.Cartesian3.fromDegrees(lon, lat, h);
-          result.push(point);
-        }
-      }
-      return result;
-    }
-  }
-
   // 添加六边形
   function addHexagonAll(lat, lng, radius, id, index) {
     // 最大添加次数
@@ -1431,7 +1344,7 @@ const CesiumComponent: React.FC<{}> = () => {
           ])
         ),
         outline: true,
-        outlineColor: Cesium.Color.RED,
+        outlineColor: new Cesium.Color(210/255, 51/255, 90/255, 1),
         outlineWidth: 4,
         fill: false,
         material: Cesium.Color.fromCssColorString(
@@ -1578,9 +1491,10 @@ const CesiumComponent: React.FC<{}> = () => {
         style={{
           height: "100%",
           width: "100%",
-          backgroundRepeat: "no-repeat ",
-          backgroundSize: "cover",
-          backgroundImage: "url(./images/star_blue.png)",
+          // backgroundRepeat: "no-repeat ",
+          // backgroundSize: "cover",
+          // backgroundImage: "url(./images/star_blue.png)",
+          background:"#000"
         }}
       ></div>
       <div className="right-wrap">
