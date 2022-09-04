@@ -5,6 +5,7 @@ import DashBoardChart from "./dashboardComponents/dashboardChart";
 import HourChart from "./dashboardComponents/hourChart";
 import TextCard from "./dashboardComponents/textCard";
 import {Dashboard} from "../../types/type"
+import { useParams } from "react-router-dom";
 
 const SatelliteDashboard: React.FC<Dashboard> = (props) => {
   const [init, setInit] = useState<boolean>(false);
@@ -16,13 +17,16 @@ const SatelliteDashboard: React.FC<Dashboard> = (props) => {
   const [satelliteStabilityState, setSatelliteStability] = useState<any>(null);
   const [satelliteUseRateState, setSatelliteUseRate] = useState<any>(null);
   const { type, id } = props;
-
+  // const {type, id} = useParams<{type:string,id:string}>();
+  // console.log(type, id);
   useEffect(() => {
     setInit(true);
   }, []);
 
   useEffect(() => {
     if (init) {
+      
+      
       fetch("./data/groundData/groundBusiness.json")
         .then((res) => res.json())
         .then((data) => {

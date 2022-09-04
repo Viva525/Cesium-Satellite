@@ -1,15 +1,16 @@
 import { Col, Row } from "antd";
 import React, { useEffect, useState } from "react";
 
-import { BaseStation, SetState } from "../../types/type";
+import { BaseStation, Dashboard, SetState } from "../../types/type";
 
 type BaseStationInfoProp = {
   baseStationList: BaseStation[];
   setBaseStation: SetState<BaseStation | null>;
+  setDashboard: SetState<Dashboard | undefined>
 };
 
 const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
-  const { baseStationList, setBaseStation } = props;
+  const { baseStationList, setBaseStation, setDashboard } = props;
   const [init, setInit] = useState<boolean>(false);
 
   useEffect(() => {
@@ -61,7 +62,13 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
                 </span>
               </p>
             </Col>
-            <Col span={4}>
+            <Col
+              span={4}
+              onClick={() => {
+                setDashboard({type: 'baseStation', id: baseStation.name});
+
+              }}
+            >
               <div className="dashboardIcon"></div>
             </Col>
           </Row>

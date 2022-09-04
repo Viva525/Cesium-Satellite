@@ -1526,6 +1526,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             <BaseStationInfo
               baseStationList={baseStationList}
               setBaseStation={setCurBaseStation}
+              setDashboard = {setDashboard}
             />
           }
         />
