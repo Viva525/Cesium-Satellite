@@ -17,14 +17,11 @@ const SatelliteDashboard: React.FC<{}> = () => {
   const [satelliteStabilityState, setSatelliteStability] = useState<any>(null);
   const [satelliteUseRateState, setSatelliteUseRate] = useState<any>(null);
 
-  // let type = "satellite";
-  // let a = useParams();
-  // console.log(a);
+  let state = useParams();
 
-  const { state } = useLocation();
-
+  // const { state } = useLocation();
   //@ts-ignore
-  const type = state ? state.type : "baseStation";
+  const type = state ? state.type : "";
   //@ts-ignore
   const id = state ? state.id : "";
 
@@ -50,7 +47,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
           .then((data) => {
             setGroundStabilityState(data);
           });
-      } else {
+      } else if (type === "satellite") {
         fetch("http://localhost:3000/data/satelliteData/satelliteCoverage.json")
           .then((res) => res.json())
           .then((data) => {
@@ -71,17 +68,6 @@ const SatelliteDashboard: React.FC<{}> = () => {
       }
     }
   }, [init]);
-
-  useEffect(() => {
-    if (init) {
-      console.log(
-        75,
-        groundBusinessState,
-        groundReliabilityState,
-        groundStabilityState
-      );
-    }
-  }, [groundBusinessState, groundReliabilityState, groundStabilityState]);
 
   return (
     <div

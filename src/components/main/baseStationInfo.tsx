@@ -67,17 +67,23 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
               span={4}
               onClick={() => {
                 // setDashboard({ type: "baseStation", id: baseStation.name });
+
                 // 使用useNavigator解决;
                 //@ts-ignore
                 // to("/satelliteDashboard/", {
                 //   state: { type: "baseStation", id: baseStation.name },
                 // });
 
-                window.open(`/satelliteDashboard/`, "_blank");
+                // 打开新标签的方式
+                window.open(
+                  `/satelliteDashboard/baseStation/${baseStation.name}`,
+                  "_blank"
+                );
               }}
             >
-              {/* <Link to="/satelliteDashboard/baseStation/age">
-                satelliteDashboard
+              {/* 创建Link跳转 */}
+              {/* <Link target="_blank" to="/satelliteDashboard/baseStation/age">
+                信息
               </Link> */}
               <div className="dashboardIcon"></div>
             </Col>

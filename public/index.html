@@ -24,20 +24,24 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    
-    <link href="https://cesium.com/downloads/cesiumjs/releases/1.95/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-    <link href="./Cesium/Widgets/widgets.css" rel="stylesheet">
-    <script>window.CESIUM_BASE_URL = '/Cesium/'</script>
-    <script src="./Cesium/Cesium.js"></script>
+
+    <link
+      href="https://cesium.com/downloads/cesiumjs/releases/1.95/Build/Cesium/Widgets/widgets.css"
+      rel="stylesheet"
+    />
+    <link href="./Cesium/Widgets/widgets.css" rel="stylesheet" />
+    <script>
+      window.CESIUM_BASE_URL = "/Cesium/";
+    </script>
+    <script src="http://localhost:3000/Cesium/Cesium.js"></script>
     <title>React App</title>
     <!-- <script type="javascript" src="../src/js/Sandcastle-header.js"></script> -->
-
   </head>
   <body>
     <script
-		type="text/javascript"
-		src="http://api.map.baidu.com/api?v=2.0&ak=IPRZ6sdlLwMEqc5evhlazd2YQoRH4j4G">
-	</script>
+      type="text/javascript"
+      src="http://api.map.baidu.com/api?v=2.0&ak=IPRZ6sdlLwMEqc5evhlazd2YQoRH4j4G"
+    ></script>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--

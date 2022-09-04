@@ -11,9 +11,7 @@ function App() {
   useEffect(() => {
     if (dashboardInfo !== undefined) {
       //@ts-ignore
-      // window.location = `http://localhost:3000/satelliteDashboard/${dashboardInfo.type}/${dashboardInfo.id}`;
-      window.location = `http://localhost:3000/satelliteDashboard`;
-      console.log(dashboardInfo);
+      window.location = `http://localhost:3000/satelliteDashboard/${dashboardInfo.type}/${dashboardInfo.id}`;
     }
   }, [dashboardInfo]);
   return (
@@ -25,14 +23,10 @@ function App() {
             element={<CesiumComponent setDashboard={setDashboardInfo} />}
           ></Route>
 
-          {/* 配合useNavigator使用 */}
           <Route
-            path="/satelliteDashboard"
+            path="/satelliteDashboard/:type/:id"
             element={<SatelliteDashboard />}
           ></Route>
-
-          {/* <Route path='/satelliteDashboard/:type/:id' element={<SatelliteDashboard type={dashboardInfo?.type} id={dashboardInfo?.id} />}></Route> */}
-          {/* <Link to={{pathname: "/satelliteDashboard/"}} state={{type: dashboardInfo?.type, id:dashboardInfo?.id}}></Link> */}
         </Routes>
       </BrowserRouter>
     </div>
