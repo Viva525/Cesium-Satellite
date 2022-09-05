@@ -1,7 +1,8 @@
-import { Col, Row } from "antd";
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { BaseStation, Dashboard, SetState } from "../../types/type";
+import { Col, Row, Tag } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BaseStation, Dashboard, SetState } from '../../types/type';
+import { CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 
 type BaseStationInfoProp = {
   baseStationList: BaseStation[];
@@ -22,46 +23,54 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
 
   return (
     <div
-      id="baseStationList"
-      style={{ width: "100%", height: "39vh", overflowY: "scroll" }}
+      id='baseStationList'
+      style={{ width: '100%', height: '39vh', overflowY: 'scroll' }}
     >
       {baseStationList.map((baseStation: BaseStation, index) => {
         return (
           <Row
-            className="row-style"
+            className='row-style'
             key={index}
             style={{
-              cursor: "pointer",
-              borderBottom: "2px solid rgba(13, 126, 222, 0.5)",
+              cursor: 'pointer',
+              // borderBottom: "2px solid rgba(13, 126, 222, 0.5)",
             }}
           >
             <Col span={4}>
-              <div className="baseStationIcon"></div>
+              <div className='baseStationIcon'></div>
             </Col>
             <Col
               span={16}
-              style={{ paddingLeft: "5px" }}
+              style={{ paddingLeft: '5px' }}
               onClick={() => {
                 setBaseStation(baseStation);
               }}
             >
-              <p className="baseStationText">
-                基站名: &nbsp;{baseStation.name}
-              </p>
-              <p className="baseStationText">
-                基站描述: &nbsp;{baseStation.desc}
-              </p>
-              <p className="baseStationText">
-                {" "}
-                基站状态:&nbsp;
-                <span
+              <Row style={{ width: '100%', height: '100%' }}>
+                <Col span={16}>
+                  <p className='baseStationText_title'>基站名</p>
+                  <p className='baseStationText_content'>{baseStation.name}</p>
+                </Col>
+                <Col span={8}>
+                  <p className='baseStationText_title'>
+                    基站状态
+                    {/* <span
                   style={{
                     color: baseStation.state == "working" ? "green" : "rgba(210, 51, 90, 1)",
                   }}
                 >
                   {baseStation.state}
-                </span>
-              </p>
+                </span> */}
+                  </p>
+                  <div>
+                    {baseStation.state == 'working' ? (
+                      <Tag icon={<SyncOutlined spin />} color="success">Working</Tag>
+                    ) : (
+                      <Tag icon={<CloseCircleOutlined spin />} color="error">Stopped</Tag>
+                    )}
+                  </div>
+                </Col>
+              </Row>
             </Col>
             <Col
               span={4}
@@ -77,7 +86,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
                 // 打开新标签的方式
                 window.open(
                   `/satelliteDashboard/baseStation/${baseStation.name}`,
-                  "_blank"
+                  '_blank'
                 );
               }}
             >
@@ -85,7 +94,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
               {/* <Link target="_blank" to="/satelliteDashboard/baseStation/age">
                 信息
               </Link> */}
-              <div className="dashboardIcon"></div>
+              <div className='dashboardIcon'></div>
             </Col>
           </Row>
         );

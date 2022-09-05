@@ -3,6 +3,7 @@ import CesiumComponent from "./components/main/main";
 import SatelliteDashboard from "./components/satelliteDashboard/satelliteDashboard";
 import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import { Dashboard } from "./types/type";
+import "antd/dist/antd.min.css";
 
 function App() {
   const [dashboardInfo, setDashboardInfo] = useState<Dashboard | undefined>(

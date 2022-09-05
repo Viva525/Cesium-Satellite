@@ -1,7 +1,6 @@
 import { Table, Image} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
-import "antd/dist/antd.min.css"
 import './table.css'
 // import Item from 'antd/lib/list/Item';
 import React, { Dispatch, SetStateAction, useState } from 'react';
