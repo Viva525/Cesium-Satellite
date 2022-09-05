@@ -139,9 +139,11 @@
 .baseStationIcon {
     width: 100%;
     height: 100%;
-    background-image: url("../assets/baseStation.jpg");
-    background-size: contain;
+    background-image: url("../assets/basestation_work.png");
+    background-size: 50%;
     background-repeat: no-repeat;
+    background-position: center;
+    border-bottom: 2px solid rgba(13, 126, 222, 1);
 }
 
 .dashboardIcon {
@@ -161,9 +163,24 @@
     opacity: 1;
 }
 
-.baseStationText {
+.baseStationText_title {
     color: rgba(13, 126, 222, 1);
-    font-size: 14px;
+    font-size: 16px;
+    margin: 0;
+}
+
+.baseStationText_content{
+    color: rgba(13, 126, 222, 1);
+    font-size: 18px;
+    border: 500;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.ant-tag-success, .ant-tag-error{
+    background-color: transparent !important;
+    border: none !important;
+    font-size: 16px !important;
 }
 
 .row-style {
