@@ -1,4 +1,4 @@
-import { Table } from 'antd';
+import { Table, Image} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import "antd/dist/antd.min.css"
@@ -42,6 +42,28 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
             satellityKey={record.key}
             setSelectSatelliteList={setSelectSatelliteList}
           />)
+      }
+    },
+    {
+      title:'info',
+      dataIndex: 'JumpImage',
+      render:(_: any, record: DataType) =>{
+        return(
+          <Image
+            width={30}
+            src="./images/dot_32.png"
+            preview={{
+              visible: false,
+            }}
+            onClick={() => {
+              window.open(
+                //@ts-ignore
+                `/satelliteDashboard/satellite/${record.key.split('/').slice(1).join('-')}`,
+                "_blank"
+              );
+            }}
+          />
+        )
       }
     }
   ];
