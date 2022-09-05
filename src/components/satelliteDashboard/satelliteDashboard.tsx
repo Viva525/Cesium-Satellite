@@ -80,8 +80,8 @@ const SatelliteDashboard: React.FC<{}> = () => {
           className="dashboard-button"
           onClick={() => {
             //@ts-ignore
-            // window.location = "http://localhost:3000";
-            window.history.go(-1);
+            window.location = "http://localhost:3000";
+            // window.history.go(-1);
           }}
         >
           返回监测平台

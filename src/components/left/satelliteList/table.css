@@ -56,3 +56,7 @@ tbody td{
     height: 50%;
     margin-left: 10%;
 }
+
+.ant-image-mask-info{
+    display: none !important;
+}

@@ -178,12 +178,12 @@ const SatelliteNumberChart: React.FC<{}> = () => {
                 lineStyle: {
                   normal: {
                     width: 0.9,
-                    color: "rgba(25,163,223,1)", // 线条颜色
+                    color: "rgba(13, 126, 222, 1)", // 线条颜色
                   },
                   borderColor: "rgba(0,0,0,.4)",
                 },
                 itemStyle: {
-                  color: "rgba(25,163,223,1)",
+                  color: "rgba(13, 126, 222, 1)",
                   borderWidth: 0,
                 },
                 tooltip: {
@@ -201,16 +201,16 @@ const SatelliteNumberChart: React.FC<{}> = () => {
                       [
                         {
                           offset: 0,
-                          color: "rgba(25,163,223,.3)",
+                          color: "rgba(13, 126, 222,.3)",
                         },
                         {
                           offset: 1,
-                          color: "rgba(25,163,223, 0)",
+                          color: "rgba(13, 126, 222, 0)",
                         },
                       ],
                       false
                     ),
-                    shadowColor: "rgba(25,163,223, 0.5)", //阴影颜色
+                    shadowColor: "rgba(13, 126, 222, 0.5)", //阴影颜色
                     shadowBlur: 20, //shadowBlur设图形阴影的模糊大小。配合shadowColor,shadowOffsetX/Y, 设置图形的阴影效果。
                   },
                 },
@@ -226,12 +226,12 @@ const SatelliteNumberChart: React.FC<{}> = () => {
                 lineStyle: {
                   normal: {
                     width: 0.9,
-                    color: "rgba(10,219,250,1)", // 线条颜色
+                    color: "rgba(210, 51, 90,1)", // 线条颜色
                   },
                   borderColor: "rgba(0,0,0,.4)",
                 },
                 itemStyle: {
-                    color: "rgba(10,219,250,1)",
+                    color: "rgba(210, 51, 90,1)",
                   borderWidth: 0,
                 },
                 tooltip: {
@@ -249,16 +249,16 @@ const SatelliteNumberChart: React.FC<{}> = () => {
                       [
                         {
                           offset: 0,
-                          color: "rgba(10,219,250,.3)",
+                          color: "rgba(210, 51, 90,.3)",
                         },
                         {
                           offset: 1,
-                          color: "rgba(10,219,250, 0)",
+                          color: "rgba(210, 51, 90, 0)",
                         },
                       ],
                       false
                     ),
-                    shadowColor: "rgba(10,219,250, 0.5)", //阴影颜色
+                    shadowColor: "rgba(210, 51, 90, 0.5)", //阴影颜色
                     shadowBlur: 20, //shadowBlur设图形阴影的模糊大小。配合shadowColor,shadowOffsetX/Y, 设置图形的阴影效果。
                   },
                 },

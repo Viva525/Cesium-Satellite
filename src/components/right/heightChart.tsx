@@ -28,7 +28,7 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
         xAxis: {
           type: "category",
           axisLabel: {
-            color: "#fff",
+            color: "rgba(13, 126, 222, 1)",
             align: "left",
           },
           data: nowSystemDate,
@@ -38,16 +38,17 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
           name: "height / km",
           position: "left",
           nameTextStyle: {
-            color: "#fff",
+            color: "rgba(13, 126, 222, 1)",
           },
           splitLine:{
             show:true,
             lineStyle:{
-              type: 'dashed'
+              type: 'dashed',
+              color: "rgba(13, 126, 222, 1)"
             }
           },
           axisLabel: {
-            color: "#fff",
+            color: "rgba(13, 126, 222, 1)",
           },
           min: (value: any) => {
             return value.min - 1;
@@ -67,17 +68,17 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
             data: satellitePostionData,
             type: "line",
             itemStyle: {
-              color: 'rgba(111, 149, 165,1)'
+              color: 'rgba(210, 51, 90,1)'
             },
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgba(111, 149, 165,0.8)'
+                  color: 'rgba(210, 51, 90,0.8)'
                 },
                 {
                   offset: 1,
-                  color: 'rgba(255, 255, 255, 0)'
+                  color: 'rgba(210, 51, 90, 0)'
                 }
               ])
             },

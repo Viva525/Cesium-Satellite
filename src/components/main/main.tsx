@@ -321,7 +321,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               let re_gps = /Satellite\/GPS/;
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
-                entityColor = Cesium.Color.RED;
+                entityColor = Cesium.Color.WHITE;
                 // ele.path.show = true;
                 // 发光材质
                 // ele.path.width = 5;
@@ -334,7 +334,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
                 // 流光材质
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
-                  color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+                  color: new Cesium.Color(1.0, 1.0, 1.0, 0.8),
                   speed: 10,
                   percent: 0.1,
                   gradient: 0.1,
@@ -343,7 +343,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
 
-                entityColor = Cesium.Color.GREEN;
+                entityColor = new Cesium.Color(13/255, 126/255, 222/255, 1);
                 // ele.path.width = 5;
                 // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
                 //   glowPower: 0.2,
@@ -361,7 +361,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               }
               if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
-                entityColor = Cesium.Color.YELLOW;
+                entityColor = new Cesium.Color(210/255, 51/255, 90/255, 1);
                 // ele.path.width = 5;
                 // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
                 //   glowPower: 0.2,
@@ -527,15 +527,18 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               let re_gps = /Satellite\/GPS/;
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
-                ele.path.material.color = Cesium.Color.RED;
+                ele.path.material.color = new Cesium.Color(1,1,1,1);
+                ele.path.width = 2;
               }
               if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
-                ele.path.material.color = Cesium.Color.GREEN;
+                ele.path.material.color = new Cesium.Color(13/255, 126/255, 222/255, 1);
+                ele.path.width = 2;
               }
               if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
-                ele.path.material.color = Cesium.Color.YELLOW;
+                ele.path.material.color = new Cesium.Color(210/255, 51/255, 90/255, 1);
+                ele.path.width = 2;
               }
               // ele.path.show = false; // 设置路径不可看
               //ele.path.material.color = Cesium.Color.WHITE;

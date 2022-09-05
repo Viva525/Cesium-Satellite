@@ -32,7 +32,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
             key={index}
             style={{
               cursor: "pointer",
-              borderBottom: "2px solid rgba(255, 255, 255, 0.5)",
+              borderBottom: "2px solid rgba(13, 126, 222, 0.5)",
             }}
           >
             <Col span={4}>
@@ -56,7 +56,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
                 基站状态:&nbsp;
                 <span
                   style={{
-                    color: baseStation.state == "working" ? "green" : "yellow",
+                    color: baseStation.state == "working" ? "green" : "rgba(210, 51, 90, 1)",
                   }}
                 >
                   {baseStation.state}

@@ -153,10 +153,16 @@
     background-image: url("../assets/dot_32.png");
     background-size: contain;
     background-repeat: no-repeat;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.dashboardIcon:hover{
+    opacity: 1;
 }
 
 .baseStationText {
-    color: #fff;
+    color: rgba(13, 126, 222, 1);
     font-size: 14px;
 }
 
