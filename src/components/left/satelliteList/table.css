@@ -1,6 +1,6 @@
 .ant-table-cell, .ant-empty-description, .ant-pagination-item-link, .ant-pagination-item>a, .ant-select-selector,.ant-pagination-simple-pager input{
     /* background: #303336 !important; */
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
     border:1px #fff;
     color: #fff !important;
 }
