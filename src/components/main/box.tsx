@@ -23,7 +23,6 @@ const Box: React.FC<BoxProps> = (props) => {
   return (
     <div id="box" ref={boxRef}>
       <div className="boxTitle">
-        {/* <img id = 'box-img'/> */}
         <span className="cube">&nbsp;</span>
         {props.title}
       </div>

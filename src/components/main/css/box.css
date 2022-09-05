@@ -1,5 +1,14 @@
 #box{
-    margin-bottom: 20px;
+    margin-bottom: 50px;
+    background: linear-gradient(to left, #09fcfe, #09fcfe) left top no-repeat,
+    linear-gradient(to bottom, #09fcfe, #09fcfe) left top no-repeat,
+    linear-gradient(to left, #09fcfe, #09fcfe) right top no-repeat,
+    linear-gradient(to bottom, #09fcfe, #09fcfe) right top no-repeat,
+    linear-gradient(to left, #09fcfe, #09fcfe) left bottom no-repeat,
+    linear-gradient(to bottom, #09fcfe, #09fcfe) left bottom no-repeat,
+    linear-gradient(to left, #09fcfe, #09fcfe) right bottom no-repeat,
+    linear-gradient(to left, #09fcfe, #09fcfe) right bottom no-repeat;
+    background-size: 2px 20px, 20px 2px, 2px 20px, 20px 2px;
 }
 .boxTitle{
     height: 32px;
@@ -15,20 +24,22 @@
     font-weight: bold;
     vertical-align: middle;
     box-sizing: border-box;
+    margin-left: 10px;
     /* padding-left: 15px; */
 }
-.cube {
+/* .cube {
     display: inline-block;
     width: 5px;
     height: 32px;
     background-color: rgba(210, 51, 90, 1);
     margin-right: 15px;
-}
+} */
 
 .boxContent{
     background: rgba(0,0,0,0.05);
     box-sizing: border-box;
-    /* border: 5px  solid ; */
+    
+
 }
 
 /*图片替换*/

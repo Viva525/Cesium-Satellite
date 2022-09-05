@@ -156,7 +156,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
     imageryLayers.addImageryProvider(imageryProvider);
 
-
+    stages = viewer.scene.postProcessStages
 
       // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = false;
@@ -1408,7 +1408,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (baseStationEntity.model == undefined) {
               baseStationEntity.model = {
                 // 引入模型
-                uri: "./baseStation.gltf",
+                uri: "./Telescope.gltf",
                 // 配置模型大小的最小值
                 minimumPixelSize: 0.05,
                 //配置模型大小的最大值
@@ -1467,7 +1467,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             //   roll: Cesium.Math.toRadians(360 || 0)
             // },
           });
-          // setIsRotate(false);
+          setIsRotate(false);
           viewer.camera.lookDown(5000);
           viewer.camera.moveBackward(500);
         }
