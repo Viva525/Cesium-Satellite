@@ -7,13 +7,13 @@ import ColumnGroup from "antd/lib/table/ColumnGroup";
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
 type satelliteColor = {
-  initColor: RGBColor
+  initColor: RGBColor|undefined
   setSatelliteColor:SetState<any>;
   satellityKey: React.Key;
   setSelectSatelliteList: SetState<any[]>;
 };
 const ColorSelect: React.FC<satelliteColor> = (props) => {
-  const {initColor, satellityKey, setSelectSatelliteList } = props;
+  const {initColor, setSatelliteColor, satellityKey, setSelectSatelliteList } = props;
   const [color, setColor] = useState(initColor);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
@@ -60,7 +60,11 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
   const handleChange = (color: { rgb: RGBColor }) => {
     setColor(color.rgb);
     setSelectSatelliteList([[1, satellityKey, color.rgb]]);
-    // setSatelliteColor({...ele, satellityKey: ColumnGroup.rgb})
+    console.log(satellityKey);
+    
+    setSatelliteColor((ele)=>{
+      return {...ele, [satellityKey]: color.rgb}
+    });
   };
 
   return (

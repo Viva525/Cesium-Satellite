@@ -305,7 +305,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
             viewer.entities.add(ele);
-            let entityColor;
+            let entityColor ;
             // 1. 配置样式与路径
             if (ele.label != undefined) {
               ele.label.show = false;
@@ -315,20 +315,16 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               ele.path.show = false; // 设置路径不可看
               // 设置路径样式
               let re_starlink = /Satellite\/STARLINK*/;
-              let re_beidou = /Satellite\/(BEIDOU)|(BD)*/;
-              let re_gps = /Satellite\/GPS/;
+              let re_beidou = /Satellite\/(BEIDOU*)|(BD*)/;
+              let re_gps = /Satellite\/GPS*/;
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
-                entityColor = Cesium.Color.WHITE;
-                // ele.path.show = true;
-                // 发光材质
-                // ele.path.width = 5;
-                // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
-                //   glowPower: 0.2,
-                //   color: entityColor,
-                // });
-                // ele.path.material.color = Cesium.Color.RED;
-                // ele.path.material.glowPower = 0.8;
+                entityColor = new Cesium.Color(
+                  1,
+                  1,
+                  1,
+                  1
+                );
                 // 流光材质
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
@@ -337,7 +333,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   gradient: 0.1,
                 });
               }
-              if (re_beidou.exec(ele.id) != null) {
+              else if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
                 entityColor = new Cesium.Color(
                   13 / 255,
@@ -345,13 +341,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   222 / 255,
                   1
                 );
-                // ele.path.width = 5;
-                // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
-                //   glowPower: 0.2,
-                //   color: entityColor,
-                // });
-                // ele.path.material.color = Cesium.Color.GREEN;
-                // ele.path.material.glowPower = 0.8
 
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
@@ -360,7 +349,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   gradient: 0.1,
                 });
               }
-              if (re_gps.exec(ele.id) != null) {
+              else if (re_gps.exec(ele.id) != null) {
+              console.log('353 GPS');
+              
                 // gps轨迹
                 entityColor = new Cesium.Color(
                   210 / 255,
@@ -368,14 +359,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   90 / 255,
                   1
                 );
-                // ele.path.width = 5;
-                // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
-                //   glowPower: 0.2,
-                //   color: entityColor,
-                // });
-                // ele.path.material.color = Cesium.Color.YELLOW;
-                // ele.path.material.glowPower = 0.8
-
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
@@ -383,7 +366,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   gradient: 0.1,
                 });
               }
-              //ele.path.material.color = Cesium.Color.WHITE;
+
               // 改成点
               ele.billboard = undefined;
               ele.point = {
@@ -508,13 +491,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               let radius = 1.5;
               addHexagonAll(position[1], position[0], radius, `Hexagon/${ele.name}/`, 1);
               setBaseStationList(baseStationTemp);
-              console.log(viewer.entities);
             }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
         
       });
+
+      console.log(viewer.entities);
+      
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (click: { position: any }) {
@@ -611,10 +596,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       previousTime = viewer.clock.currentTime.secondsOfDay;
       setIsRotate(true);
 
-      // 配置时间轴
-      // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
-      // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
-      // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
       // 监听2d切换事件
       viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(
         () => {
@@ -634,8 +615,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
       );
       // 抛物飞线效果
-
-      console.log(viewer.imageryLayers._layers);
     }
   }, [init]);
 
