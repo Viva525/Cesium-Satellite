@@ -508,8 +508,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 verticalOrigin: Cesium.VerticalOrigin.CENTER,
               }
               let radius = 1.5;
-              addHexagonAll(position[0], position[1], radius, `Hexagon/${ele.name}`, 1);
+              addHexagonAll(position[1], position[0], radius, `Hexagon/${ele.name}/`, 1);
               setBaseStationList(baseStationTemp);
+              console.log(viewer.entities);
             }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
