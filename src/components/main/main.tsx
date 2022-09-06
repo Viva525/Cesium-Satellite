@@ -507,10 +507,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 show: true,
                 verticalOrigin: Cesium.VerticalOrigin.CENTER,
               }
+              let radius = 1.5;
+              addHexagonAll(position[0], position[1], radius, `Hexagon/${ele.name}`, 1);
+              setBaseStationList(baseStationTemp);
             }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
-          setBaseStationList(baseStationTemp);
         });
         
       });
@@ -710,7 +712,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     return cartesian3;
   };
   // 创建基站
-  const createBaseStation = (lng: any, lat: any, name: number) => {
+  const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new Cesium.TimeInterval({
       start: start,
       stop: stop,
@@ -749,9 +751,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     };
     viewer.entities.add(baseStation);
     // setSatelliteList(ele => [...ele, `baseStation_${id}`])
-    //添加矩形Entity
-    let radius = 1.5;
-    addHexagonAll(lat, lng, radius, id, 1);
   };
   // 绘制线条测量距离
   const measureDistance = () => {
