@@ -529,6 +529,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (nowPicksatellite) {
               if (pick.id !== nowPicksatellite.id) {
                 nowPicksatellite = pick;
+                console.log(nowPicksatellite)
                 setNowSystemDate([]);
                 setSatellitePostionData([]);
               }
@@ -874,6 +875,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       return (distance / 1000).toFixed(2);
     }
   };
+
   const measureArea = () => {
     if (!isDrawPolygon) return;
     // 鼠标事件
@@ -1046,6 +1048,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       return s;
     }
   };
+// 添加卫星高度数据
   const nowSatellitePostion = () => {
     let cartographic = null;
     cartographic = Cesium.Cartographic.fromCartesian(
