@@ -66,10 +66,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const [selectedSatelliteList, setSelectedSatelliteList] = useState<any[]>([]);
   const [start, setStart] = useState(
-    Cesium.JulianDate.fromIso8601("2022-09-03T04:00:00Z")
+    Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
   );
   const [stop, setStop] = useState(
-    Cesium.JulianDate.fromIso8601("2022-09-04T04:00:00Z")
+    Cesium.JulianDate.fromIso8601("2022-09-07T04:00:00Z")
   );
   const [baseStationList, setBaseStationList] = useState<BaseStation[]>([]);
   const [curSatellite, setCurSatellite] = useState<String>("");
@@ -291,7 +291,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/1213china.czml"
+          "./data/star-beidou-gps_2.czml"
           // "./data/star-beidou-gps.czml"
         );
         let nowSatelliteList: string[] = [];
@@ -307,12 +307,68 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
             viewer.entities.add(ele);
-            let entityColor;
+            let entityColor ;
             // 1. 配置样式与路径
             if (ele.label != undefined) {
               ele.label.show = false;
             }
             if (ele.path != undefined) {
+              nowSatelliteList.push(ele.id);
+              ele.path.show = false; // 设置路径不可看
+              // 设置路径样式
+              let re_starlink = /Satellite\/STARLINK*/;
+              let re_beidou = /Satellite\/(BEIDOU*)|(BD*)/;
+              let re_gps = /Satellite\/GPS*/;
+              if (re_starlink.exec(ele.id) != null) {
+                // 星链轨迹
+                entityColor = new Cesium.Color(
+                  1,
+                  1,
+                  1,
+                  1
+                );
+                // 流光材质
+                ele.path.material = new Cesium.LineFlowMaterialProperty({
+                  color: entityColor,
+                  speed: 10,
+                  percent: 0.1,
+                  gradient: 0.1,
+                });
+              }
+              else if (re_beidou.exec(ele.id) != null) {
+                // 北斗轨迹
+                entityColor = new Cesium.Color(
+                  13 / 255,
+                  126 / 255,
+                  222 / 255,
+                  1
+                );
+
+                ele.path.material = new Cesium.LineFlowMaterialProperty({
+                  color: entityColor,
+                  speed: 1,
+                  percent: 0.1,
+                  gradient: 0.1,
+                });
+              }
+              else if (re_gps.exec(ele.id) != null) {
+              console.log('353 GPS');
+              
+                // gps轨迹
+                entityColor = new Cesium.Color(
+                  210 / 255,
+                  51 / 255,
+                  90 / 255,
+                  1
+                );
+                ele.path.material = new Cesium.LineFlowMaterialProperty({
+                  color: entityColor,
+                  speed: 1,
+                  percent: 0.1,
+                  gradient: 0.1,
+                });
+              }
+
               // 改成点
               ele.billboard = undefined;
               ele.point = {
@@ -321,82 +377,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // outlineWidth: 4,
                 pixelSize: 5,
               };
-
-              nowSatelliteList.push(ele.id);
-              ele.path.show = false; // 设置路径不可看
-              // 设置路径样式
-              let re_starlink = /Satellite\/STARLINK*/;
-              let re_beidou = /Satellite\/BD*/;
-              let re_gps = /Satellite\/GPS/;
-              if (re_starlink.exec(ele.id) != null) {
-                // 星链轨迹
-                entityColor = Cesium.Color.WHITE;
-                // ele.path.show = true;
-                // 发光材质
-                // ele.path.width = 5;
-                // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
-                //   glowPower: 0.2,
-                //   color: entityColor,
-                // });
-                // ele.path.material.color = Cesium.Color.RED;
-                // ele.path.material.glowPower = 0.8;
-
-                // 流光材质
-                ele.path.material = new Cesium.LineFlowMaterialProperty({
-                  color: new Cesium.Color(1.0, 1.0, 1.0, 0.8),
-                  speed: 10,
-                  percent: 0.1,
-                  gradient: 0.1,
-                });
-              }
-              if (re_beidou.exec(ele.id) != null) {
-                // 北斗轨迹
-                entityColor = new Cesium.Color(
-                  13 / 255,
-                  126 / 255,
-                  222 / 255,
-                  1
-                );
-                // ele.path.width = 5;
-                // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
-                //   glowPower: 0.2,
-                //   color: entityColor,
-                // });
-                // ele.path.material.color = Cesium.Color.GREEN;
-                // ele.path.material.glowPower = 0.8
-
-                ele.path.material = new Cesium.LineFlowMaterialProperty({
-                  color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-                  speed: 1,
-                  percent: 0.1,
-                  gradient: 0.1,
-                });
-              }
-              if (re_gps.exec(ele.id) != null) {
-                // gps轨迹
-                entityColor = new Cesium.Color(
-                  210 / 255,
-                  51 / 255,
-                  90 / 255,
-                  1
-                );
-                // ele.path.width = 5;
-                // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
-                //   glowPower: 0.2,
-                //   color: entityColor,
-                // });
-                // ele.path.material.color = Cesium.Color.YELLOW;
-                // ele.path.material.glowPower = 0.8
-
-                ele.path.material = new Cesium.LineFlowMaterialProperty({
-                  color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-                  speed: 1,
-                  percent: 0.1,
-                  gradient: 0.1,
-                });
-              }
-              //ele.path.material.color = Cesium.Color.WHITE;
-
               // 绘制雷达扫描
               let lineFlowPosition = [];
               let radarId = "radarScan_" + ele.id;
@@ -489,7 +469,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
             }
             // 地面基站
-            if (/^Place\/*/.exec(ele.id) != null) {
+            let re_Place = /^Place\/Place[0-9]$/;
+            if (re_Place.exec(ele.id) != null) {
               let position = GetWGS84FromDKR(ele._position._value, 1).map(item => Number(item));
               baseStationTemp.push({
                 name: `${ele.name}`,
@@ -509,13 +490,18 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 show: true,
                 verticalOrigin: Cesium.VerticalOrigin.CENTER,
               }
+              let radius = 1.5;
+              addHexagonAll(position[1], position[0], radius, `Hexagon/${ele.name}/`, 1);
+              setBaseStationList(baseStationTemp);
             }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
-          setBaseStationList(baseStationTemp);
         });
 
       });
+
+      console.log(viewer.entities);
+      
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (click: { position: any }) {
@@ -614,10 +600,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       previousTime = viewer.clock.currentTime.secondsOfDay;
       setIsRotate(true);
 
-      // 配置时间轴
-      // viewer.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
-      // viewer.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
-      // viewer.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
       // 监听2d切换事件
       viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(
         () => {
@@ -637,8 +619,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
       );
       // 抛物飞线效果
-
-      console.log(viewer.imageryLayers._layers);
     }
   }, [init]);
 
@@ -714,7 +694,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     return cartesian3;
   };
   // 创建基站
-  const createBaseStation = (lng: any, lat: any, name: number) => {
+  const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new Cesium.TimeInterval({
       start: start,
       stop: stop,
@@ -753,9 +733,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     };
     viewer.entities.add(baseStation);
     // setSatelliteList(ele => [...ele, `baseStation_${id}`])
-    //添加矩形Entity
-    let radius = 1.5;
-    addHexagonAll(lat, lng, radius, id, 1);
   };
   // 绘制线条测量距离
   const measureDistance = () => {
