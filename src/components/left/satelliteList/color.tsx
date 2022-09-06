@@ -76,4 +76,4 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
   );
 };
 
-export default memo(ColorSelect);
+export default ColorSelect;
