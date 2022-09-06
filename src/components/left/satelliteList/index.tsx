@@ -15,6 +15,7 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     {
       title: 'satelliteName',
       dataIndex: 'key',
+      width:"60%",
       filters: [
         {
           text: '星链',
@@ -34,6 +35,7 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     },
     {
       title: 'color',
+      width:"30%",
       dataIndex: 'color',
       render: (_: any, record: DataType) => {
         return (
@@ -45,6 +47,7 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     },
     {
       title:'info',
+      width:"10%",
       dataIndex: 'JumpImage',
       render:(_: any, record: DataType) =>{
         return(

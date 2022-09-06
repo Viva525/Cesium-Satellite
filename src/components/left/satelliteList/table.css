@@ -51,11 +51,11 @@ tbody td{
     background-color: rgba(40, 37, 37, 0.8) !important;
 }
 
-.hue-horizontal {
-    width: 80%;
-    height: 50%;
-    margin-left: 10%;
+.hue-picker{
+    width: 100% !important;
+    
 }
+
 
 .ant-image-mask-info{
     display: none !important;

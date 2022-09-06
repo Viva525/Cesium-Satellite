@@ -13,6 +13,8 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
   return (
     <HuePicker
       color= {color}
+      height={"50%"}
+      width={"100%"}
       onChange={(color: any) => {
         setColor(color.rgb)
         setSelectSatelliteList([[1, satellityKey, color.rgb]])

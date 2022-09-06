@@ -17,7 +17,7 @@ import SatelliteBar from "../left/satelliteBar";
 import SatelliteNumberChart from "../left/satelliteNumberChart";
 import SatelliteInfo from "../right/satelliteInfo";
 import "./LineFlowMaterialProperty";
-import {CesiumComponentType}  from "../../types/type"
+import { CesiumComponentType } from "../../types/type";
 
 //@ts-ignore
 let viewer: any;
@@ -41,7 +41,7 @@ let previousTime: any;
 // let satelliteList: {[key:string]:any []} = {};
 // let satelliteList: string[] = []
 const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
-  const {setDashboard} = props;
+  const { setDashboard } = props;
   const [init, setInit] = useState<boolean>(false);
   const [isDrawLine, setIsDrawLine] = useState<boolean>(false);
   const [isDrawPolygon, setIsDrawPolygon] = useState<boolean>(false);
@@ -64,10 +64,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const [start, setStart] = useState(
-    Cesium.JulianDate.fromIso8601("2022-08-17T07:10:35.930703+00:00")
+    Cesium.JulianDate.fromIso8601("2022-09-03T04:00:00Z")
   );
   const [stop, setStop] = useState(
-    Cesium.JulianDate.fromIso8601("2022-08-18T07:10:35.930703+00:00")
+    Cesium.JulianDate.fromIso8601("2022-09-04T04:00:00Z")
   );
   const [baseStationList, setBaseStationList] = useState<BaseStation[]>([]);
   const [curSatellite, setCurSatellite] = useState<String>("");
@@ -152,18 +152,18 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         style: "default",
         format: "image/png",
         tileMatrixSetID: "GoogleMapsCompatible",
-        show: false
-        });
-    imageryLayers.addImageryProvider(imageryProvider);
+        show: false,
+      });
+      imageryLayers.addImageryProvider(imageryProvider);
 
-    stages = viewer.scene.postProcessStages
+      stages = viewer.scene.postProcessStages;
 
       // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = false;
       viewer.shadows = false;
 
-      let layer = imageryLayers.get(0)
-      layer['brightness'] = 1
+      let layer = imageryLayers.get(0);
+      layer["brightness"] = 1;
 
       // 更换天空盒
       // let spaceSkybox = new Cesium.SkyBox({
@@ -184,7 +184,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       // });
       // viewer.scene.skyBox = spaceSkybox;
 
-      // 背景切换为图片 
+      // 背景切换为图片
       // 去掉黑色星空背景
       viewer.scene.skyBox.show = false;
       // viewer.scene.sun.show = true
@@ -289,7 +289,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/star-beidou-gps.czml"
+          "./data/1213china.czml"
+          // "./data/star-beidou-gps.czml"
         );
         let dronePromise_beidou =
           Cesium.CzmlDataSource.load("./data/beidou.czml");
@@ -305,7 +306,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           viewer.dataSources.add(dronePromise);
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
-            nowSatelliteList.push(ele.id);
+            
             viewer.entities.add(ele);
             let entityColor;
 
@@ -314,10 +315,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               ele.label.show = false;
             }
             if (ele.path != undefined) {
+              nowSatelliteList.push(ele.id);
               ele.path.show = false; // 设置路径不可看
               // 设置路径样式
               let re_starlink = /Satellite\/STARLINK*/;
-              let re_beidou = /Satellite\/BEIDOU*/;
+              let re_beidou = /Satellite\/BD*/;
               let re_gps = /Satellite\/GPS/;
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
@@ -343,7 +345,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
 
-                entityColor = new Cesium.Color(13/255, 126/255, 222/255, 1);
+                entityColor = new Cesium.Color(
+                  13 / 255,
+                  126 / 255,
+                  222 / 255,
+                  1
+                );
                 // ele.path.width = 5;
                 // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
                 //   glowPower: 0.2,
@@ -361,7 +368,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               }
               if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
-                entityColor = new Cesium.Color(210/255, 51/255, 90/255, 1);
+                entityColor = new Cesium.Color(
+                  210 / 255,
+                  51 / 255,
+                  90 / 255,
+                  1
+                );
                 // ele.path.width = 5;
                 // ele.path.material = new Cesium.PolylineGlowMaterialProperty({
                 //   glowPower: 0.2,
@@ -378,6 +390,97 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 });
               }
               //ele.path.material.color = Cesium.Color.WHITE;
+
+              // 绘制雷达扫描
+              let lineFlowPosition = [];
+              let radarId = "radarScan_" + ele.id;
+
+              let postionValues = [...ele.position._property._values];
+              let cartographic = Cesium.Cartographic.fromCartesian(
+                new Cesium.Cartesian3(
+                  postionValues[0],
+                  postionValues[1],
+                  postionValues[2]
+                )
+              );
+              let height = Math.abs(cartographic.height);
+              let earthRadius = 6371393;
+              // 卫星底部据地球中心的距离
+              let earthHeight =
+                (earthRadius * earthRadius) / (height + earthRadius);
+              earthHeight = earthHeight + ((earthRadius - earthHeight) * 8) / 9;
+              // 卫星底部的辐射半径
+              let bottomRadius = Math.sqrt(
+                earthRadius * earthRadius - earthHeight * earthHeight
+              );
+              // 卫星辐射的长度
+              let satelliteLenght = Math.abs(
+                height + earthRadius - earthHeight
+              );
+              var property = new Cesium.SampledPositionProperty();
+              var lineProperty = new Cesium.SampledPositionProperty();
+              let radarHeight: number = 0;
+              for (var i = 0; i < postionValues.length / 3; i++) {
+                let time = Cesium.JulianDate.clone(
+                  ele.position._property._times[i]
+                );
+                let radarHeight =
+                  earthHeight + satelliteLenght / 2 - earthRadius;
+                let flowHeight = height;
+
+                // @ts-ignore
+                let [lng, lat] = GetWGS84FromDKR(
+                  new Cesium.Cartesian3(
+                    postionValues[i * 3],
+                    postionValues[i * 3 + 1],
+                    postionValues[i * 3 + 2]
+                  ),
+                  1
+                );
+
+                lineFlowPosition.push(
+                  new Cesium.Cartesian3(
+                    postionValues[i * 3],
+                    postionValues[i * 3 + 1],
+                    postionValues[i * 3 + 2]
+                  )
+                );
+
+                let radarPosition = Cesium.Cartesian3.fromDegrees(
+                  eval(lng),
+                  eval(lat),
+                  radarHeight
+                );
+                // 添加位置，和时间对应
+                property.addSample(time, radarPosition);
+                property._property._interpolationAlgorithm.type =
+                  ele.position._property._interpolationAlgorithm.type;
+                property._property._interpolationDegree =
+                  ele.position._property._interpolationDegree;
+                property._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
+
+                let flowPosition = Cesium.Cartesian3.fromDegrees(
+                  eval(lng),
+                  eval(lat),
+                  flowHeight
+                );
+                lineProperty.addSample(time, flowPosition);
+                lineProperty._property._interpolationAlgorithm.type =
+                  ele.position._property._interpolationAlgorithm.type;
+                lineProperty._property._interpolationDegree =
+                  ele.position._property._interpolationDegree;
+                lineProperty._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
+              }
+
+              // console.log(ele, entityColor);
+              
+              radarScanner(
+                property,
+                satelliteLenght,
+                radarId,
+                bottomRadius,
+                entityColor
+              );
             }
 
             // 2. 改成点
@@ -399,90 +502,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               //       }),
               //     }
             }
-
-            // 绘制雷达扫描
-            let lineFlowPosition = [];
-            let radarId = "radarScan_" + ele.id;
-            let postionValues = [...ele.position._property._values];
-            let cartographic = Cesium.Cartographic.fromCartesian(
-              new Cesium.Cartesian3(
-                postionValues[0],
-                postionValues[1],
-                postionValues[2]
-              )
-            );
-            let height = Math.abs(cartographic.height);
-            let earthRadius = 6371393;
-            // 卫星底部据地球中心的距离
-            let earthHeight =
-              (earthRadius * earthRadius) / (height + earthRadius);
-            earthHeight = earthHeight + ((earthRadius - earthHeight) * 8) / 9;
-            // 卫星底部的辐射半径
-            let bottomRadius = Math.sqrt(
-              earthRadius * earthRadius - earthHeight * earthHeight
-            );
-            // 卫星辐射的长度
-            let satelliteLenght = Math.abs(height + earthRadius - earthHeight);
-            var property = new Cesium.SampledPositionProperty();
-            var lineProperty = new Cesium.SampledPositionProperty();
-            let radarHeight: number = 0;
-            for (var i = 0; i < postionValues.length / 3; i++) {
-              let time = Cesium.JulianDate.clone(
-                ele.position._property._times[i]
-              );
-              let radarHeight = earthHeight + satelliteLenght / 2 - earthRadius;
-              let flowHeight = height;
-
-              // @ts-ignore
-              let [lng, lat] = GetWGS84FromDKR(
-                new Cesium.Cartesian3(
-                  postionValues[i * 3],
-                  postionValues[i * 3 + 1],
-                  postionValues[i * 3 + 2]
-                ),
-                1
-              );
-
-              lineFlowPosition.push(
-                new Cesium.Cartesian3(
-                  postionValues[i * 3],
-                  postionValues[i * 3 + 1],
-                  postionValues[i * 3 + 2]
-                )
-              );
-
-              let radarPosition = Cesium.Cartesian3.fromDegrees(
-                eval(lng),
-                eval(lat),
-                radarHeight
-              );
-              // 添加位置，和时间对应
-              property.addSample(time, radarPosition);
-              property._property._interpolationAlgorithm.type =
-                ele.position._property._interpolationAlgorithm.type;
-              property._property._interpolationDegree =
-                ele.position._property._interpolationDegree;
-              property._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
-
-              let flowPosition = Cesium.Cartesian3.fromDegrees(
-                eval(lng),
-                eval(lat),
-                flowHeight
-              );
-              lineProperty.addSample(time, flowPosition);
-              lineProperty._property._interpolationAlgorithm.type =
-                ele.position._property._interpolationAlgorithm.type;
-              lineProperty._property._interpolationDegree =
-                ele.position._property._interpolationDegree;
-              lineProperty._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
-            }
-            radarScanner(
-              property,
-              satelliteLenght,
-              radarId,
-              bottomRadius,
-              entityColor
-            );
 
             // if (c) {
             //   lineFlow("lineFlow_" + ele.id, lineProperty);
@@ -523,21 +542,31 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (ele.path != undefined) {
               // 设置路径样式
               let re_starlink = /Satellite\/STARLINK*/;
-              let re_beidou = /Satellite\/BEIDOU*/;
+              let re_beidou = /Satellite\/BD*/;
               let re_gps = /Satellite\/GPS/;
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
-                ele.path.material.color = new Cesium.Color(1,1,1,1);
+                ele.path.material.color = new Cesium.Color(1, 1, 1, 1);
                 ele.path.width = 2;
               }
               if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
-                ele.path.material.color = new Cesium.Color(13/255, 126/255, 222/255, 1);
+                ele.path.material.color = new Cesium.Color(
+                  13 / 255,
+                  126 / 255,
+                  222 / 255,
+                  1
+                );
                 ele.path.width = 2;
               }
               if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
-                ele.path.material.color = new Cesium.Color(210/255, 51/255, 90/255, 1);
+                ele.path.material.color = new Cesium.Color(
+                  210 / 255,
+                  51 / 255,
+                  90 / 255,
+                  1
+                );
                 ele.path.width = 2;
               }
               // ele.path.show = false; // 设置路径不可看
@@ -671,8 +700,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(
         () => {
           setIsRotate(false);
-          let layer = viewer.imageryLayers.get(0)
-          layer['brightness'] = 4
+          let layer = viewer.imageryLayers.get(0);
+          layer["brightness"] = 4;
         }
       );
 
@@ -680,18 +709,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         () => {
           setTimeout(() => {
             setIsRotate(true);
-            let layer = viewer.imageryLayers.get(0)
-            layer['brightness'] = 6
+            let layer = viewer.imageryLayers.get(0);
+            layer["brightness"] = 6;
           }, 2000);
         }
       );
       // 抛物飞线效果
 
       console.log(viewer.imageryLayers._layers);
-      
-
-
-
     }
   }, [init]);
 
@@ -1349,7 +1374,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           ])
         ),
         outline: true,
-        outlineColor: new Cesium.Color(210/255, 51/255, 90/255, 1),
+        outlineColor: new Cesium.Color(210 / 255, 51 / 255, 90 / 255, 1),
         outlineWidth: 4,
         fill: false,
         material: Cesium.Color.fromCssColorString(
@@ -1499,7 +1524,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // backgroundRepeat: "no-repeat ",
           // backgroundSize: "cover",
           // backgroundImage: "url(./images/star_blue.png)",
-          background:"#000"
+          background: "#000",
         }}
       ></div>
       <div className="right-wrap">
@@ -1529,7 +1554,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             <BaseStationInfo
               baseStationList={baseStationList}
               setBaseStation={setCurBaseStation}
-              setDashboard = {setDashboard}
+              setDashboard={setDashboard}
             />
           }
         />
@@ -1562,10 +1587,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         <button
           type="button"
           id="measureArea"
-          style={{float:"right", marginRight:"2vw"}}
+          style={{ float: "right", marginRight: "2vw" }}
           onClick={() => {
             //debugger;
-            window.location="http://localhost:3000/satelliteDashboard"
+            window.location = "http://localhost:3000/satelliteDashboard";
           }}
           className="cesium-button"
         >
