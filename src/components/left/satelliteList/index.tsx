@@ -1,21 +1,33 @@
+//@ts-nocheck
 import { Table, Image} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import './table.css'
 // import Item from 'antd/lib/list/Item';
 import React, { Dispatch, SetStateAction, useCallback, useState } from 'react';
-import ColorSelect from './color';
+import ColorSelect, { SetState } from './color';
 import {DataType, satelliteListType} from "../../../types/type"
 
 
 const SatelliteList: React.FC<satelliteListType> = (props) => {
-  // const [statelliteList, setStatelliteList] = useState(undefined)
-  // const [setSelectSatelliteList, setSetSelectSatelliteList] = useState(undefined)
   const { statelliteList, setSelectSatelliteList } = props
-  // const 
+  const [satelliteColor, setSatelliteColor] = useState({})
 
-    console.log('组件重新渲染了');
-    
+  let t = {}
+  statelliteList.forEach(ele =>{
+    let color;
+    if(ele.includes("BD") | ele.includes("BEIDOU")){
+      color = { r: "13", g: "126", b: "222", a: "1" }
+    }else if(ele.includes("GPS")){
+      color ={ r: "210", g: '51', b: '90', a: "1" }
+    }else{
+      color ={ r: '6', g: '55', b: '96',a: "1" }
+    }
+    // satelliteColor[ele] = color
+    setSatelliteColor({...satelliteColor, ele: color})
+  })
+  // setSatelliteColor(t)
+
   const columns: ColumnsType<DataType> = [
     {
       title: 'satelliteName',
@@ -47,7 +59,9 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
         return (
           <ColorSelect
             //@ts-ignore
-            initColor={record.key.includes("BD") | record.key.includes("BEIDOU")  ? { r: "13", g: "126", b: "222", a: "1" }: record.key.includes("GPS") ?{ r: "210", g: '51', b: '90', a: "1" } : { r: '6', g: '55', b: '96',a: "1" } }
+            // initColor={record.key.includes("BD") | record.key.includes("BEIDOU")  ? { r: "13", g: "126", b: "222", a: "1" }: record.key.includes("GPS") ?{ r: "210", g: '51', b: '90', a: "1" } : { r: '6', g: '55', b: '96',a: "1" } }
+            initColor={satelliteColor[record.key]}
+            setSatelliteColor = {setSatelliteColor}
             satellityKey={record.key}
             setSelectSatelliteList={setSelectSatelliteList}
           />)

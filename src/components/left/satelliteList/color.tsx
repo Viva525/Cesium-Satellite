@@ -2,11 +2,13 @@
 import { RGBColor, SketchPicker } from "react-color";
 import reactCSS from "reactcss";
 import React, { Dispatch, SetStateAction, useState, memo } from "react";
+import ColumnGroup from "antd/lib/table/ColumnGroup";
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
 type satelliteColor = {
   initColor: RGBColor
+  setSatelliteColor:SetState<any>;
   satellityKey: React.Key;
   setSelectSatelliteList: SetState<any[]>;
 };
@@ -16,7 +18,6 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
 
-  
   const styles = reactCSS({
     default: {
       color: {
@@ -59,6 +60,7 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
   const handleChange = (color: { rgb: RGBColor }) => {
     setColor(color.rgb);
     setSelectSatelliteList([[1, satellityKey, color.rgb]]);
+    // setSatelliteColor({...ele, satellityKey: ColumnGroup.rgb})
   };
 
   return (
