@@ -10,7 +10,7 @@ import {DataType, satelliteListType} from "../../../types/type"
 
 const SatelliteList: React.FC<satelliteListType> = (props) => {
 
-  const { statelliteList, setSelectSatelliteList } = props
+  const { statelliteList, setSelectSatelliteList, setSelectedSatelliteList } = props
   const columns: ColumnsType<DataType> = [
     {
       title: 'satelliteName',
@@ -83,7 +83,6 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
 
     let nowSelectList = []
     if (selectedRowKeys.length < newSelectedRowKeys.length) {
-
       let nowSelectKey = newSelectedRowKeys.concat(selectedRowKeys).filter(item => !selectedRowKeys.includes(item))
       for (let i of nowSelectKey) {
         nowSelectList.push([0, i, true])
@@ -97,6 +96,7 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     }
 
     setSelectSatelliteList(nowSelectList)
+    setSelectedSatelliteList(newSelectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys);
 
   };

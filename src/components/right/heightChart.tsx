@@ -85,7 +85,7 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
           },
         ],
       };
-      myChart.setOption(option);
+      myChart.setOption(option, true);
       myChart.resize();
     }
   }, [satellitePostionData, nowSystemDate]);

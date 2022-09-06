@@ -18,6 +18,7 @@ import SatelliteNumberChart from "../left/satelliteNumberChart";
 import SatelliteInfo from "../right/satelliteInfo";
 import "./LineFlowMaterialProperty";
 import { CesiumComponentType } from "../../types/type";
+import { BlockPicker } from "react-color";
 
 //@ts-ignore
 let viewer: any;
@@ -63,6 +64,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [isPostion, setIsPostion] = useState<boolean>(false);
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
+  const [selectedSatelliteList, setSelectedSatelliteList] = useState<any[]>([]);
   const [start, setStart] = useState(
     Cesium.JulianDate.fromIso8601("2022-09-03T04:00:00Z")
   );
@@ -208,8 +210,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () {},
-        highlight: function () {},
+        declare: function () { },
+        highlight: function () { },
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -283,7 +285,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             menu.appendChild(option);
           }
         },
-        reset: function () {},
+        reset: function () { },
       };
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
@@ -477,7 +479,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               }
 
               // console.log(ele, entityColor);
-              
+
               radarScanner(
                 property,
                 satelliteLenght,
@@ -487,8 +489,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
             }
             // 地面基站
-            if (/^Place\/*/.exec(ele.id) != null){
-              let position = GetWGS84FromDKR(ele._position._value,1).map(item=>Number(item));
+            if (/^Place\/*/.exec(ele.id) != null) {
+              let position = GetWGS84FromDKR(ele._position._value, 1).map(item => Number(item));
               baseStationTemp.push({
                 name: `${ele.name}`,
                 desc: "baseStation",
@@ -512,7 +514,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
           setBaseStationList(baseStationTemp);
         });
-        
+
       });
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -521,22 +523,22 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         if (pick && pick.id) {
           if (pick.id._path != undefined) {
             pick.id._path.show = true;
-            setIsPostion(true);
+            // setIsPostion(true);
             let curradarScanner = viewer.entities.getById(
               "radarScan_" + pick.id._id
             );
             curradarScanner.show = true;
             if (nowPicksatellite) {
-              if (pick.id !== nowPicksatellite.id) {
-                nowPicksatellite = pick;
-                console.log(nowPicksatellite)
-                setNowSystemDate([]);
-                setSatellitePostionData([]);
+              if (pick.id._id !== nowPicksatellite[0]) {
+                nowPicksatellite = [pick.id._id, true, false];
               }
-            } else {
-              nowPicksatellite = pick;
+              else {
+                nowPicksatellite = [pick.id._id, true, true];
+              }
             }
-            viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
+            else{
+              nowPicksatellite = [pick.id._id, true, true];
+            }
             setCurSatellite(pick.id._id.split("/")[1]);
             if (pick.id.model == undefined) {
               // 将点换成模型
@@ -572,10 +574,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // 点击的是卫星
           if (pick.id._path != undefined) {
             pick.id._path.show = false;
-            setIsPostion(false);
+            nowPicksatellite = [pick.id._id, false, false];
+            // setIsPostion(false);
             setNowSystemDate([]);
             setSatellitePostionData([]);
-            viewer.clock.onTick.removeEventListener(nowSatellitePostion, false);
+            // viewer.clock.onTick.removeEventListener(nowSatellitePostion, false);
             // 删除雷达扫描实体
             // viewer.entities.removeById('radarScan_' + pick.id._id)
             let curradarScanner = viewer.entities.getById(
@@ -868,7 +871,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -1017,7 +1020,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -1043,23 +1046,24 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
   };
-// 添加卫星高度数据
+
+  // 添加卫星高度数据
   const nowSatellitePostion = () => {
-    let cartographic = null;
-    cartographic = Cesium.Cartographic.fromCartesian(
-      nowPicksatellite.primitive._actualPosition
-    );
-    let x = Cesium.Math.toDegrees(cartographic.longitude);
-    let y = Cesium.Math.toDegrees(cartographic.latitude);
-    let z = Math.ceil(cartographic.height / 1000);
-    let nowDate = new Date(viewer.clock.currentTime).toUTCString();
-    // 时间没有暂停
-    if (viewer.clock.shouldAnimate) {
+    if (viewer.clock.shouldAnimate && nowPicksatellite[1]) {
+      let pick = viewer.entities.getById(nowPicksatellite[0]);
+      let cartographic = null;
+      cartographic = Cesium.Cartographic.fromCartesian(
+        pick.position.getValue(viewer.clock.currentTime)
+      );
+      let z = Math.ceil(cartographic.height / 1000);
+      let nowDate = new Date(viewer.clock.currentTime).toUTCString();
+      // 时间没有暂停
+
       setNowSystemDate((prev) => {
         return [...prev, nowDate];
       });
@@ -1068,6 +1072,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       });
     }
   };
+
   // 绘制卫星锥体
   const radarScanner = (
     position: any,
@@ -1305,11 +1310,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     });
   }
 
+  // 当前选择的卫星
   useEffect(() => {
-    let count = 0,
-      current = "";
     for (let i of selectSatelliteList) {
-      var pick = viewer.entities.getById(i[1]);
+      let pick = viewer.entities.getById(i[1]);
       let curradarScanner = viewer.entities.getById("radarScan_" + i[1]);
 
       if (i[0] === 0) {
@@ -1332,12 +1336,47 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         );
       }
     }
-
-    if (count === 1) {
-      setCurSatellite(current.split("/")[1]);
-    }
   }, [selectSatelliteList]);
 
+  // 当前选中的卫星
+  useEffect(() => {
+    console.log(selectedSatelliteList)
+    if (selectedSatelliteList.length > 0) {
+      if (nowPicksatellite) {
+        if (selectedSatelliteList[0] !== nowPicksatellite[0]) {
+          nowPicksatellite = [selectedSatelliteList[0], true, false]
+        }
+        else{
+          nowPicksatellite = [selectedSatelliteList[0], true, true]
+        }
+      }
+      else{
+        nowPicksatellite = [selectedSatelliteList[0], true, true]
+      }
+      setCurSatellite(selectedSatelliteList[0].split("/")[1]);
+    }
+    else {
+      if (nowPicksatellite) {
+        nowPicksatellite = [nowPicksatellite[0], false, false]
+      }
+    }
+
+  }, [selectedSatelliteList]);
+
+
+  useEffect(() => {
+    console.log(nowPicksatellite)
+    if (nowPicksatellite) {
+      if (nowPicksatellite[1] && nowPicksatellite[2]) {
+        viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
+      }
+      else{
+        viewer.clock.onTick.removeEventListener(nowSatellitePostion, false);
+        setNowSystemDate([])
+        setSatellitePostionData([])
+      }
+    }
+  }, [nowPicksatellite])
   useEffect(() => {
     if (init) {
       // 监听摄像机高度变化
@@ -1431,6 +1470,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             <SatelliteList
               statelliteList={satelliteList}
               setSelectSatelliteList={setSelectSatelliteList}
+              setSelectedSatelliteList={setSelectedSatelliteList}
             />
           }
         />

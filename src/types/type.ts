@@ -8,6 +8,7 @@ export type DataType = {
 export type satelliteListType = {
     statelliteList: string[]
     setSelectSatelliteList: SetState<any[]>
+    setSelectedSatelliteList: SetState<any[]>
   }
 export type BaseStation = {
     name: string,
