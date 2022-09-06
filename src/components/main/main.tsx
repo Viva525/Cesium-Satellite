@@ -1407,7 +1407,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           i[2].r / 255,
           i[2].g / 255,
           i[2].b / 255,
-          0.4
+          i[2].a
         );
       }
     }
