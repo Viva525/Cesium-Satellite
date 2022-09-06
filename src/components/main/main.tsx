@@ -343,7 +343,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   222 / 255,
                   1
                 );
-
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
@@ -352,8 +351,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 });
               }
               else if (re_gps.exec(ele.id) != null) {
-              console.log('353 GPS');
-              
                 // gps轨迹
                 entityColor = new Cesium.Color(
                   210 / 255,
@@ -368,7 +365,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   gradient: 0.1,
                 });
               }
-
               // 改成点
               ele.billboard = undefined;
               ele.point = {
@@ -380,7 +376,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               // 绘制雷达扫描
               let lineFlowPosition = [];
               let radarId = "radarScan_" + ele.id;
-
               let postionValues = [...ele.position._property._values];
               let cartographic = Cesium.Cartographic.fromCartesian(
                 new Cesium.Cartesian3(
@@ -1218,39 +1213,39 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let lng2 = lng;
     let lat2 = lat + radius * Math.sqrt(3);
     addOneHexagon(lat2, lng2, radius, id + index + "1");
-    if (Math.floor(Math.random() * 10) > 2) {
+    if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id + "index" + "1", index + 1);
     }
     // 左边的六边形
     lat2 = lat - radius * Math.sqrt(3);
     addOneHexagon(lat2, lng2, radius, id + index + "2");
-    if (Math.floor(Math.random() * 10) > 2) {
+    if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id + "index" + "2", index + 1);
     }
     // 左上角六边形
     lng2 = lng + (radius * 3) / 2;
     lat2 = lat - (radius * Math.sqrt(3)) / 2;
     addOneHexagon(lat2, lng2, radius, id + index + "3");
-    if (Math.floor(Math.random() * 10) > 2) {
+    if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id + "index" + "3", index + 1);
     }
     //左下角六边形
     lng2 = lng - (radius * 3) / 2;
     addOneHexagon(lat2, lng2, radius, id + index + "4");
-    if (Math.floor(Math.random() * 10) > 2) {
+    if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id + "index" + "4", index + 1);
     }
     //右上角六边形
     lng2 = lng + (radius * 3) / 2;
     lat2 = lat + (radius * Math.sqrt(3)) / 2;
     addOneHexagon(lat2, lng2, radius, id + index + "5");
-    if (Math.floor(Math.random() * 10) > 2) {
+    if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id + "index" + "5", index + 1);
     }
     //右下角六边形
     lng2 = lng - (radius * 3) / 2;
     addOneHexagon(lat2, lng2, radius, id + index + "6");
-    if (Math.floor(Math.random() * 10) > 2) {
+    if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id + "index" + "6", index + 1);
     }
   }
@@ -1362,7 +1357,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         let height = viewer.camera.positionCartographic.height;
         if (curBaseStation != null) {
           let baseStationEntity = viewer.entities.getById(
-            `Facility/${curBaseStation?.name}`
+            `Place/${curBaseStation?.name}`
           );
           // 当高度小于一定值 显示模型
           if (height <= 2000) {
@@ -1521,18 +1516,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           className="cesium-button"
         >
           MeasureArea
-        </button>
-        <button
-          type="button"
-          id="measureArea"
-          style={{ float: "right", marginRight: "2vw" }}
-          onClick={() => {
-            //debugger;
-            window.location = "http://localhost:3000/satelliteDashboard";
-          }}
-          className="cesium-button"
-        >
-          Satellite Situation
         </button>
       </div>
       <div id="left-border-line"></div>

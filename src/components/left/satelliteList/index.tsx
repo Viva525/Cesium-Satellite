@@ -76,7 +76,6 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
   ];
 
   const data: DataType[] = []
-
   for (let i = 0; i < statelliteList.length; i++) {
     data.push({
       key: statelliteList[i],

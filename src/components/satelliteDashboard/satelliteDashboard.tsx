@@ -78,13 +78,8 @@ const SatelliteDashboard: React.FC<{}> = () => {
         <p>卫星态势分析</p>
         <button
           className="dashboard-button"
-          onClick={() => {
-            //@ts-ignore
-            window.location = "http://localhost:3000";
-            // window.history.go(-1);
-          }}
         >
-          返回监测平台
+          ID: &nbsp;{id}
         </button>
       </header>
       <div className="charts-container">

@@ -18,18 +18,18 @@ const SatelliteBar: React.FC<{}> = () => {
         myChart = echarts.init(chartRef.current as unknown as HTMLDivElement);
       }
 
-      var myColor = ["#81E7ED"];
+      var myColor = ["rgba(210, 51, 90, 0)"];
       var dataLine = [35, 32, 50];
       var positionLeft = 10,
         max = 100 + positionLeft;
 
       var g_cellBar0_y =
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAoCAYAAAAhf6DEAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAA6SURBVEhLY2x8/vY/A4mg3zwcTDOBSTLBqGYSwahmEsGoZhLBqGYSwahmEsGoZhLBqGYSwZDUzMAAAJldBMF2UASmAAAAAElFTkSuQmCC";
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAoCAIAAAHZGgcFAAAACXBIWXMAAAsTAAALEwEAmpwYAAAF62lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDIgNzkuMTYwOTI0LCAyMDE3LzA3LzEzLTAxOjA2OjM5ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1sbnM6cGhvdG9zaG9wPSJodHRwOi8vbnMuYWRvYmUuY29tL3Bob3Rvc2hvcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgKFdpbmRvd3MpIiB4bXA6Q3JlYXRlRGF0ZT0iMjAyMi0wOS0wNlQxOTozOTo1NSswODowMCIgeG1wOk1vZGlmeURhdGU9IjIwMjItMDktMDZUMTk6NDM6MDQrMDg6MDAiIHhtcDpNZXRhZGF0YURhdGU9IjIwMjItMDktMDZUMTk6NDM6MDQrMDg6MDAiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIiBwaG90b3Nob3A6SUNDUHJvZmlsZT0ic1JHQiBJRUM2MTk2Ni0yLjEiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6ZWZhZDlkOTktZTgzMS05NjRkLTkxOWEtY2IyM2NiYjJlNjg3IiB4bXBNTTpEb2N1bWVudElEPSJhZG9iZTpkb2NpZDpwaG90b3Nob3A6MTFiNTViMWMtMmU2Mi1jNjQ2LWI3ZTQtOWY2MTFjNzJmNTRkIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6MTJmZTM4NTYtYmFlZi1hOTQ1LTlmOTgtMThjZGNmYzU5MTU3Ij4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDoxMmZlMzg1Ni1iYWVmLWE5NDUtOWY5OC0xOGNkY2ZjNTkxNTciIHN0RXZ0OndoZW49IjIwMjItMDktMDZUMTk6Mzk6NTUrMDg6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCBDQyAoV2luZG93cykiLz4gPHJkZjpsaSBzdEV2dDphY3Rpb249InNhdmVkIiBzdEV2dDppbnN0YW5jZUlEPSJ4bXAuaWlkOmVmYWQ5ZDk5LWU4MzEtOTY0ZC05MTlhLWNiMjNjYmIyZTY4NyIgc3RFdnQ6d2hlbj0iMjAyMi0wOS0wNlQxOTo0MzowNCswODowMCIgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWRvYmUgUGhvdG9zaG9wIENDIChXaW5kb3dzKSIgc3RFdnQ6Y2hhbmdlZD0iLyIvPiA8L3JkZjpTZXE+IDwveG1wTU06SGlzdG9yeT4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz71xk7rAAAAVklEQVQ4jWPkrbvHwMDAxMDAgItiJFoJihhJHIQBzAvSyDGAYg6KF+AA3TU4tQ9hCSw+Z15bjV35qOjgEcWeYjEB89pqhs+vcUY/CTaOqh5VPaqaEAAA6YUQtQ92ficAAAAASUVORK5CYII=";
       var g_cellBarImg0_y = new Image();
       g_cellBarImg0_y.src = g_cellBar0_y;
 
       var option = {
-        backgroundColor: "rgba(255,255,255,0.1)",
+        backgroundColor: "rgba(255,255,255,0)",
         grid: [
           {
             left: "10%",
@@ -149,7 +149,7 @@ const SatelliteBar: React.FC<{}> = () => {
             barWidth: 28,
             itemStyle: {
               normal: {
-                color: "#1e1e1e",
+                color: "rgba(0,0,0,0)",
                 barBorderRadius: 2,
               },
             },
