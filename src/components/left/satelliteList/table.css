@@ -50,12 +50,12 @@ tbody td{
     color: #fff;
     background-color: rgba(40, 37, 37, 0.8) !important;
 }
-
-.hue-picker{
+.flexbox-fix input{
+    color: black;
     width: 100% !important;
-    
+    font-size: 12px !important;
+    text-align: center;
 }
-
 
 .ant-image-mask-info{
     display: none !important;
