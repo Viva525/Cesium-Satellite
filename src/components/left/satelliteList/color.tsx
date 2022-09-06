@@ -1,19 +1,22 @@
 //@ts-nocheck
-import { SketchPicker } from "react-color";
+import { RGBColor, SketchPicker } from "react-color";
 import reactCSS from "reactcss";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useState, memo } from "react";
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 
 type satelliteColor = {
+  initColor: RGBColor
   satellityKey: React.Key;
   setSelectSatelliteList: SetState<any[]>;
 };
 const ColorSelect: React.FC<satelliteColor> = (props) => {
-  const [color, setColor] = useState({ r: "241", g: "112", b: "19", a: "1" });
+  const {initColor, satellityKey, setSelectSatelliteList } = props;
+  const [color, setColor] = useState(initColor);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
-  const { satellityKey, setSelectSatelliteList } = props;
 
+
+  
   const styles = reactCSS({
     default: {
       color: {
@@ -29,6 +32,7 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
         boxShadow: "0 0 0 1px rgba(0,0,0,.1)",
         display: "inline-block",
         cursor: "pointer",
+        verticalAlign: "middle"
       },
       popover: {
         position: "absolute",
@@ -52,20 +56,12 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
     setDisplayColorPicker(false);
   };
 
-  const handleChange = (color: { rgb: any }) => {
+  const handleChange = (color: { rgb: RGBColor }) => {
     setColor(color.rgb);
     setSelectSatelliteList([[1, satellityKey, color.rgb]]);
   };
 
   return (
-    // <SketchPicker
-    //   color= {color}
-    //   // width={"100%"}
-    //   onChange={(color: any) => {
-    //     setColor(color.rgb)
-    //     setSelectSatelliteList([[1, satellityKey, color.rgb]])
-    //   }}
-    // />
     <div>
       <div style={styles.swatch} onClick={handleClick}>
         <div style={styles.color} />
@@ -80,4 +76,4 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
   );
 };
 
-export default ColorSelect;
+export default memo(ColorSelect);
