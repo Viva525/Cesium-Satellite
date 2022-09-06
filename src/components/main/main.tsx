@@ -64,10 +64,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const [start, setStart] = useState(
-    Cesium.JulianDate.fromIso8601("2022-09-03T04:00:00Z")
+    Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
   );
   const [stop, setStop] = useState(
-    Cesium.JulianDate.fromIso8601("2022-09-04T04:00:00Z")
+    Cesium.JulianDate.fromIso8601("2022-09-07T04:00:00Z")
   );
   const [baseStationList, setBaseStationList] = useState<BaseStation[]>([]);
   const [curSatellite, setCurSatellite] = useState<String>("");
@@ -289,7 +289,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/1213china.czml"
+          "./data/star-beidou-gps_2.czml"
           // "./data/star-beidou-gps.czml"
         );
         let nowSatelliteList: string[] = [];
@@ -311,20 +311,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               ele.label.show = false;
             }
             if (ele.path != undefined) {
-              // 改成点
-              ele.billboard = undefined;
-              ele.point = {
-                show: true,
-                color: entityColor,
-                // outlineWidth: 4,
-                pixelSize: 5,
-              };
-
               nowSatelliteList.push(ele.id);
               ele.path.show = false; // 设置路径不可看
               // 设置路径样式
               let re_starlink = /Satellite\/STARLINK*/;
-              let re_beidou = /Satellite\/BD*/;
+              let re_beidou = /Satellite\/(BEIDOU)|(BD)*/;
               let re_gps = /Satellite\/GPS/;
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
@@ -338,10 +329,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // });
                 // ele.path.material.color = Cesium.Color.RED;
                 // ele.path.material.glowPower = 0.8;
-
                 // 流光材质
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
-                  color: new Cesium.Color(1.0, 1.0, 1.0, 0.8),
+                  color: entityColor,
                   speed: 10,
                   percent: 0.1,
                   gradient: 0.1,
@@ -364,7 +354,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // ele.path.material.glowPower = 0.8
 
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
-                  color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+                  color: entityColor,
                   speed: 1,
                   percent: 0.1,
                   gradient: 0.1,
@@ -387,14 +377,21 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // ele.path.material.glowPower = 0.8
 
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
-                  color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
+                  color: entityColor,
                   speed: 1,
                   percent: 0.1,
                   gradient: 0.1,
                 });
               }
               //ele.path.material.color = Cesium.Color.WHITE;
-
+              // 改成点
+              ele.billboard = undefined;
+              ele.point = {
+                show: true,
+                color: entityColor,
+                // outlineWidth: 4,
+                pixelSize: 5,
+              };
               // 绘制雷达扫描
               let lineFlowPosition = [];
               let radarId = "radarScan_" + ele.id;
@@ -487,7 +484,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
             }
             // 地面基站
-            if (/^Place\/*/.exec(ele.id) != null){
+            let re_Place = /^Place\/Place[0-9]$/;
+            if (re_Place.exec(ele.id) != null){
               let position = GetWGS84FromDKR(ele._position._value,1).map(item=>Number(item));
               baseStationTemp.push({
                 name: `${ele.name}`,
@@ -507,10 +505,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 show: true,
                 verticalOrigin: Cesium.VerticalOrigin.CENTER,
               }
+              let radius = 1.5;
+              addHexagonAll(position[1], position[0], radius, `Hexagon/${ele.name}/`, 1);
+              setBaseStationList(baseStationTemp);
+              console.log(viewer.entities);
             }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
-          setBaseStationList(baseStationTemp);
         });
         
       });
@@ -710,7 +711,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     return cartesian3;
   };
   // 创建基站
-  const createBaseStation = (lng: any, lat: any, name: number) => {
+  const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new Cesium.TimeInterval({
       start: start,
       stop: stop,
@@ -749,9 +750,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     };
     viewer.entities.add(baseStation);
     // setSatelliteList(ele => [...ele, `baseStation_${id}`])
-    //添加矩形Entity
-    let radius = 1.5;
-    addHexagonAll(lat, lng, radius, id, 1);
   };
   // 绘制线条测量距离
   const measureDistance = () => {
