@@ -292,11 +292,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           "./data/1213china.czml"
           // "./data/star-beidou-gps.czml"
         );
-        let dronePromise_beidou =
-          Cesium.CzmlDataSource.load("./data/beidou.czml");
-        let dronePromise_GPS = Cesium.CzmlDataSource.load("./data/gps.czml");
         let nowSatelliteList: string[] = [];
-        // 加载星链实体
+        let baseStationTemp: BaseStation[] = [];
+        // 加载实体
         dronePromise.then((dataSource: any) => {
           // 配置时间轴
           // dataSource.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
@@ -306,15 +304,22 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           viewer.dataSources.add(dronePromise);
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
-            
             viewer.entities.add(ele);
             let entityColor;
-
             // 1. 配置样式与路径
             if (ele.label != undefined) {
               ele.label.show = false;
             }
             if (ele.path != undefined) {
+              // 改成点
+              ele.billboard = undefined;
+              ele.point = {
+                show: true,
+                color: entityColor,
+                // outlineWidth: 4,
+                pixelSize: 5,
+              };
+
               nowSatelliteList.push(ele.id);
               ele.path.show = false; // 设置路径不可看
               // 设置路径样式
@@ -344,7 +349,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               }
               if (re_beidou.exec(ele.id) != null) {
                 // 北斗轨迹
-
                 entityColor = new Cesium.Color(
                   13 / 255,
                   126 / 255,
@@ -482,119 +486,33 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 entityColor
               );
             }
-
-            // 2. 改成点
-            if (ele.path != undefined) {
-              ele.billboard = undefined;
-              ele.point = {
+            // 地面基站
+            if (/^Place\/*/.exec(ele.id) != null){
+              let position = GetWGS84FromDKR(ele._position._value,1).map(item=>Number(item));
+              baseStationTemp.push({
+                name: `${ele.name}`,
+                desc: "baseStation",
+                pos: position,
+                state: "working",
+              });
+              ele.model = undefined;
+              ele.billboard = {
+                eyeOffset: new Cesium.Cartesian3(0, 0, 0),
+                horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                // image:"./logo512.png",
+                image:
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC",
+                pixelOffset: new Cesium.Cartesian2(0, 0),
+                scale: 1,
                 show: true,
-                color: entityColor,
-                // outlineWidth: 4,
-                pixelSize: 5,
-              };
-
-              // ele.polyline = {
-              //       material: new Cesium.LineFlowMaterialProperty({
-              //         color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-              //         speed: 1,
-              //         percent: 0.1,
-              //         gradient: 0.01,
-              //       }),
-              //     }
-            }
-
-            // if (c) {
-            //   lineFlow("lineFlow_" + ele.id, lineProperty);
-            // }
-            // c = false;
-
-            // 更改显示的时间
-            // var timeInterval = new Cesium.TimeInterval({
-            //   start: start,
-            //   stop: stop,
-            //   isStartIncluded: true,
-            //   isStopIncluded: true,
-            // });
-            // ele.availability = new Cesium.TimeIntervalCollection([timeInterval])
-            // // 2. 添加和配置运动实体的模型
-            // ele.model = {
-            //   // 引入模型
-            //   uri: "./Satellite.gltf",
-            //   // 配置模型大小的最小值
-            //   minimumPixelSize: 50,
-            //   //配置模型大小的最大值
-            //   maximumScale: 100,
-            //   //配置模型轮廓的颜色
-            //   silhouetteColor: Cesium.Color.WHITE,
-            //   //配置轮廓的大小
-            //   silhouetteSize: 1,
-            // };
-            // //设置方向,根据实体的位置来配置方向
-            // ele.orientation = new Cesium.VelocityOrientationProperty(ele.position);
-            // //设置模型初始的位置
-            // ele.viewFrom = new Cesium.Cartesian3(0, -30, 30);
-            // //设置查看器，让模型动起来
-            // viewer.clock.shouldAnimate = true;
-            // 3. 配置样式与路径
-            if (ele.label != undefined) {
-              ele.label.show = false;
-            }
-            if (ele.path != undefined) {
-              // 设置路径样式
-              let re_starlink = /Satellite\/STARLINK*/;
-              let re_beidou = /Satellite\/BD*/;
-              let re_gps = /Satellite\/GPS/;
-              if (re_starlink.exec(ele.id) != null) {
-                // 星链轨迹
-                ele.path.material.color = new Cesium.Color(1, 1, 1, 1);
-                ele.path.width = 2;
+                verticalOrigin: Cesium.VerticalOrigin.CENTER,
               }
-              if (re_beidou.exec(ele.id) != null) {
-                // 北斗轨迹
-                ele.path.material.color = new Cesium.Color(
-                  13 / 255,
-                  126 / 255,
-                  222 / 255,
-                  1
-                );
-                ele.path.width = 2;
-              }
-              if (re_gps.exec(ele.id) != null) {
-                // gps轨迹
-                ele.path.material.color = new Cesium.Color(
-                  210 / 255,
-                  51 / 255,
-                  90 / 255,
-                  1
-                );
-                ele.path.width = 2;
-              }
-              // ele.path.show = false; // 设置路径不可看
-              //ele.path.material.color = Cesium.Color.WHITE;
             }
           });
-
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
+          setBaseStationList(baseStationTemp);
         });
-        // // 随机生成基站
-        viewer.camera.flyHome(0);
-        const lngMin = -180;
-        const lngMax = 180;
-        const latMin = -90;
-        const latMax = 90;
-        let baseStationTemp: BaseStation[] = [];
-        for (let i = 0; i < 10; i++) {
-          let lng = Math.random() * (lngMax - lngMin + 1) + lngMin;
-          let lat = Math.random() * (latMax - latMin + 1) + latMin;
-          createBaseStation(lng, lat, i);
-          baseStationTemp.push({
-            name: `baseStation_${i}`,
-            desc: "baseStation",
-            pos: [lng, lat],
-            state: Math.random() > 0.5 ? "working" : "stoped",
-          });
-        }
-        setBaseStationList(baseStationTemp);
+        
       });
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -782,7 +700,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let y = Cesium.Math.toDegrees(cartographic.latitude);
     if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
     else if (type === 1)
-      return [x.toFixed(2) as number, y.toFixed(2) as number];
+      return [x as number, y as number];
   };
   // 经纬度转笛卡尔坐标
   const wgs84ToCartesign = (lng: any, lat: any, alt: any) => {
@@ -792,7 +710,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     return cartesian3;
   };
   // 创建基站
-  const createBaseStation = (lng: any, lat: any, id: number) => {
+  const createBaseStation = (lng: any, lat: any, name: number) => {
     var timeInterval = new Cesium.TimeInterval({
       start: start,
       stop: stop,
