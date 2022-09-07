@@ -1422,18 +1422,72 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       timeID = setInterval(()=>{
         let currTime = viewer.clock.currentTime;
         let baseStation = `Place/${curBaseStation?.name}`;
-        let entity = viewer.entities.getById(linkToBaseStation[baseStation].id);
-        console.log(entity.show);
-
+        // let entity = viewer.entities.getById(linkToBaseStation[baseStation].id);
+        // console.log(entity.show);
+        linkToBaseStation[baseStation].linkTimes.forEach(interval=>{
+          if(Cesium.JulianDate.lessThanOrEquals(interval[0],currTime) && Cesium.JulianDate.greaterThanOrEquals(interval[1],currTime)){
+            // 旋转基站
+            console.log("旋转!");
+            let baseStationEntity = viewer.entities.getById(baseStation);
+            let baseStationCar = baseStationEntity._position._value;
+            let satelliteCar = viewer.entities.getById(linkToBaseStation[baseStation].satellite).position.getValue(viewer.clock.currentTime);
+            let m = getModelMatrix(baseStationCar , satelliteCar );
+            let hpr = getHeadingPitchRoll(m);
+            hpr.pitch = hpr.pitch + 3.14 / 2 + 3.14;
+            let orientation = Cesium.Transforms.headingPitchRollQuaternion(
+              baseStationCar,
+              hpr
+            );
+            baseStationEntity._orientation = orientation;
+          }
+        });
       })
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
 
-    const baseStationRotate = useCallback(()=>{
-      let currTime = viewer.clock.currentTime;
-      let baseStation = curBaseStation?.name;
-      console.log(baseStation);
-    },[]);
+  const getModelMatrix = (pointA, pointB) => {
+    //向量AB
+    const vector2 = Cesium.Cartesian3.subtract(
+      pointB,
+      pointA,
+      new Cesium.Cartesian3()
+    );
+    //归一化
+    const normal = Cesium.Cartesian3.normalize(vector2, new Cesium.Cartesian3());
+    //旋转矩阵 rotationMatrixFromPositionVelocity源码中有，并未出现在cesiumAPI中
+    const rotationMatrix3 = Cesium.Transforms.rotationMatrixFromPositionVelocity(
+      pointA,
+      normal,
+      Cesium.Ellipsoid.WGS84
+    );
+    const modelMatrix4 = Cesium.Matrix4.fromRotationTranslation(
+      rotationMatrix3,
+      pointA
+    );
+    return modelMatrix4;
+  }
+  
+  const getHeadingPitchRoll = (m) => {
+    var m1 = Cesium.Transforms.eastNorthUpToFixedFrame(
+      Cesium.Matrix4.getTranslation(m, new Cesium.Cartesian3()),
+      Cesium.Ellipsoid.WGS84,
+      new Cesium.Matrix4()
+    );
+    // 矩阵相除
+    var m3 = Cesium.Matrix4.multiply(
+      Cesium.Matrix4.inverse(m1, new Cesium.Matrix4()),
+      m,
+      new Cesium.Matrix4()
+    );
+    // 得到旋转矩阵
+    var mat3 = Cesium.Matrix4.getMatrix3(m3, new Cesium.Matrix3());
+    // 计算四元数
+    var q = Cesium.Quaternion.fromRotationMatrix(mat3);
+    // 计算旋转角(弧度)
+    var hpr = Cesium.HeadingPitchRoll.fromQuaternion(q);
+    return hpr;
+  }
+
 
   return (
     <>
