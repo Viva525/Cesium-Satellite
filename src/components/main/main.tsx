@@ -1427,7 +1427,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         linkToBaseStation[baseStation].linkTimes.forEach(interval=>{
           if(Cesium.JulianDate.lessThanOrEquals(interval[0],currTime) && Cesium.JulianDate.greaterThanOrEquals(interval[1],currTime)){
             // 旋转基站
-            console.log("旋转!");
             let baseStationEntity = viewer.entities.getById(baseStation);
             let baseStationCar = baseStationEntity._position._value;
             let satelliteCar = viewer.entities.getById(linkToBaseStation[baseStation].satellite).position.getValue(viewer.clock.currentTime);
@@ -1438,7 +1437,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               baseStationCar,
               hpr
             );
-            baseStationEntity._orientation = orientation;
+            console.log(orientation, baseStationEntity);
+            
+            baseStationEntity._orientation._value = orientation;
           }
         });
       })
