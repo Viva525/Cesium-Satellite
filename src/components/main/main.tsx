@@ -149,8 +149,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             alpha: true,
           },
         },
-        timeline: false,
-        animation: false,
+        timeline: true,
+        animation: true,
       });
       // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
@@ -1349,7 +1349,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           let baseStationEntity = viewer.entities.getById(
             `Place/${curBaseStation?.name}`
           );
-
           // 当高度小于一定值 显示模型
           if (height <= 2000) {
             baseStationEntity.billboard.show = false;
@@ -1364,13 +1363,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 //配置模型轮廓的颜色
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
-                silhouetteSize: 0,
-                articulations:{
-                  "Dish DishX": {
-                    epoch: "2022-09-06T04:00:00Z",
-                    number: [100,100]
-                  }
-                }
+                silhouetteSize: 0
               };
             } else {
               baseStationEntity.model.show = true;
@@ -1448,14 +1441,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               hpr
             );
             // console.log(orientation, baseStationEntity);
-            
+            console.log(orientation)
             // baseStationEntity._orientation._value = orientation;
-            // baseStationEntity.model.articulations = {
-            //   "Dish DishX": {
-            //     epoch: "2022-09-06T04:00:00Z",
-            //     number: [0,0,600,360]
-            //   }
-            // }
+            baseStationEntity.model.articulations = {
+              "Dish DishX": orientation.x*100,
+              "Dish DishY": orientation.y*100,
+              "Dish DishZ": orientation.z*100
+            }
           }
         });
       })
