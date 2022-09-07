@@ -20,8 +20,10 @@ import "./LineFlowMaterialProperty";
 import { CesiumComponentType } from "../../types/type";
 import { BlockPicker } from "react-color";
 
+
 //@ts-ignore
 let viewer: any;
+let linkToBaseStation: any = {};
 var handler: {
   setInputAction: (
     arg0: {
@@ -39,6 +41,7 @@ let nowPicksatellite: any;
 let rain: any, snow: any, fog: any;
 let stages: any;
 let previousTime: any;
+let timeID: any;
 // let satelliteList: {[key:string]:any []} = {};
 // let satelliteList: string[] = []
 const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
@@ -76,6 +79,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [curBaseStation, setCurBaseStation] = useState<BaseStation | null>(
     null
   );
+
   useEffect(() => {
     setInit(true);
   }, []);
@@ -491,6 +495,17 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               addHexagonAll(position[1], position[0], radius, `Hexagon/${ele.name}/`, 1);
               setBaseStationList(baseStationTemp);
             }
+            let re_linkToBaseStation = /^Place\/Place[0-9]-to-*/;
+            if(re_linkToBaseStation.exec(ele.id) != null){
+              let times = ele._availability._intervals.map((item)=>{
+                return [Cesium.JulianDate.fromIso8601(item.start.toString()),Cesium.JulianDate.fromIso8601(item.stop.toString())];
+              });
+              linkToBaseStation[ele.id.split("-to-")[0]] = {
+                id: ele.id,
+                satellite: ele.id.split("-to-")[1],
+                linkTimes: times
+              }
+            }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
@@ -586,6 +601,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           viewer.scene.mode == Cesium.SceneMode.SCENE3D
         ) {
           setIsRotate(true);
+          clearInterval(timeID);
         } else {
           setIsRotate(false);
         }
@@ -1390,8 +1406,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // }
         }
       });
-      console.log(curBaseStation);
-      
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
@@ -1403,8 +1417,23 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       viewer.camera.lookDown(5000);
       viewer.camera.moveBackward(300);
 
+      // viewer.clock.onTick.addEventListener(baseStationRotate);
+      clearInterval(timeID);
+      timeID = setInterval(()=>{
+        let currTime = viewer.clock.currentTime;
+        let baseStation = `Place/${curBaseStation?.name}`;
+        let entity = viewer.entities.getById(linkToBaseStation[baseStation].id);
+        console.log(entity.show);
+
+      })
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
+
+    const baseStationRotate = useCallback(()=>{
+      let currTime = viewer.clock.currentTime;
+      let baseStation = curBaseStation?.name;
+      console.log(baseStation);
+    },[]);
 
   return (
     <>
