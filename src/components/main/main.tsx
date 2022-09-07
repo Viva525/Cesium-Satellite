@@ -1356,7 +1356,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (baseStationEntity.model == undefined) {
               baseStationEntity.model = {
                 // 引入模型
-                uri: "./SignalTower.gltf",
+                uri: "./Telescope.gltf",
                 // 配置模型大小的最小值
                 minimumPixelSize: 5,
                 //配置模型大小的最大值
@@ -1365,6 +1365,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
                 silhouetteSize: 0,
+                // articulations : {
+                //   Dish : {
+
+                //   }
+                // }
               };
             } else {
               baseStationEntity.model.show = true;
@@ -1406,6 +1411,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // }
         }
       });
+
+      console.log(viewer.entities.getById(
+        `Place/${curBaseStation?.name}`
+      ));
+      
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
@@ -1417,7 +1427,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       viewer.camera.lookDown(5000);
       viewer.camera.moveBackward(300);
 
-      // viewer.clock.onTick.addEventListener(baseStationRotate);
       clearInterval(timeID);
       timeID = setInterval(()=>{
         let currTime = viewer.clock.currentTime;
