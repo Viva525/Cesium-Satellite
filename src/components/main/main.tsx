@@ -149,15 +149,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       });
       // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
-      let imageryProvider = new Cesium.UrlTemplateImageryProvider({
-        url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
-        layer: "tdtVecBasicLayer",
-        style: "default",
-        format: "image/png",
-        tileMatrixSetID: "GoogleMapsCompatible",
-        show: false,
-      });
-      imageryLayers.addImageryProvider(imageryProvider);
+      // let imageryProvider = new Cesium.UrlTemplateImageryProvider({
+      //   url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+      //   layer: "tdtVecBasicLayer",
+      //   style: "default",
+      //   format: "image/png",
+      //   tileMatrixSetID: "GoogleMapsCompatible",
+      //   show: false,
+      // });
+      // imageryLayers.addImageryProvider(imageryProvider);
 
       stages = viewer.scene.postProcessStages;
 
@@ -1339,7 +1339,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (baseStationEntity.model == undefined) {
               baseStationEntity.model = {
                 // 引入模型
-                uri: "./Telescope.gltf",
+                uri: "./SignalTower.gltf",
                 // 配置模型大小的最小值
                 minimumPixelSize: 0.05,
                 //配置模型大小的最大值
