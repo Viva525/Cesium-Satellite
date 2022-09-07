@@ -139,6 +139,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         infoBox: false, // 是否显示点击要素之后显示的信息
         // 去掉地球表面的大气效果黑圈问题
         orderIndependentTranslucency: true,
+        // terrainProvider : Cesium.createWorldTerrain(),
         contextOptions: {
           webgl: {
             alpha: true,
@@ -1341,9 +1342,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // 引入模型
                 uri: "./SignalTower.gltf",
                 // 配置模型大小的最小值
-                minimumPixelSize: 0.05,
+                minimumPixelSize: 5,
                 //配置模型大小的最大值
-                maximumScale: 0.05,
+                maximumScale: 5,
                 //配置模型轮廓的颜色
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
@@ -1387,11 +1388,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           //     }
           //   );
           // }
-          
-
         }
       });
-
+      console.log(curBaseStation);
+      
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
@@ -1401,7 +1401,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       });
       setIsRotate(false);
       viewer.camera.lookDown(5000);
-      viewer.camera.moveBackward(500);
+      viewer.camera.moveBackward(300);
 
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
