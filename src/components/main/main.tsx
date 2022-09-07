@@ -1365,11 +1365,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
                 silhouetteSize: 0,
-                // articulations : {
-                //   Dish : {
-
-                //   }
-                // }
+                articulations:{
+                  "Dish DishX": {
+                    epoch: "2022-09-06T04:00:00Z",
+                    number: [100,100]
+                  }
+                }
               };
             } else {
               baseStationEntity.model.show = true;
@@ -1446,9 +1447,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               baseStationCar,
               hpr
             );
-            console.log(orientation, baseStationEntity);
+            // console.log(orientation, baseStationEntity);
             
-            baseStationEntity._orientation._value = orientation;
+            // baseStationEntity._orientation._value = orientation;
+            // baseStationEntity.model.articulations = {
+            //   "Dish DishX": {
+            //     epoch: "2022-09-06T04:00:00Z",
+            //     number: [0,0,600,360]
+            //   }
+            // }
           }
         });
       })
