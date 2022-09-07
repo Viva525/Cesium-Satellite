@@ -108,6 +108,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       }
     }
   }, [isDrawPolygon]);
+  
   useEffect(() => {
     if (isDrawLine) {
       //@ts-ignore
@@ -642,36 +643,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
   }, []);
 
-  // const lineFlow = (id, position) => {
-  //   // viewer.entities.add({
-  //   //   id: id,
-  //   //   polyline: {
-  //   //     positions: position,
-  //   //     material: new Cesium.LineFlowMaterialProperty({
-  //   //       color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-  //   //       speed: 1,
-  //   //       percent: 0.1,
-  //   //       gradient: 0.01,
-  //   //     }),
-  //   //   },
-  //   // });
-
-  //   viewer.entities.add({
-  //     id: id,
-  //     position: position,
-  //     box: {
-  //       dimensions: new Cesium.Cartesian3(1000000.0, 100000.0, 1),
-  //       // material: Cesium.Color.BLUE,
-  //       material: new Cesium.LineFlowMaterialProperty({
-  //         color: new Cesium.Color(1.0, 1.0, 0.0, 0.8),
-  //         speed: 10,
-  //         percent: 0.1,
-  //         gradient: 0.1,
-  //       }),
-  //     },
-  //   });
-  // };
-
   // 笛卡尔坐标系转经纬度
   const GetWGS84FromDKR = (coor: any, type: number) => {
     let cartographic = Cesium.Cartographic.fromCartesian(coor);
@@ -681,6 +652,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     else if (type === 1)
       return [x as number, y as number];
   };
+
   // 经纬度转笛卡尔坐标
   const wgs84ToCartesign = (lng: any, lat: any, alt: any) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
@@ -688,6 +660,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
     return cartesian3;
   };
+
   // 创建基站
   const createBaseStation = (lng: any, lat: any, id: number) => {
     var timeInterval = new Cesium.TimeInterval({
@@ -1337,7 +1310,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
 
   useEffect(() => {
-    console.log(nowPicksatellite)
     if (nowPicksatellite) {
       if (nowPicksatellite[1] && nowPicksatellite[2]) {
         viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
@@ -1349,6 +1321,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       }
     }
   }, [nowPicksatellite])
+
   useEffect(() => {
     if (init) {
       // 监听摄像机高度变化
@@ -1359,6 +1332,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           let baseStationEntity = viewer.entities.getById(
             `Place/${curBaseStation?.name}`
           );
+
           // 当高度小于一定值 显示模型
           if (height <= 2000) {
             baseStationEntity.billboard.show = false;
@@ -1384,51 +1358,51 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               baseStationEntity.billboard.show = true;
             }
           }
-          if (height <= 1000) {
-            Jsonp(
-              `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
-              {},
-              function (err, res) {
-                let curWeather = res.result.realtime.skycon;
-                if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
-                  addWeather();
-                } else if (["HEAVY_RAIN", "STORM_RAIN"].includes(curWeather)) {
-                  addWeather("rain", 0.7);
-                } else if (
-                  ["LIGHT_RAIN", "MODERATE_RAIN"].includes(curWeather)
-                ) {
-                  addWeather("rain", 0.3);
-                } else if (["HEAVY_SNOW", "STORM_SNOW"].includes(curWeather)) {
-                  addWeather("snow", 0.7);
-                } else if (
-                  ["LIGHT_SNOW", "MODERATE_SNOW"].includes(curWeather)
-                ) {
-                  addWeather("snow", 0.3);
-                } else if (["FOG"].includes(curWeather)) {
-                  addWeather("fog");
-                } else {
-                  addWeather();
-                }
-              }
-            );
-          }
-          viewer.camera.setView({
-            destination: Cesium.Cartesian3.fromDegrees(
-              curBaseStation?.pos[0],
-              curBaseStation?.pos[1],
-              0
-            ),
-            // orientation: {
-            //   heading: Cesium.Math.toRadians(286.69615060171867),
-            //   pitch: Cesium.Math.toRadians(-5.205762977472191),
-            //   roll: Cesium.Math.toRadians(360 || 0)
-            // },
-          });
-          setIsRotate(false);
-          viewer.camera.lookDown(5000);
-          viewer.camera.moveBackward(500);
+
+          // if (height <= 1000) {
+          //   Jsonp(
+          //     `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
+          //     {},
+          //     function (err, res) {
+          //       let curWeather = res.result.realtime.skycon;
+          //       if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
+          //         addWeather();
+          //       } else if (["HEAVY_RAIN", "STORM_RAIN"].includes(curWeather)) {
+          //         addWeather("rain", 0.7);
+          //       } else if (
+          //         ["LIGHT_RAIN", "MODERATE_RAIN"].includes(curWeather)
+          //       ) {
+          //         addWeather("rain", 0.3);
+          //       } else if (["HEAVY_SNOW", "STORM_SNOW"].includes(curWeather)) {
+          //         addWeather("snow", 0.7);
+          //       } else if (
+          //         ["LIGHT_SNOW", "MODERATE_SNOW"].includes(curWeather)
+          //       ) {
+          //         addWeather("snow", 0.3);
+          //       } else if (["FOG"].includes(curWeather)) {
+          //         addWeather("fog");
+          //       } else {
+          //         addWeather();
+          //       }
+          //     }
+          //   );
+          // }
+          
+
         }
       });
+
+      viewer.camera.setView({
+        destination: Cesium.Cartesian3.fromDegrees(
+          curBaseStation?.pos[0],
+          curBaseStation?.pos[1],
+          0
+        ),
+      });
+      setIsRotate(false);
+      viewer.camera.lookDown(5000);
+      viewer.camera.moveBackward(500);
+
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
 
