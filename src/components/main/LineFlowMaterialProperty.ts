@@ -1,13 +1,4 @@
 //@ts-nocheck
-/*
- * @Description: 飞线效果（参考开源代码）
- * @Version: 1.0
- * @Author: Julian
- * @Date: 2022-03-05 16:13:21
- * @LastEditors: Julian
- * @LastEditTime: 2022-03-05 17:39:38
- */
-
 export default class LineFlowMaterialProperty {
     color: any;
     speed: any;

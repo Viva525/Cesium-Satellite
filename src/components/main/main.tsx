@@ -17,6 +17,7 @@ import SatelliteBar from "../left/satelliteBar";
 import SatelliteNumberChart from "../left/satelliteNumberChart";
 import SatelliteInfo from "../right/satelliteInfo";
 import "./LineFlowMaterialProperty";
+import "./Spriteline1MaterialProperty"
 import { CesiumComponentType } from "../../types/type";
 import { BlockPicker } from "react-color";
 
@@ -304,16 +305,27 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         let baseStationTemp: BaseStation[] = [];
         // 加载实体
         dronePromise.then((dataSource: any) => {
-          // 配置时间轴
-          // dataSource.clock.startTime = start.clone();   // 给cesium时间轴设置开始的时间，也就是上边的东八区时间
-          // dataSource.clock.stopTime = stop.clone();     // 设置cesium时间轴设置结束的时间
-          // dataSource.clock.currentTime = start.clone(); // 设置cesium时间轴设置当前的时间
 
           viewer.dataSources.add(dronePromise);
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
             viewer.entities.add(ele);
             let entityColor ;
+            // 实体之间的连线
+            if(ele.path === undefined && ele.polyline !== undefined){
+              let curColor = ele.polyline.material.color, image;
+              let randomNumber = Math.floor(Math.random()*10)
+              console.log(randomNumber);
+              
+              if(6<randomNumber && randomNumber<=9){
+                image = 'a.png'
+              }else if(3<randomNumber && randomNumber<=6){
+                image = 'b.png'
+              }else{
+                image = 'c.png'
+              }
+              ele.polyline.material =  new Cesium.Spriteline1MaterialProperty(1000, `./images/${image}`)
+            }
             // 1. 配置样式与路径
             if (ele.label != undefined) {
               ele.label.show = false;
@@ -511,8 +523,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
 
       });
-
-      console.log(viewer.entities);
       
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
@@ -1446,14 +1456,17 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               hpr
             );
             // console.log(orientation, baseStationEntity);
-            // console.log(orientation)
+            console.log(orientation)
             // baseStationEntity._orientation._value = orientation;
             if(baseStationEntity.model != undefined){
-              baseStationEntity.model.articulations["Dish DishX"] = orientation.x*100; 
-              baseStationEntity.model.articulations["Dish DishY"] = orientation.y*100; 
-              baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*100; 
+              // baseStationEntity.model.articulations["Dish DishX"] = -orientation.x*100 ; 
+              // baseStationEntity.model.articulations["Dish DishY"] = orientation.z<0?-orientation.y*100:orientation.y*100 + 90; 
+              // baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*100; 
+              baseStationEntity.model.articulations["Dish DishX"] = orientation.x*180/Math.PI ; 
+              baseStationEntity.model.articulations["Dish DishY"] = orientation.y*180/Math.PI; 
+              baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*180/Math.PI; 
             }
-            console.log(viewer.entities);
+            // console.log(viewer.entities);
           }
         });
       })
