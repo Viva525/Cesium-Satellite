@@ -1363,7 +1363,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 //配置模型轮廓的颜色
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
-                silhouetteSize: 0
+                silhouetteSize: 0,
+                articulations: {
+                  "Dish DishX" : 0,
+                  "Dish DishY" : 0,
+                  "Dish DishZ" : 0,
+                }
               };
             } else {
               baseStationEntity.model.show = true;
@@ -1441,16 +1446,18 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               hpr
             );
             // console.log(orientation, baseStationEntity);
-            console.log(orientation)
+            // console.log(orientation)
             // baseStationEntity._orientation._value = orientation;
-            baseStationEntity.model.articulations = {
-              "Dish DishX": orientation.x*100,
-              "Dish DishY": orientation.y*100,
-              "Dish DishZ": orientation.z*100
+            if(baseStationEntity.model != undefined){
+              baseStationEntity.model.articulations["Dish DishX"] = orientation.x*100; 
+              baseStationEntity.model.articulations["Dish DishY"] = orientation.y*100; 
+              baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*100; 
             }
+            console.log(viewer.entities);
           }
         });
       })
+      
     }
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
 
