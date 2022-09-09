@@ -628,7 +628,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         () => {
           setIsRotate(false);
           let layer = viewer.imageryLayers.get(0);
-          layer["brightness"] = 4;
+          layer["brightness"] = 1;
         }
       );
 
@@ -637,7 +637,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           setTimeout(() => {
             setIsRotate(true);
             let layer = viewer.imageryLayers.get(0);
-            layer["brightness"] = 6;
+            layer["brightness"] = 1;
           }, 2000);
         }
       );
@@ -1440,36 +1440,20 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       timeID = setInterval(()=>{
         let currTime = viewer.clock.currentTime;
         let baseStation = `Place/${curBaseStation?.name}`;
-        // let entity = viewer.entities.getById(linkToBaseStation[baseStation].id);
-        // console.log(entity.show);
         linkToBaseStation[baseStation].linkTimes.forEach(interval=>{
           if(Cesium.JulianDate.lessThanOrEquals(interval[0],currTime) && Cesium.JulianDate.greaterThanOrEquals(interval[1],currTime)){
             // 旋转基站
             let baseStationEntity = viewer.entities.getById(baseStation);
             let baseStationCar = baseStationEntity._position._value;
             let satelliteCar = viewer.entities.getById(linkToBaseStation[baseStation].satellite).position.getValue(viewer.clock.currentTime);
-            let m = getModelMatrix(baseStationCar , satelliteCar );
+            let m = getModelMatrix(baseStationCar, satelliteCar);
             let hpr = getHeadingPitchRoll(m);
-            console.log(hpr)
-            // hpr.pitch = hpr.pitch + 3.14 / 2 + 3.14;
             hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
-            // hpr.roll = hpr.roll + 3.14 / 2 + 3.14;
-            let orientation = Cesium.Transforms.headingPitchRollQuaternion(
-              baseStationCar,
-              hpr
-            );
-            // console.log(orientation, baseStationEntity);
-            console.log(orientation)
-            // baseStationEntity._orientation._value = orientation;
             if(baseStationEntity.model != undefined){
-              // baseStationEntity.model.articulations["Dish DishX"] = -orientation.x*100 ; 
-              // baseStationEntity.model.articulations["Dish DishY"] = orientation.z<0?-orientation.y*100:orientation.y*100 + 90; 
-              // baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*100; 
               baseStationEntity.model.articulations["Dish DishX"] = -hpr.roll*180/Math.PI ; 
               baseStationEntity.model.articulations["Dish DishY"] = -hpr.heading*180/Math.PI; 
               baseStationEntity.model.articulations["Dish DishZ"] = -hpr.pitch*180/Math.PI; 
             }
-            // console.log(viewer.entities);
           }
         });
       })
