@@ -1452,6 +1452,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let hpr = getHeadingPitchRoll(m);
             console.log(hpr)
             // hpr.pitch = hpr.pitch + 3.14 / 2 + 3.14;
+            hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
+            // hpr.roll = hpr.roll + 3.14 / 2 + 3.14;
             let orientation = Cesium.Transforms.headingPitchRollQuaternion(
               baseStationCar,
               hpr
@@ -1463,9 +1465,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               // baseStationEntity.model.articulations["Dish DishX"] = -orientation.x*100 ; 
               // baseStationEntity.model.articulations["Dish DishY"] = orientation.z<0?-orientation.y*100:orientation.y*100 + 90; 
               // baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*100; 
-              baseStationEntity.model.articulations["Dish DishX"] = orientation.x*180/Math.PI ; 
-              baseStationEntity.model.articulations["Dish DishY"] = orientation.y*180/Math.PI; 
-              baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*180/Math.PI; 
+              baseStationEntity.model.articulations["Dish DishX"] = -hpr.roll*180/Math.PI ; 
+              baseStationEntity.model.articulations["Dish DishY"] = -hpr.heading*180/Math.PI; 
+              baseStationEntity.model.articulations["Dish DishZ"] = -hpr.pitch*180/Math.PI; 
             }
             // console.log(viewer.entities);
           }
