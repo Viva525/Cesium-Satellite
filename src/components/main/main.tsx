@@ -628,7 +628,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         () => {
           setIsRotate(false);
           let layer = viewer.imageryLayers.get(0);
-          layer["brightness"] = 1;
+          layer["brightness"] = 1.5;
         }
       );
 
