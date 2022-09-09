@@ -318,11 +318,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               console.log(randomNumber);
               
               if(6<randomNumber && randomNumber<=9){
-                image = 'a.png'
+                image = 'bar-line-red.png'
               }else if(3<randomNumber && randomNumber<=6){
-                image = 'b.png'
+                image = 'bar-line-blue.png'
               }else{
-                image = 'c.png'
+                image = 'bar-line-red.png'
               }
               ele.polyline.material =  new Cesium.Spriteline1MaterialProperty(1000, `./images/${image}`)
             }
@@ -1365,7 +1365,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (baseStationEntity.model == undefined) {
               baseStationEntity.model = {
                 // 引入模型
-                uri: "./Telescope.gltf",
+                uri: "./Telescope_2.gltf",
                 // 配置模型大小的最小值
                 minimumPixelSize: 5,
                 //配置模型大小的最大值
