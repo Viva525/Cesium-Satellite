@@ -1365,7 +1365,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (baseStationEntity.model == undefined) {
               baseStationEntity.model = {
                 // 引入模型
-                uri: "./Telescope.gltf",
+                uri: "./Telescope_2.gltf",
                 // 配置模型大小的最小值
                 minimumPixelSize: 5,
                 //配置模型大小的最大值
@@ -1448,7 +1448,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let baseStationEntity = viewer.entities.getById(baseStation);
             let baseStationCar = baseStationEntity._position._value;
             let satelliteCar = viewer.entities.getById(linkToBaseStation[baseStation].satellite).position.getValue(viewer.clock.currentTime);
-            let m = getModelMatrix(baseStationCar , satelliteCar );
+            console.log(baseStationCar, satelliteCar)
+            let m = getModelMatrix(baseStationCar, satelliteCar);
             let hpr = getHeadingPitchRoll(m);
             console.log(hpr)
             // hpr.pitch = hpr.pitch + 3.14 / 2 + 3.14;
@@ -1463,7 +1464,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               // baseStationEntity.model.articulations["Dish DishX"] = -orientation.x*100 ; 
               // baseStationEntity.model.articulations["Dish DishY"] = orientation.z<0?-orientation.y*100:orientation.y*100 + 90; 
               // baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*100; 
-              baseStationEntity.model.articulations["Dish DishX"] = orientation.x*180/Math.PI ; 
+              baseStationEntity.model.articulations["Dish DishX"] = orientation.x*180/Math.PI; 
               baseStationEntity.model.articulations["Dish DishY"] = orientation.y*180/Math.PI; 
               baseStationEntity.model.articulations["Dish DishZ"] = orientation.z*180/Math.PI; 
             }
