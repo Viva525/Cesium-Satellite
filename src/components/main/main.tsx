@@ -318,11 +318,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               console.log(randomNumber);
               
               if(6<randomNumber && randomNumber<=9){
-                image = 'a.png'
+                image = 'bar-line-red.png'
               }else if(3<randomNumber && randomNumber<=6){
-                image = 'b.png'
+                image = 'bar-line-blue.png'
               }else{
-                image = 'c.png'
+                image = 'bar-line-red.png'
               }
               ele.polyline.material =  new Cesium.Spriteline1MaterialProperty(1000, `./images/${image}`)
             }
