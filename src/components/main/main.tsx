@@ -167,6 +167,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
       stages = viewer.scene.postProcessStages;
 
+      //  GetWGS84FromDKR(new Cesium.Cartesian3(4442039.156050082,-4554942.753447663,-447284.384375657624),1)
+        wgs84ToCartesign(-45.71896999999999, -4.048403994304465, 5.1000261306762695)
+
       // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = false;
       viewer.shadows = false;
@@ -675,6 +678,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let cartographic = Cesium.Cartographic.fromCartesian(coor);
     let x = Cesium.Math.toDegrees(cartographic.longitude);
     let y = Cesium.Math.toDegrees(cartographic.latitude);
+    // console.log(x, y, cartographic.height);
+    
     if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
     else if (type === 1)
       return [x as number, y as number];
@@ -685,6 +690,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
+    console.log(cartesian3);
+    
     return cartesian3;
   };
 
@@ -1450,9 +1457,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let hpr = getHeadingPitchRoll(m);
             hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
             if(baseStationEntity.model != undefined){
-              baseStationEntity.model.articulations["Dish DishX"] = -hpr.roll*180/Math.PI ; 
-              baseStationEntity.model.articulations["Dish DishY"] = -hpr.heading*180/Math.PI; 
-              baseStationEntity.model.articulations["Dish DishZ"] = -hpr.pitch*180/Math.PI; 
+              baseStationEntity.model.articulations["Dish DishX"] = (-hpr.roll*180/Math.PI)%360 ; 
+              baseStationEntity.model.articulations["Dish DishY"] = (-hpr.heading*180/Math.PI)%360; 
+              baseStationEntity.model.articulations["Dish DishZ"] = (-hpr.pitch*180/Math.PI)%360; 
             }
           }
         });
