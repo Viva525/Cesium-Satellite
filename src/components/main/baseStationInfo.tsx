@@ -24,7 +24,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
   return (
     <div
       id='baseStationList'
-      style={{ width: '100%', height: '39vh', overflowY: 'scroll' }}
+      style={{ width: '100%', height: '15vh', overflowY: 'scroll' }}
     >
       {baseStationList.map((baseStation: BaseStation, index) => {
         return (

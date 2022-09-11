@@ -15,6 +15,7 @@ import Box from "./box";
 import HeightChart from "../right/heightChart";
 import SatelliteBar from "../left/satelliteBar";
 import SatelliteNumberChart from "../left/satelliteNumberChart";
+import PolarEarth from "../right/palarEarth";
 import SatelliteInfo from "../right/satelliteInfo";
 import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty"
@@ -1552,6 +1553,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             />
           }
         />
+        <Box
+          title="极地图"
+          component={<PolarEarth></PolarEarth>}
+          >
+        </Box>
         <Box
           title="卫星实时高度图"
           component={
