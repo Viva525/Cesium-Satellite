@@ -69,7 +69,8 @@ const PolarEarth: React.FC<{}> = () => {
                 }
             },
             axisLabel: {
-                color: '#000'
+                color: '#fff',
+                fontSize: 8
             },
             axisTick: {
                 inside: true
