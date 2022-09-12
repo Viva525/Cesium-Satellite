@@ -9,7 +9,7 @@ import type { TableRowSelection } from "antd/es/table/interface";
 import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
-import { BaseStation } from "../../types/type";
+import { BaseStation, PolarEarthProps } from "../../types/type";
 import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
 import HeightChart from "../right/heightChart";
@@ -43,8 +43,7 @@ let rain: any, snow: any, fog: any;
 let stages: any;
 let previousTime: any;
 let timeID: any;
-// let satelliteList: {[key:string]:any []} = {};
-// let satelliteList: string[] = []
+let polarTimeId: any;
 const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const { setDashboard } = props;
   const [init, setInit] = useState<boolean>(false);
@@ -80,6 +79,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [curBaseStation, setCurBaseStation] = useState<BaseStation | null>(
     null
   );
+  const [polarPosition, setPolarPosition] = useState<PolarEarthProps>(null);
 
   useEffect(() => {
     setInit(true);
@@ -168,11 +168,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       stages = viewer.scene.postProcessStages;
 
       //  GetWGS84FromDKR(new Cesium.Cartesian3(4442039.156050082,-4554942.753447663,-447284.384375657624),1)
-      wgs84ToCartesign(
-        -45.71896999999999,
-        -4.048403994304465,
-        5.1000261306762695
-      );
+      // wgs84ToCartesign(
+      //   -45.71896999999999,
+      //   -4.048403994304465,
+      //   5.1000261306762695
+      // );
 
       // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = false;
@@ -686,8 +686,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let cartographic = Cesium.Cartographic.fromCartesian(coor);
     let x = Cesium.Math.toDegrees(cartographic.longitude);
     let y = Cesium.Math.toDegrees(cartographic.latitude);
-    // console.log(x, y, cartographic.height);
-
     if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
     else if (type === 1) return [x as number, y as number];
   };
@@ -697,8 +695,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    console.log(cartesian3);
-
     return cartesian3;
   };
 
@@ -1296,10 +1292,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   // 当前选择的卫星
   useEffect(() => {
+    
+
     for (let i of selectSatelliteList) {
       let pick = viewer.entities.getById(i[1]);
       let curradarScanner = viewer.entities.getById("radarScan_" + i[1]);
-
       if (i[0] === 0) {
         if (i[1] === true) {
           count += 1;
@@ -1322,9 +1319,29 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   }, [selectSatelliteList]);
 
+    // 经纬度转极坐标
+    const lnglat2polat = (lng: any, lat: any) => {
+      let R = 6371;
+      let x = Math.abs(R*Math.round(Math.cos((lng * Math.PI/180)) * 1000000) / 1000000)
+      return [x, -lat]
+    }
   // 当前选中的卫星
   useEffect(() => {
-    console.log(selectedSatelliteList);
+    // 实时展示被选中的实体的位置
+    clearInterval(polarTimeId);
+    if(selectedSatelliteList.length === 0){
+      setPolarPosition([])
+    }else{
+      polarTimeId = setInterval(() =>{
+        let t = []
+        for(let i of selectedSatelliteList){          
+          let curPosition = viewer.entities.getById(i).position.getValue(viewer.clock.currentTime)
+          let [lng, lat] = GetWGS84FromDKR(curPosition, 1)
+          t.push([...lnglat2polat(lng, lat), i])
+        }
+        setPolarPosition(t)
+      }, 1000)
+    }
     if (selectedSatelliteList.length > 0) {
       if (nowPicksatellite) {
         if (selectedSatelliteList[0] !== nowPicksatellite[0]) {
@@ -1565,7 +1582,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             />
           }
         />
-        <Box title="极地图" component={<PolarEarth></PolarEarth>}></Box>
+        <Box
+          title="极地图"
+          component={<PolarEarth position={polarPosition}></PolarEarth>}
+        ></Box>
         <Box
           title="卫星实时高度图"
           component={
@@ -1604,7 +1624,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           type="button"
           id="measureArea"
           onClick={() => {
-            //debugger;
             setIsDrawPolygon(!isDrawPolygon);
           }}
           className="cesium-button"

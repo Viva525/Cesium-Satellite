@@ -24,3 +24,7 @@ export type Dashboard = {
 export type CesiumComponentType ={
     setDashboard: SetState<Dashboard|undefined>
 }
+
+export type PolarEarthProps = {
+  position: []
+}

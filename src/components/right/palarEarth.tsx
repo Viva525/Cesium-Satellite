@@ -1,118 +1,150 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
 import { type } from "os";
+import {PolarEarthProps} from "../../types/type"
 
-type PolarEarthProps = {
-    lng: number,
-    lat: number,
-    sateId: string
-}
-
-const PolarEarth: React.FC<{}> = () => {
+const PolarEarth: React.FC<PolarEarthProps> = (props) => {
   const [init, setInit] = useState<boolean>(false);
-  const chartRef = useRef(null);
+  const { position } = props
+  const chartRef = useRef(null)
+  const polarChartRef = useRef(null);
   useEffect(() => {
     setInit(true);
   }, []);
 
   useEffect(() => {
     if (init) {
-      let myChart = echarts.getInstanceByDom(
-        chartRef.current as unknown as HTMLDivElement
-      );
-      if (myChart == null) {
-        myChart = echarts.init(chartRef.current as unknown as HTMLDivElement);
-      }
-      var data = [];
-
-      for (var i = 0; i <= 100; i++) {
-        var theta = (i / 100) * 360;
-        var r = 5 * (1 + Math.sin((theta / 180) * Math.PI));
-        data.push([r, theta]);
-      }
-      lnglat2polat(45, 90)
-
-      let option = {
-        polar: {},
-        grid:{
-            top:'1%',
-            bottom: "1%"
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross'
-            },
-            backgroundColor: "#212124",
-            textStyle: {
-              color: "#fff",
-              fontSize: 11,
-            }
-        },
-        angleAxis: {
-            type: 'value',
-            startAngle: -90,
-            splitNumber: 18,
-            max: 360,
-            minorTick: {
-                show: true,
-                splitNumber: 10
-            },
-            axisLine: { //坐标轴轴线设置
-                lineStyle: {
-                    color: '#0d559e',
-                },
-            },
-            splitLine: {
-                lineStyle: {
-                    color: '#007bff'
-                }
-            },
-            axisLabel: {
-                color: '#fff',
-                fontSize: 8
-            },
-            axisTick: {
-                inside: true
-            }
-        },
-        radiusAxis: {
-            max:6371,
-            axisLine: { //坐标轴轴线设置
-                show: false,
-            },
-            axisTick: { //坐标轴刻度设置
-                show: false
-            },
-            axisLabel: {
-                show: false
-            },
-    
-            splitLine: {
-                lineStyle: {
-                    color: '#007bff'
-                }
-            }
-        },
-        series: [{
-            coordinateSystem: 'polar',
-            type: 'scatter',
-            data: [[2320.866025105018, 327.6], [5320.4866025105018, 327.6], [213.20866025105018, 227.6]],
-            symbolSize: 3
-        }]
-    };
-      myChart.setOption(option)
+      drawPolarEarth()
+      draw2DEarth()
     }
-  }, [init]);
+  }, [position]);
 
-  const lnglat2polat = (lng: any, lat: any) => {
-    let R = 6371;
-    let x = R*Math.round(Math.cos((lng * Math.PI/180)) * 1000000) / 1000000
-    console.log([x, lat]);
-    
-    return [x, lat]
+
+  const drawPolarEarth = () =>{
+    let myChart = echarts.getInstanceByDom(
+      polarChartRef.current as unknown as HTMLDivElement
+    );
+    if (myChart == null) {
+      myChart = echarts.init(polarChartRef.current as unknown as HTMLDivElement);
+    }
+    //@ts-ignore
+    var data = [], cate: any[] = []
+    for(let item of position){
+      data.push(item)
+      cate.push(item[2])
+    }
+    let option = {
+      polar: {},
+      grid:{
+          top:'1%',
+          bottom: "1%"
+      },
+      tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+              type: 'cross'
+          },
+          backgroundColor: "#212124",
+          textStyle: {
+            color: "#fff",
+            fontSize: 11,
+          }
+      },
+      angleAxis: {
+          type: 'value',
+          startAngle: -90,
+          splitNumber: 14,
+          clockwise: false,
+          min:0,
+          max: 360,
+          minorTick: {
+              show: true,
+              splitNumber: 10
+          },
+          axisLine: { //坐标轴轴线设置
+              lineStyle: {
+                  color: '#0d559e',
+              },
+          },
+          splitLine: {
+              lineStyle: {
+                  color: '#007bff'
+              }
+          },
+          axisLabel: {
+              color: '#fff',
+              fontSize: 8,
+              formatter: (value: any, index: any) =>{
+                if(value === 90) return `${value} E`
+                if(value === 270) return `W ${360-value}`
+                if(value >180){
+                  value = 360-value
+                }
+                return value
+              }
+          },
+          axisTick: {
+              inside: true
+          }
+      },
+      radiusAxis: {
+          min:0,
+          max:6371,
+          splitNumber: 8,
+          axisLine: { //坐标轴轴线设置
+              show: false,
+          },
+          axisTick: { //坐标轴刻度设置
+              show: false
+          },
+          axisLabel: {
+              show: false
+          },
+  
+          splitLine: {
+              lineStyle: {
+                  color: '#007bff'
+              }
+          }
+      },
+      visualMap:[{
+        show:false,
+        dimension:2,
+        categories:cate,
+        inRange: {
+          color: (function () {
+            var colors = ['#51689b', '#ce5c5c', '#fbc357', '#8fbf8f', '#659d84', '#fb8e6a', '#c77288', '#786090', '#91c4c5', '#6890ba'];
+            return colors.concat(colors);
+          })()
+        }
+      }],
+      series: [{
+          coordinateSystem: 'polar',
+          type: 'scatter',
+          //@ts-ignore
+          data: data,
+          symbolSize: 5
+      }]
+  };
+    myChart.setOption(option, true)
   }
-  return <div style={{ width: "100%", height: "18vh" }} ref={chartRef}></div>;
+
+  const draw2DEarth = () =>{
+    let myChart = echarts.getInstanceByDom(
+      chartRef.current as unknown as HTMLDivElement
+    );
+    if (myChart == null) {
+      myChart = echarts.init(chartRef.current as unknown as HTMLDivElement);
+    }
+
+
+  }
+  return (
+  <div style={{ width: "100%", height: "18vh" }}>
+    <div style={{ width: "40%", height: "100%" }} ref={polarChartRef} ></div>
+    <div style={{ width: "50%", height: "100%" }} ref={chartRef} ></div>
+  </div>
+  )
 };
 
 export default PolarEarth;
