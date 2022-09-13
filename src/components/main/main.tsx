@@ -604,11 +604,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
           }
         }
-        let scenePos = click.position;
-        let cartesianPos = viewer.scene.pickPosition(scenePos);
-        console.log(click.position);
-        console.log(cartesianPos);
-        console.log(GetWGS84FromDKR(cartesianPos, 1));
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       handler.setInputAction(function (click: { position: any }) {
         var pick = viewer.scene.pick(click.position);
@@ -1394,6 +1389,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   useEffect(() => {
     if (init) {
+      console.log("1",curBaseStation.pos);
       // 监听摄像机高度变化
       viewer.camera.changed.addEventListener(() => {
         // 当前高度
@@ -1435,6 +1431,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         }
       });
+      console.log("2",Cesium.Cartesian3.fromDegrees(
+        curBaseStation?.pos[0],
+        curBaseStation?.pos[1],
+        0
+      ));
+      
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
