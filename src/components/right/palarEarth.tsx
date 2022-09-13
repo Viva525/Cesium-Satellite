@@ -181,26 +181,16 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
     echarts.registerMap('world', geoMap)
     let option = {
       tooltip: {
-        trigger: "item",
-        //@ts-ignore
-        formatter: function (params) {
-          if (params.seriesType == "effectScatter") {
-            return params.marker + params.data.name + "" + params.data.value[2];
-          } else if (params.seriesType == "lines") {
-            return params.data.fromName + " -> " + params.data.toName + "<br />" + params.data.value;
-          } else {
-            return params.name;
-          }
-        },
+        show: false
       },
       grid: {
-        right: '8%',
-        // top:'5%'
+        right: '1%',
+        left:'1%'
       },
       geo: {
         map: 'world',
         aspectScale: 0.65, //长宽比
-        zoom: 1.12,
+        zoom: 1.2,
         tooltip: {
           show: false,
         },
@@ -235,16 +225,7 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
 
         },
         emphasis: {
-          itemStyle: {
-            label: {
-              // show: !1,
-              color: "#fff",
-            },
-            areaColor: "#0E83B7",
-            //    shadowColor: 'rgb(12,25,50)',
-            borderWidth: 0.2,
-
-          }
+          disabled: true
         },
         silent: true
       },
