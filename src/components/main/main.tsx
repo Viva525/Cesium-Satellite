@@ -183,11 +183,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //   38.814281354519615,
       //   5.1000261306762695
       // )
-      wgs84ToCartesign(
-        -77.05534486727545, 
-        38.814281354519615,
-        0
-      )
+      wgs84ToCartesign(-77.05534486727545, 38.814281354519615, 0);
       // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = false;
       viewer.shadows = false;
@@ -345,9 +341,17 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               }
               // ele.polyline.material =  new Cesium.Spriteline1MaterialProperty(1000, `./images/${image}`)
 
-              ele.polyline.material = new Cesium.PolylineDashMaterialProperty({
+              // ele.polyline.width = 1
+              // ele.polyline.material = new Cesium.PolylineDashMaterialProperty({
+              //   color: curColor,
+              //   dashLength: 8.0,
+              // });
+
+              ele.polyline.material = new Cesium.LineFlowMaterialProperty({
                 color: curColor,
-                dashLength: 8.0,
+                speed: 50,
+                percent: 0.5,
+                gradient: 0.1,
               });
             }
             // 1. 配置样式与路径
@@ -604,9 +608,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         let cartesianPos = viewer.scene.pickPosition(scenePos);
         console.log(click.position);
         console.log(cartesianPos);
-        console.log(GetWGS84FromDKR(cartesianPos,1));
-        
-        
+        console.log(GetWGS84FromDKR(cartesianPos, 1));
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       handler.setInputAction(function (click: { position: any }) {
         var pick = viewer.scene.pick(click.position);
@@ -716,7 +718,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    console.log([cartesian3.x,cartesian3.y,cartesian3.z]);
+    console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
 
     return cartesian3;
   };
@@ -1067,23 +1069,24 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       );
       let z = Math.ceil(cartographic.height / 1000);
       let nowDate = new Date(viewer.clock.currentTime).toUTCString();
+      let dataLength = 1000
       // 时间没有暂停
       setNowSystemDate((prev) => {
-        console.log(nowData)
-        if(nowData.length < 100){
-          return [...prev, nowDate];
+        let nowData = [...prev, nowDate]
+        if(nowData.length < dataLength){
+          return nowData;
         }
         else{
-          return nowData.slice(nowData.length - 100, nowData.length)
+          return nowData.slice(nowData.length - dataLength, nowData.length)
         }
       });
       setSatellitePostionData((prev) => {
         let nowData = [...prev, z]
-        if(nowData.length < 100){
-          return [...prev, z];
+        if(nowData.length < dataLength){
+          return nowData;
         }
         else{
-          return nowData.slice(nowData.length - 100, nowData.length)
+          return nowData.slice(nowData.length - dataLength, nowData.length)
         }
       });
     }
@@ -1326,8 +1329,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   // 当前选择的卫星
   useEffect(() => {
-    
-
     for (let i of selectSatelliteList) {
       let pick = viewer.entities.getById(i[1]);
       let curradarScanner = viewer.entities.getById("radarScan_" + i[1]);
@@ -1353,28 +1354,25 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   }, [selectSatelliteList]);
 
-    // 经纬度转极坐标
-    const lnglat2polat = (lng: any, lat: any) => {
-      let R = 6371;
-      let x = Math.abs(R*Math.round(Math.cos((lng * Math.PI/180)) * 1000000) / 1000000)
-      return [x, -lat]
-    }
+
   // 当前选中的卫星
   useEffect(() => {
     // 实时展示被选中的实体的位置
     clearInterval(polarTimeId);
-    if(selectedSatelliteList.length === 0){
-      setPolarPosition([])
-    }else{
-      polarTimeId = setInterval(() =>{
-        let t = []
-        for(let i of selectedSatelliteList){          
-          let curPosition = viewer.entities.getById(i).position.getValue(viewer.clock.currentTime)
-          let [lng, lat] = GetWGS84FromDKR(curPosition, 1)
-          t.push([...lnglat2polat(lng, lat), i])
+    if (selectedSatelliteList.length === 0) {
+      setPolarPosition([]);
+    } else {
+      polarTimeId = setInterval(() => {
+        let t = [];
+        for (let i of selectedSatelliteList) {
+          let curPosition = viewer.entities
+            .getById(i)
+            .position.getValue(viewer.clock.currentTime);
+          let [lng, lat] = GetWGS84FromDKR(curPosition, 1);
+          t.push([lng, lat, i]);
         }
-        setPolarPosition(t)
-      }, 1000)
+        setPolarPosition(t);
+      }, 1000);
     }
     if (selectedSatelliteList.length > 0) {
       if (nowPicksatellite) {
@@ -1427,7 +1425,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 minimumPixelSize: 1,
                 //配置模型大小的最大值
                 maximumScale: 50,
-                scale:4,
+                scale: 4,
                 //配置模型轮廓的颜色
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小

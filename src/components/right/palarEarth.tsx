@@ -15,45 +15,49 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
 
   useEffect(() => {
     if (init) {
-      console.log(position)
-      drawPolarEarth()
-      draw2DEarth()
+      //@ts-ignore
+      let data = [],
+        cate: any[] = [];
+
+      for (let item of position) {
+        data.push([...lnglat2polat(item[0], item[1]), item[2]]);
+        cate.push(item[2]);
+      }
+      drawPolarEarth(data, cate);
+      draw2DEarth(position, cate);
     }
   }, [position]);
 
 
-  const drawPolarEarth = () => {
+  const drawPolarEarth = (data: any, cate: any) => {
     let myChart = echarts.getInstanceByDom(
       polarChartRef.current as unknown as HTMLDivElement
     );
     if (myChart == null) {
-      myChart = echarts.init(polarChartRef.current as unknown as HTMLDivElement);
+      myChart = echarts.init(
+        polarChartRef.current as unknown as HTMLDivElement
+      );
     }
-    //@ts-ignore
-    var data = [], cate: any[] = []
-    for (let item of position) {
-      data.push(item)
-      cate.push(item[2])
-    }
+
     let option = {
       polar: {},
       grid: {
-        top: '1%',
-        bottom: "1%"
+        top: "1%",
+        left: "1%"
       },
       tooltip: {
-        trigger: 'axis',
+        trigger: "axis",
         axisPointer: {
-          type: 'cross'
+          type: "cross",
         },
         backgroundColor: "#212124",
         textStyle: {
           color: "#fff",
           fontSize: 11,
-        }
+        },
       },
       angleAxis: {
-        type: 'value',
+        type: "value",
         startAngle: -90,
         splitNumber: 14,
         clockwise: false,
@@ -61,87 +65,117 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
         max: 360,
         minorTick: {
           show: true,
-          splitNumber: 10
+          splitNumber: 10,
         },
-        axisLine: { //坐标轴轴线设置
+        axisLine: {
+          //坐标轴轴线设置
           lineStyle: {
-            color: '#0d559e',
+            color: "#0d559e",
           },
         },
         splitLine: {
           lineStyle: {
-            color: '#007bff'
-          }
+            color: "#007bff",
+          },
         },
         axisLabel: {
-          color: '#fff',
+          color: "#fff",
           fontSize: 8,
+          margin: 2,
           formatter: (value: any, index: any) => {
-            if (value === 90) return `${value} E`
-            if (value === 270) return `W ${360 - value}`
+            if (value === 90) return `${value} E`;
+            if (value === 270) return `W ${360 - value}`;
             if (value > 180) {
-              value = 360 - value
+              value = 360 - value;
             }
-            return value
-          }
+            return value;
+          },
         },
         axisTick: {
-          inside: true
-        }
+          inside: true,
+        },
       },
       radiusAxis: {
         min: 0,
         max: 6371,
         splitNumber: 8,
-        axisLine: { //坐标轴轴线设置
+        axisLine: {
+          //坐标轴轴线设置
           show: false,
         },
-        axisTick: { //坐标轴刻度设置
-          show: false
+        axisTick: {
+          //坐标轴刻度设置
+          show: false,
         },
         axisLabel: {
-          show: false
+          show: false,
         },
 
         splitLine: {
           lineStyle: {
-            color: '#007bff'
-          }
-        }
+            color: "#007bff",
+          },
+        },
       },
-      visualMap: [{
-        show: false,
-        dimension: 2,
-        categories: cate,
-        inRange: {
-          color: (function () {
-            var colors = ['#51689b', '#ce5c5c', '#fbc357', '#8fbf8f', '#659d84', '#fb8e6a', '#c77288', '#786090', '#91c4c5', '#6890ba'];
-            return colors.concat(colors);
-          })()
-        }
-      }],
-      series: [{
-        coordinateSystem: 'polar',
-        type: 'scatter',
-        //@ts-ignore
-        data: data,
-        symbolSize: 5
-      }]
+      visualMap: [
+        {
+          show: false,
+          dimension: 2,
+          categories: cate,
+          inRange: {
+            color: (function () {
+              var colors = [
+                "#33FFFF",
+                "#FF0033",
+                "#FFCC33",
+                "#B3FF00",
+                "#659d84",
+                "#fb8e6a",
+                "#c77288",
+                "#786090",
+                "#91c4c5",
+                "#6890ba",
+              ];
+              return colors.concat(colors);
+            })(),
+          },
+        },
+      ],
+      series: [
+        {
+          coordinateSystem: "polar",
+          type: "effectScatter",
+          //@ts-ignore
+          data: data,
+          symbolSize: 5,
+          rippleEffect: {
+            period: 2,
+            scale: 5,
+          },
+        },
+      ],
     };
-    myChart.setOption(option, true)
-  }
+    myChart.setOption(option, true);
+  };
 
-  const draw2DEarth = () => {
+  const lnglat2polat = (lng: any, lat: any) => {
+    let R = 6371;
+    let x = Math.abs(
+      (R * Math.round(Math.cos((lat * Math.PI) / 180) * 1000000)) / 1000000
+    );
+    if (lng < 0) {
+      lng += 360;
+    }
+    return [x, lng];
+  };
+
+  const draw2DEarth = (data: any, cate: any) => {
     let myChart = echarts.getInstanceByDom(
       mapChartRef.current as unknown as HTMLDivElement
     );
     if (myChart == null) {
       myChart = echarts.init(mapChartRef.current as unknown as HTMLDivElement);
     }
-    let useData = [{
-      name: "now",
-      value: [125.299633, 43.914039, 10]
-    }]
 
     //@ts-ignore
     echarts.registerMap('world', geoMap)
@@ -214,17 +248,36 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
         },
         silent: true
       },
+      visualMap: [
+        {
+          show: false,
+          dimension: 2,
+          categories: cate,
+          inRange: {
+            color: (function () {
+              var colors = [
+                "#33FFFF",
+                "#FF0033",
+                "#FFCC33",
+                "#B3FF00",
+                "#659d84",
+                "#fb8e6a",
+                "#c77288",
+                "#786090",
+                "#91c4c5",
+                "#6890ba",
+              ];
+              return colors.concat(colors);
+            })(),
+          },
+        },
+      ],
       series: [
         {
           name: '地点',
-          type: 'scatter',
+          type: "effectScatter",
           coordinateSystem: 'geo',
           zlevel: 2,
-          rippleEffect: {
-            period: 1,
-            brushType: "stroke",
-            scale: 8
-          },
           label: {
             show: true,
             position: "right",
@@ -233,47 +286,30 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
             textStyle: {
               color: "#fff"
             }
-
           },
           symbol: "circle",
-          symbolSize: 10,
+          rippleEffect: {
+            period: 2,
+            scale: 5,
+          },
+          symbolSize: 5,
           itemStyle: {
             show: true,
-            color: {
-              type: "linear",
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                {
-                  offset: 0,
-                  color: "#F65857", // 0% 处的颜色
-                },
-                {
-                  offset: 1,
-                  color: "#EC2624", // 100% 处的颜色
-                },
-              ],
-            },
+
           },
-          emphasis: {
-            label: {
-              show: true
-            }
-          },
-          data: useData
+          data: data
         }
       ],
     }
 
     myChart.setOption(option, true)
+    myChart.resize()
 
   }
   return (
     <div style={{ width: "100%", height: "18vh" }}>
-      <div style={{ width: "40%", height: "100%", float: "left" }} ref={polarChartRef} ></div>
-      <div style={{ width: "60%", height: "100%", float: "left" }} ref={mapChartRef} ></div>
+      <div style={{ width: "42%", height: "100%", float: "left" }} ref={polarChartRef} ></div>
+      <div style={{ width: "58%", height: "100%", float: "left" }} ref={mapChartRef} ></div>
     </div>
   )
 };
