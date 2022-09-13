@@ -1068,12 +1068,23 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       let z = Math.ceil(cartographic.height / 1000);
       let nowDate = new Date(viewer.clock.currentTime).toUTCString();
       // 时间没有暂停
-
       setNowSystemDate((prev) => {
-        return [...prev, nowDate];
+        console.log(nowData)
+        if(nowData.length < 100){
+          return [...prev, nowDate];
+        }
+        else{
+          return nowData.slice(nowData.length - 100, nowData.length)
+        }
       });
       setSatellitePostionData((prev) => {
-        return [...prev, z];
+        let nowData = [...prev, z]
+        if(nowData.length < 100){
+          return [...prev, z];
+        }
+        else{
+          return nowData.slice(nowData.length - 100, nowData.length)
+        }
       });
     }
   };
