@@ -136,7 +136,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [isDrawLine]);
   useEffect(() => {
     if (init) {
-      console.log(Cesium);
       Cesium.Ion.defaultAccessToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTg4MTUyNy0zMTA2LTRiMDktOGE1My05ZDA4OTRmOTE3YzciLCJpZCI6MTAzMjg1LCJpYXQiOjE2NTk0MDcyODB9.sfpT8e4oxun23JG--UmUN9ZD4SbQfU-Ljvh2MsPTTcY";
       viewer = new Cesium.Viewer("cesiumContainer", {
@@ -145,6 +144,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         // 去掉地球表面的大气效果黑圈问题
         orderIndependentTranslucency: true,
         // terrainProvider : Cesium.createWorldTerrain(),
+        terrainProvider: new Cesium.CesiumTerrainProvider({
+          url: Cesium.IonResource.fromAssetId(1),
+        }),
         contextOptions: {
           webgl: {
             alpha: true,
@@ -153,6 +155,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         timeline: true,
         animation: true,
       });
+      const Melbourne_tileset = new Cesium.Cesium3DTileset({
+        url: Cesium.IonResource.fromAssetId(69380),
+      });
+      const Washington_tileset = new Cesium.Cesium3DTileset({
+        url: Cesium.IonResource.fromAssetId(57588),
+      });
+      viewer.scene.primitives.add(Melbourne_tileset);
+      viewer.scene.primitives.add(Washington_tileset);
       // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
       // let imageryProvider = new Cesium.UrlTemplateImageryProvider({
@@ -168,12 +178,16 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       stages = viewer.scene.postProcessStages;
 
       //  GetWGS84FromDKR(new Cesium.Cartesian3(4442039.156050082,-4554942.753447663,-447284.384375657624),1)
+      // wgs84ToCartesign(
+      //   -77.05534486727545,
+      //   38.814281354519615,
+      //   5.1000261306762695
+      // )
       wgs84ToCartesign(
-        -45.71896999999999,
-        -4.048403994304465,
-        5.1000261306762695
-      );
-
+        -77.05534486727545, 
+        38.814281354519615,
+        0
+      )
       // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = false;
       viewer.shadows = false;
@@ -305,7 +319,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/star-beidou-gps_2.czml"
+          "./data/star-beidou-gps_3.czml"
           // "./data/star-beidou-gps.czml"
         );
         let nowSatelliteList: string[] = [];
@@ -586,6 +600,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
           }
         }
+        let scenePos = click.position;
+        let cartesianPos = viewer.scene.pickPosition(scenePos);
+        console.log(click.position);
+        console.log(cartesianPos);
+        console.log(GetWGS84FromDKR(cartesianPos,1));
+        
+        
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       handler.setInputAction(function (click: { position: any }) {
         var pick = viewer.scene.pick(click.position);
@@ -697,7 +718,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    console.log(cartesian3);
+    console.log([cartesian3.x,cartesian3.y,cartesian3.z]);
 
     return cartesian3;
   };
@@ -1373,9 +1394,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // 引入模型
                 uri: "./Telescope_2.gltf",
                 // 配置模型大小的最小值
-                minimumPixelSize: 5,
+                minimumPixelSize: 1,
                 //配置模型大小的最大值
-                maximumScale: 5,
+                maximumScale: 50,
+                scale:4,
                 //配置模型轮廓的颜色
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
