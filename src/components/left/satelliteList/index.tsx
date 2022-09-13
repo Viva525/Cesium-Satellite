@@ -24,7 +24,7 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
         },
         {
           text: '北斗',
-          value: 'BD',
+          value: 'BEIDOU',
         },
         {
           text: 'gps',
