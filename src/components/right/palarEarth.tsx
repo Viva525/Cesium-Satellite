@@ -1,25 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
 import { type } from "os";
-import { PolarEarthProps } from "../../types/type";
+import { PolarEarthProps } from "../../types/type"
+import geoMap from "./map.json"
 
 const PolarEarth: React.FC<PolarEarthProps> = (props) => {
   const [init, setInit] = useState<boolean>(false);
-  const { position } = props;
-  const chartRef = useRef(null);
+  const { position } = props
   const polarChartRef = useRef(null);
+  const mapChartRef = useRef(null)
   useEffect(() => {
     setInit(true);
   }, []);
 
   useEffect(() => {
     if (init) {
-      drawPolarEarth();
-      draw2DEarth();
+      //@ts-ignore
+      let data = [],
+        cate: any[] = [];
+
+      for (let item of position) {
+        data.push([...lnglat2polat(item[0], item[1]), item[2]]);
+        cate.push(item[2]);
+      }
+      drawPolarEarth(data, cate);
+      draw2DEarth(position, cate);
     }
   }, [position]);
 
-  const drawPolarEarth = () => {
+
+  const drawPolarEarth = (data: any, cate: any) => {
     let myChart = echarts.getInstanceByDom(
       polarChartRef.current as unknown as HTMLDivElement
     );
@@ -28,13 +38,7 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
         polarChartRef.current as unknown as HTMLDivElement
       );
     }
-    //@ts-ignore
-    var data = [],
-      cate: any[] = [];
-    for (let item of position) {
-      data.push([...lnglat2polat(item[0], item[1]), item[2]]);
-      cate.push(item[2]);
-    }
+
     let option = {
       polar: {},
       grid: {
@@ -77,7 +81,7 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
         axisLabel: {
           color: "#fff",
           fontSize: 8,
-          margin:2,
+          margin: 2,
           formatter: (value: any, index: any) => {
             if (value === 90) return `${value} E`;
             if (value === 270) return `W ${360 - value}`;
@@ -165,20 +169,149 @@ const PolarEarth: React.FC<PolarEarthProps> = (props) => {
     return [x, lng];
   };
 
-  const draw2DEarth = () => {
+  const draw2DEarth = (data: any, cate: any) => {
     let myChart = echarts.getInstanceByDom(
-      chartRef.current as unknown as HTMLDivElement
+      mapChartRef.current as unknown as HTMLDivElement
     );
     if (myChart == null) {
-      myChart = echarts.init(chartRef.current as unknown as HTMLDivElement);
+      myChart = echarts.init(mapChartRef.current as unknown as HTMLDivElement);
     }
-  };
+
+    //@ts-ignore
+    echarts.registerMap('world', geoMap)
+    let option = {
+      tooltip: {
+        trigger: "item",
+        //@ts-ignore
+        formatter: function (params) {
+          if (params.seriesType == "effectScatter") {
+            return params.marker + params.data.name + "" + params.data.value[2];
+          } else if (params.seriesType == "lines") {
+            return params.data.fromName + " -> " + params.data.toName + "<br />" + params.data.value;
+          } else {
+            return params.name;
+          }
+        },
+      },
+      grid: {
+        right: '8%',
+        // top:'5%'
+      },
+      geo: {
+        map: 'world',
+        aspectScale: 0.65, //长宽比
+        zoom: 1.12,
+        tooltip: {
+          show: false,
+        },
+        scaleLimit: {
+          min: 1,
+          max: 5,
+        },
+        label: {
+          show: false
+        },
+        roam: false,
+        itemStyle: {
+          borderColor: "#0d559e",
+          borderWidth: 0.2,
+          areaColor: {
+            type: "radial",
+            x: 0.5,
+            y: 0.5,
+            r: 0.8,
+            colorStops: [
+              {
+                offset: 0,
+                color: "#1867B5", // 0% 处的颜色
+              },
+              {
+                offset: 1,
+                color: "#1867B5", // 100% 处的颜色
+              },
+            ],
+            globalCoord: true, // 缺省为 false
+          },
+
+        },
+        emphasis: {
+          itemStyle: {
+            label: {
+              // show: !1,
+              color: "#fff",
+            },
+            areaColor: "#0E83B7",
+            //    shadowColor: 'rgb(12,25,50)',
+            borderWidth: 0.2,
+
+          }
+        },
+        silent: true
+      },
+      visualMap: [
+        {
+          show: false,
+          dimension: 2,
+          categories: cate,
+          inRange: {
+            color: (function () {
+              var colors = [
+                "#33FFFF",
+                "#FF0033",
+                "#FFCC33",
+                "#B3FF00",
+                "#659d84",
+                "#fb8e6a",
+                "#c77288",
+                "#786090",
+                "#91c4c5",
+                "#6890ba",
+              ];
+              return colors.concat(colors);
+            })(),
+          },
+        },
+      ],
+      series: [
+        {
+          name: '地点',
+          type: "effectScatter",
+          coordinateSystem: 'geo',
+          zlevel: 2,
+          label: {
+            show: true,
+            position: "right",
+            color: "#9966cc",
+            formatter: "{b}",
+            textStyle: {
+              color: "#fff"
+            }
+          },
+          symbol: "circle",
+          rippleEffect: {
+            period: 2,
+            scale: 5,
+          },
+          symbolSize: 5,
+          itemStyle: {
+            show: true,
+
+          },
+          data: data
+        }
+      ],
+    }
+
+    myChart.setOption(option, true)
+    myChart.resize()
+
+  }
   return (
     <div style={{ width: "100%", height: "18vh" }}>
-      <div style={{ width: "42%", height: "100%" }} ref={polarChartRef}></div>
-      <div style={{ width: "50%", height: "100%" }} ref={chartRef}></div>
+      <div style={{ width: "42%", height: "100%", float: "left" }} ref={polarChartRef} ></div>
+      <div style={{ width: "58%", height: "100%", float: "left" }} ref={mapChartRef} ></div>
     </div>
-  );
+  )
 };
 
 export default PolarEarth;
