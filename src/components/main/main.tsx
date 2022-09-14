@@ -600,11 +600,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
           }
         }
-        let scenePos = click.position;
-        let cartesianPos = viewer.scene.pickPosition(scenePos);
-        console.log(click.position);
-        console.log(cartesianPos);
-        console.log(GetWGS84FromDKR(cartesianPos,1));
+        // let scenePos = click.position;
+        // let cartesianPos = viewer.scene.pickPosition(scenePos);
+        // console.log(click.position);
+        // console.log(cartesianPos);
+        // console.log(GetWGS84FromDKR(cartesianPos,1));
         
         
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
