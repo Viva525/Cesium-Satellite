@@ -160,11 +160,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       });
       const Washington_tileset = new Cesium.Cesium3DTileset({
         url: Cesium.IonResource.fromAssetId(57588),
+        url: './data/tileset.json',
       });
       viewer.scene.primitives.add(Melbourne_tileset);
       viewer.scene.primitives.add(Washington_tileset);
       // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
+// 添加地形数据
+// viewer.terrainProvider = Cesium.createWorldTerrain();
+
       // let imageryProvider = new Cesium.UrlTemplateImageryProvider({
       //   url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
       //   layer: "tdtVecBasicLayer",
@@ -183,32 +187,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //   38.814281354519615,
       //   5.1000261306762695
       // )
-      wgs84ToCartesign(-77.05534486727545, 38.814281354519615, 0);
+
       // 开启光照 & 亮度设置: 两种方式
       viewer.scene.globe.enableLighting = false;
       viewer.shadows = false;
 
       let layer = imageryLayers.get(0);
       layer["brightness"] = 1;
-
-      // 更换天空盒
-      // let spaceSkybox = new Cesium.SkyBox({
-      //   sources: {
-      //     negativeX: "./images/Space_Skybox/starmap_2020_16k_mx.jpg",
-      //     positiveX: "./images/Space_Skybox/starmap_2020_16k_px.jpg",
-      //     negativeY: "./images/Space_Skybox/starmap_2020_16k_my.jpg",
-      //     positiveY: "./images/Space_Skybox/starmap_2020_16k_py.jpg",
-      //     negativeZ: "./images/Space_Skybox/starmap_2020_16k_mz.jpg",
-      //     positiveZ: "./images/Space_Skybox/starmap_2020_16k_pz.jpg",
-      //     // negativeX: "./images/star_blue_mx.png",
-      //     // positiveX: "./images/star_blue_px.png",
-      //     // negativeY: "./images/star_blue_my.png",
-      //     // positiveY: "./images/star_blue_py.png",
-      //     // negativeZ: "./images/star_blue_mz.png",
-      //     // positiveZ: "./images/star_blue_pz.png",
-      //   },
-      // });
-      // viewer.scene.skyBox = spaceSkybox;
 
       // 背景切换为图片
       // 去掉黑色星空背景

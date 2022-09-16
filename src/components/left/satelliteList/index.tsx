@@ -65,7 +65,7 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
             onClick={() => {
               window.open(
                 //@ts-ignore
-                `/satelliteDashboard/satellite/${record.key.split('/').slice(1).join('-')}`,
+                `/satellite/#/satelliteDashboard/satellite/${record.key.split('/').slice(1).join('-')}`,
                 "_blank"
               );
             }}
