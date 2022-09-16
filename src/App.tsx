@@ -9,7 +9,6 @@ function App() {
   const [dashboardInfo, setDashboardInfo] = useState<Dashboard | undefined>(
     undefined
   );
-
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <HashRouter>

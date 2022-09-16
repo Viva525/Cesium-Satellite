@@ -85,7 +85,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
 
                 // 打开新标签的方式
                 window.open(
-                  `/satellite/satelliteDashboard/baseStation/${baseStation.name}`,
+                  `/satellite/#/satelliteDashboard/baseStation/${baseStation.name}`,
                   '_blank'
                 );
               }}
