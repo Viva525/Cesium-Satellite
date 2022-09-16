@@ -32,35 +32,35 @@ const SatelliteDashboard: React.FC<{}> = () => {
   useEffect(() => {
     if (init) {
       if (type === "baseStation") {
-        fetch("http://localhost:3000/data/groundData/groundBusiness.json")
+        fetch("http://localhost:8080/satellite/data/groundData/groundBusiness.json")
           .then((res) => res.json())
           .then((data) => {
             setGroundBusiniessState(data);
           });
-        fetch("http://localhost:3000/data/groundData/groundReliability.json")
+        fetch("http://localhost:8080/satellite/data/groundData/groundReliability.json")
           .then((res) => res.json())
           .then((data) => {
             setGroundReliabilityState(data);
           });
-        fetch("http://localhost:3000/data/groundData/groundStability.json")
+        fetch("http://localhost:8080/satellite/data/groundData/groundStability.json")
           .then((res) => res.json())
           .then((data) => {
             setGroundStabilityState(data);
           });
       } else if (type === "satellite") {
-        fetch("http://localhost:3000/data/satelliteData/satelliteCoverage.json")
+        fetch("http://localhost:8080/satellite/data/satelliteData/satelliteCoverage.json")
           .then((res) => res.json())
           .then((data) => {
             setSatelliteCoverage(data);
           });
         fetch(
-          "http://localhost:3000/data/satelliteData/satelliteStability.json"
+          "http://localhost:8080/satellite/data/satelliteData/satelliteStability.json"
         )
           .then((res) => res.json())
           .then((data) => {
             setSatelliteStability(data);
           });
-        fetch("http://localhost:3000/data/satelliteData/satelliteUseRate.json")
+        fetch("http://localhost:8080/satellite/data/satelliteData/satelliteUseRate.json")
           .then((res) => res.json())
           .then((data) => {
             setSatelliteUseRate(data);
