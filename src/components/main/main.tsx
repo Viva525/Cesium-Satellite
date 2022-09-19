@@ -477,8 +477,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 lineProperty._referenceFrame = Cesium.ReferenceFrame.INERTIAL;
               }
 
-              // console.log(ele, entityColor);
-
               radarScanner(
                 property,
                 satelliteLenght,
@@ -538,6 +536,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
+      });
+
+      viewer.homeButton.viewModel.duration = 0
+      viewer.homeButton.viewModel.command.afterExecute.addEventListener(function(e) {
+        setCurBaseStation(null)
+        snow && viewer.scene.postProcessStages.remove(snow); // 移除
+        rain && viewer.scene.postProcessStages.remove(rain); // 移除
+        fog && viewer.scene.postProcessStages.remove(fog); // 移除
       });
 
       // 鼠标事件
@@ -640,6 +646,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       // 监听2d切换事件
       viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(
         () => {
+        snow && viewer.scene.postProcessStages.remove(snow); // 移除
+        rain && viewer.scene.postProcessStages.remove(rain); // 移除
+        fog && viewer.scene.postProcessStages.remove(fog); // 移除
           setIsRotate(false);
           let layer = viewer.imageryLayers.get(0);
           layer["brightness"] = 1.5;
@@ -698,7 +707,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
 
     return cartesian3;
   };
@@ -1386,7 +1394,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   useEffect(() => {
     if (init) {
-      console.log("1",curBaseStation.pos);
+      if(curBaseStation === null) return 
       // 监听摄像机高度变化
       viewer.camera.changed.addEventListener(() => {
         // 当前高度
@@ -1428,11 +1436,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         }
       });
-      console.log("2",Cesium.Cartesian3.fromDegrees(
-        curBaseStation?.pos[0],
-        curBaseStation?.pos[1],
-        0
-      ));
       
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
@@ -1441,6 +1444,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           0
         ),
       });
+      
+
       setIsRotate(false);
       viewer.camera.lookDown(5000);
       viewer.camera.moveBackward(300);

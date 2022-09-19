@@ -11,7 +11,7 @@ function App() {
   );
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
-      <HashRouter>
+      <BrowserRouter>
         <Routes>
           <Route
             path="/"
@@ -23,7 +23,7 @@ function App() {
             element={<SatelliteDashboard />}
           ></Route>
         </Routes>
-      </HashRouter>
+      </BrowserRouter>
     </div>
   );
 }
