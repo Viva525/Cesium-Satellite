@@ -53,6 +53,8 @@
 .name-sate{
     font-size: 24px;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow:ellipsis; white-space: nowrap;
 }
 
 #launch-time-container{

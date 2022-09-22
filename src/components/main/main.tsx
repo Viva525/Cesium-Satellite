@@ -160,7 +160,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       });
       const Washington_tileset = new Cesium.Cesium3DTileset({
         url: Cesium.IonResource.fromAssetId(57588),
-        url: './data/tileset.json',
       });
       viewer.scene.primitives.add(Melbourne_tileset);
       viewer.scene.primitives.add(Washington_tileset);
@@ -181,11 +180,18 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
       stages = viewer.scene.postProcessStages;
 
-      //  GetWGS84FromDKR(new Cesium.Cartesian3(4442039.156050082,-4554942.753447663,-447284.384375657624),1)
+      //  GetWGS84FromDKR(new Cesium.Cartesian3(1114736.1760718708, -4849821.241711335, 3976255.3587589497),1)
+      //  place1
+      wgs84ToCartesign(
+        -77.05534486727545,
+        38.81411101983823,
+        -10
+      )
+      // place2
       // wgs84ToCartesign(
-      //   -77.05534486727545,
-      //   38.814281354519615,
-      //   5.1000261306762695
+      //   144.92242809864345,
+      //   -37.79837165450737,
+      //   19
       // )
 
       // 开启光照 & 亮度设置: 两种方式
@@ -389,14 +395,16 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   gradient: 0.1,
                 });
               }
+
               // 改成点
-              ele.billboard = undefined;
-              ele.point = {
-                show: true,
-                color: entityColor,
-                // outlineWidth: 4,
-                pixelSize: 5,
-              };
+              // ele.billboard = undefined;
+              // ele.point = {
+              //   show: true,
+              //   color: entityColor,
+              //   // outlineWidth: 4,
+              //   pixelSize: 5,
+              // };
+
               // 绘制雷达扫描
               let lineFlowPosition = [];
               let radarId = "radarScan_" + ele.id;
@@ -408,6 +416,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   postionValues[2]
                 )
               );
+
+
               let height = Math.abs(cartographic.height);
               let earthRadius = 6371393;
               // 卫星底部据地球中心的距离
@@ -485,6 +495,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 entityColor
               );
             }
+
             // 地面基站
             let re_Place = /^Place\/Place[0-9]$/;
             if (re_Place.exec(ele.id) != null) {
@@ -698,6 +709,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let cartographic = Cesium.Cartographic.fromCartesian(coor);
     let x = Cesium.Math.toDegrees(cartographic.longitude);
     let y = Cesium.Math.toDegrees(cartographic.latitude);
+    console.log(x, y);
+    
     if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
     else if (type === 1) return [x as number, y as number];
   };
@@ -707,7 +720,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-
+    console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
+    
     return cartesian3;
   };
 
@@ -1414,7 +1428,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 minimumPixelSize: 1,
                 //配置模型大小的最大值
                 maximumScale: 50,
-                scale: 4,
+                scale: 1.6,
                 //配置模型轮廓的颜色
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
@@ -1448,7 +1462,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
       setIsRotate(false);
       viewer.camera.lookDown(5000);
-      viewer.camera.moveBackward(300);
+      viewer.camera.moveBackward(100);
 
       // 生成雨雪天气
       let randomNumber = Math.floor(Math.random() * 10);
