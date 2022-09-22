@@ -182,11 +182,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
       //  GetWGS84FromDKR(new Cesium.Cartesian3(1114736.1760718708, -4849821.241711335, 3976255.3587589497),1)
       //  place1
-      wgs84ToCartesign(
-        -77.05534486727545,
-        38.81411101983823,
-        -10
-      )
+      // wgs84ToCartesign(
+      //   -77.05534486727545,
+      //   38.81411101983823,
+      //   -10
+      // )
       // place2
       // wgs84ToCartesign(
       //   144.92242809864345,
@@ -307,7 +307,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
           "./data/star-beidou-gps_3.czml"
-          // "./data/star-beidou-gps.czml"
         );
         let nowSatelliteList: string[] = [];
         let baseStationTemp: BaseStation[] = [];
@@ -317,7 +316,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // 通过ID选择需要轨迹的实体
           dataSource.entities._entities._array.forEach((ele: any) => {
             viewer.entities.add(ele);
-            let entityColor;
+            let entityColor, entityImage;
             // 实体之间的连线
             if (ele.path === undefined && ele.polyline !== undefined) {
               let curColor = ele.polyline.material.color,
@@ -330,9 +329,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               } else {
                 image = "bar-line-red.png";
               }
-              // ele.polyline.material =  new Cesium.Spriteline1MaterialProperty(1000, `./images/${image}`)
 
+              // ele.polyline.material =  new Cesium.Spriteline1MaterialProperty(1000, `./images/${image}`)
               // ele.polyline.width = 1
+
               // ele.polyline.material = new Cesium.PolylineDashMaterialProperty({
               //   color: curColor,
               //   dashLength: 8.0,
@@ -349,6 +349,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (ele.label != undefined) {
               ele.label.show = false;
             }
+
             if (ele.path != undefined) {
               nowSatelliteList.push(ele.id);
               ele.path.show = false; // 设置路径不可看
@@ -359,6 +360,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
                 entityColor = new Cesium.Color(1, 1, 1, 1);
+                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAY5JREFUOE9jZKAQMFKon4FoA+YuXGjDzcG58djxYw2TJkyYDLOYKANAmo30DQ/fu3uHQVZO/sWGTRsK25qbV4AMwTCgt7f3uri4JKeSklKblZXFrIbm5hB7W/vVv3/9YnB0cmbYt2/f68mT+sO2bNlyAKsB8+cvfB4TGydx7eqVhtOnTxlcv3ljn6iwyKS4uASGJ0+fvGhqrI+EacYwYNrMmQXOTk5agoJCAiuWL3fLzMzmB9m4a/eOZklxibYDB/b7ImvG6gKQ4Jw5c9fHJyQFeG5YCQ6rNnnVF22tzZYbNmx4gB5rGGEACrCouDiGQ7v3rVssKyL688hxhmWJ6QyzZ80qzMpKn4DXAFho79+373NmYb7X5TPnVhsaGkm8fvWK4evXb+2qqopVOA2AaQYpBoX2tGlTHqXl5thvWLUmQ1xUjNfJyT4bW6IDeyEgIEDBzz/gvoy0DFjz+fPnMEIbV4qFh0FKWlprWEhYlYCgINGaMWKhqrY24srFiwybNm0CpzJiAFFJGZ9BFBsAAIS1qxFfqWZWAAAAAElFTkSuQmCC"
                 // 流光材质
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
@@ -374,6 +376,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   222 / 255,
                   1
                 );
+                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAUpJREFUOE+VU7FtwzAQ5FEzpNcoSpkpHBeStUMKRyOkCUSxkDaRA2SBtKm0CPnBEaTAyLCjsCLBv/u/OxLqH6tt25Llfd8vCYa9+LZtK+/9yHqt9bHv+wv3uwgSmEDnXAngnEj+JMjB7BrPs9b6kee7BNTsnBu11osx5rgF35SQCkMBMIlIBeAiIs+p810Tm6YRForIgSARCYYVRdEl824SJM0iEqIqioLGrTK2qf3ygGDn3BkA8y6HYQj3p9Np5CSUQy9ykpUgdU5alVJL3C/RAysiD9batyuCbVTs6L0Prw4ADXwSEQPgBcAnp1sf0jaa/MwpqB/AN4AvY8x7XddznKyiqWDW3vtZKTVprT+4z6PifXr7EVyKSAdgpEfBg4yk3Oac9MaaQ2zCVMJ/yE28+mnbyOIElVLqdRiGbvdnSlM65ypr7ZQT/wD49P2J42DDbAAAAABJRU5ErkJggg=="
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
@@ -388,6 +391,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   90 / 255,
                   1
                 );
+                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAWdJREFUOE+lU7FKA0EQfTMnGrC1SGGRztZCsDCgn2ChYCnCJgsWNv6AnYUg6ZY7C+0U/AcVtBAstNNOECGFRT7Am5EJe/ESr8jhwcHtsO+9mffmCP98qA7ee98KIbyXMVMTGFhENlV1kGXZeUEyInDOHVoxSZLrsor3fifP84aBOp1Om5kXAfRDCLd2f0jgvd8QkWUA66raB/BYqHS73VMR+YzkTwVwrAPn3C6AbQA3RLTGzFeFqnPuOEmSkOf5VlWHYx44584AvAJYYOY5EXmx70jaE5EDVX3IsuzkjwdxlJYpMfOqXWTmZwBD161eBlYSFMVo1kwxb/ToO03T+8nYK2M044ioZ2nE+PZUdTZ6EMopVRKYcQC+iGieme9Udd9GUtUmEbWY2Uh+Y5xsK6bSJqKPNE2P7MzMKyLSsBozvxW7MPUmmoh1RkRLRDQgogvrohaB+QHA3mYI4XK0iXV+qKlSqEP4A0aXrhHRjDAlAAAAAElFTkSuQmCC"
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
@@ -396,6 +400,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 });
               }
 
+              ele.billboard.image = entityImage
               // 改成点
               // ele.billboard = undefined;
               // ele.point = {
@@ -417,7 +422,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 )
               );
 
-
               let height = Math.abs(cartographic.height);
               let earthRadius = 6371393;
               // 卫星底部据地球中心的距离
@@ -434,7 +438,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
               var property = new Cesium.SampledPositionProperty();
               var lineProperty = new Cesium.SampledPositionProperty();
-              let radarHeight: number = 0;
               for (var i = 0; i < postionValues.length / 3; i++) {
                 let time = Cesium.JulianDate.clone(
                   ele.position._property._times[i]
@@ -709,7 +712,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let cartographic = Cesium.Cartographic.fromCartesian(coor);
     let x = Cesium.Math.toDegrees(cartographic.longitude);
     let y = Cesium.Math.toDegrees(cartographic.latitude);
-    console.log(x, y);
+    // console.log(x, y);
     
     if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
     else if (type === 1) return [x as number, y as number];
@@ -720,52 +723,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
+    // console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
     
     return cartesian3;
   };
 
-  // 创建基站
-  const createBaseStation = (lng: any, lat: any, id: number) => {
-    var timeInterval = new Cesium.TimeInterval({
-      start: start,
-      stop: stop,
-      isStartIncluded: true,
-      isStopIncluded: true,
-    });
-    let baseStation = {
-      id: `Facility/baseStation_${id}`,
-      name: `baseStation_${id}`,
-      availability: new Cesium.TimeIntervalCollection([timeInterval]),
-      description: `baseStation_${id}`,
-      billboard: {
-        eyeOffset: new Cesium.Cartesian3(0, 0, 0),
-        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
-        // image:"./logo512.png",
-        image:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAhhJREFUOE+lkj9oU1EUxr/zooPomvcSp3TQRYQMvpuOVm2x1IJ2EFxUcFAQ7LspiiCSZFEKbV6wgyKCRTdFFC12TF3U3DQVF106BEXSNC5CRdDmHsn7E14l0cGz3Mu55/zuvd93CP8Z1OlvuuIRgDGAWgz+SsBnBr3SpFe2bd+5Yl5c2uh3jwdYd+0ygw72KaprcCEpq/O9zj3An7E2JwawicMEHAJwqnNOoPk2qJCUb+vR+p6AaEFzJjOMmL4M0DCA9z/QHk3JWiOsCTXIEdF+rfHFIF4lg17HJyu1LaBSZgbMU0R4+WlH+/iB87Vf/ssArLlCEWBHGxioGdDXTbm8GOZDrZhxLZFVN7qA1qzYu2no3X4iliZgBOBRr5FwxnLUg862VRLHNOMFAR9b3zbS+/IffvbVoDEr8oaBnA+hhOVUmr5j4jkD42BMWFn19K8iNoviAgi3ATy0pDrtzUyQ0xqF5JTKdwENdzBF4JGErNzdKp5YBOOoQRiPO2ph3bXTDHoH4LEl1UkP0HDtswboftcaju0xs29Wgym9AmCaiCdNp3oryDED1YRUIrAx8wTgiYi3l0yp5jyHiuIcEe4RuGTKqgwBAOqWVAO+jUX7KhHdDAEaeigpl5c85V0xpoEFAM8sqU5EAN8tqXYFXxhMxcA5Bh8xCMW4o9wQ1tHGgC6DMW1l1R3fCbvcWU1ZHfrnKEcF7bX/Dd650RGhtRBUAAAAAElFTkSuQmCC",
-        pixelOffset: new Cesium.Cartesian2(0, 0),
-        scale: 1,
-        show: true,
-        verticalOrigin: Cesium.VerticalOrigin.CENTER,
-      },
-      label: {
-        fillColor: new Cesium.Color(244, 164, 96, 1),
-        font: "18px Lucida Console",
-        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
-        // outlineColor: Cesium.Color.BLUE,
-        outlineWidth: 0,
-        pixelOffset: new Cesium.Cartesian2(12, 0),
-        show: false,
-        // style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        text: `baseStation_${id}`,
-        verticalOrigin: Cesium.VerticalOrigin.CENTER,
-      },
-      position: new Cesium.Cartesian3.fromDegrees(lng, lat),
-    };
-    viewer.entities.add(baseStation);
-    // setSatelliteList(ele => [...ele, `baseStation_${id}`])
-  };
   // 绘制线条测量距离
   const measureDistance = () => {
     if (!isDrawLine) return;
