@@ -360,8 +360,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               if (re_starlink.exec(ele.id) != null) {
                 // 星链轨迹
                 entityColor = new Cesium.Color(1, 1, 1, 1);
-                imageColor = new Cesium.Color(0,1,1,1);
-                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAY5JREFUOE9jZKAQMFKon4FoA+YuXGjDzcG58djxYw2TJkyYDLOYKANAmo30DQ/fu3uHQVZO/sWGTRsK25qbV4AMwTCgt7f3uri4JKeSklKblZXFrIbm5hB7W/vVv3/9YnB0cmbYt2/f68mT+sO2bNlyAKsB8+cvfB4TGydx7eqVhtOnTxlcv3ljn6iwyKS4uASGJ0+fvGhqrI+EacYwYNrMmQXOTk5agoJCAiuWL3fLzMzmB9m4a/eOZklxibYDB/b7ImvG6gKQ4Jw5c9fHJyQFeG5YCQ6rNnnVF22tzZYbNmx4gB5rGGEACrCouDiGQ7v3rVssKyL688hxhmWJ6QyzZ80qzMpKn4DXAFho79+373NmYb7X5TPnVhsaGkm8fvWK4evXb+2qqopVOA2AaQYpBoX2tGlTHqXl5thvWLUmQ1xUjNfJyT4bW6IDeyEgIEDBzz/gvoy0DFjz+fPnMEIbV4qFh0FKWlprWEhYlYCgINGaMWKhqrY24srFiwybNm0CpzJiAFFJGZ9BFBsAAIS1qxFfqWZWAAAAAElFTkSuQmCC"
+                // imageColor = new Cesium.Color(0,1,1,1);
+                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAUNJREFUOE+lkzFLA0EQhd8bmyQi2ggprS3USycE7CwEwUJEiwtXCjamtQqIsRXtrC6dICj+ARHsNWdjqdgYSCnksLgd2eiFeJeEg9tuh33fzLyZJXIe5tQjMyBsu1Wl3CFio1TxL+LEmQC/Yj7+iTqIpF6q+Ff2ngKEQe1VoUWhNAtLrcvvoLYdAdeDVhVdquwUHf9hJKAXuJ8AyxQ0VHUFhvcgzuPsNLIXi1OAXuAdkmZRlXNGsS7UWSi6AI5JbcJMbQ6LR1Zgg70X9xbKraEJdWhktej478mppT1ou1X7SMEbEPMaG2WkXnL8s4mA2G0CX1DdUNKaV+4DDU+nndbRWEBiVCDxgUjWSLMPykxh2T8YtXT9FsJnb0HFvCV6/uf2uI0deBAGtRMFbInWsEzi9BifvF0bjLcsyz/JtMqTQLkBP6zMdxEeVOCBAAAAAElFTkSuQmCC"
                 // 流光材质
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
@@ -378,13 +378,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   1
                 );
                 imageColor = new Cesium.Color(0,1,1,1);
-                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAY5JREFUOE9jZKAQMFKon4FoA+YuXGjDzcG58djxYw2TJkyYDLOYKANAmo30DQ/fu3uHQVZO/sWGTRsK25qbV4AMwTCgt7f3uri4JKeSklKblZXFrIbm5hB7W/vVv3/9YnB0cmbYt2/f68mT+sO2bNlyAKsB8+cvfB4TGydx7eqVhtOnTxlcv3ljn6iwyKS4uASGJ0+fvGhqrI+EacYwYNrMmQXOTk5agoJCAiuWL3fLzMzmB9m4a/eOZklxibYDB/b7ImvG6gKQ4Jw5c9fHJyQFeG5YCQ6rNnnVF22tzZYbNmx4gB5rGGEACrCouDiGQ7v3rVssKyL688hxhmWJ6QyzZ80qzMpKn4DXAFho79+373NmYb7X5TPnVhsaGkm8fvWK4evXb+2qqopVOA2AaQYpBoX2tGlTHqXl5thvWLUmQ1xUjNfJyT4bW6IDeyEgIEDBzz/gvoy0DFjz+fPnMEIbV4qFh0FKWlprWEhYlYCgINGaMWKhqrY24srFiwybNm0CpzJiAFFJGZ9BFBsAAIS1qxFfqWZWAAAAAElFTkSuQmCC"
+                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAWBJREFUOE+Nk01SAjEQhd/LeAB/DmCoUqo8hcNJkCV6CPQQylI4CXAKqmRhPIAUe4e01QkZZoI/ZDM/SX/z+vUbYrcunt/uxPDSo5puhjcuvf/vSj1wPl6N9EovH57sC6vBsRDmxSQdIO5YJTsArRYBtPR+oWqEGK3vux29Px0v7W+KGi3Qesi08GLFmFst1GcKRgRKT/Q2w+t57kkANH1QFSJitSioIicQPAYgq06upAY0Idq/kZN3AeYRtFvkZD28GjRVtABp4+xlNatraoA4z23vTwXRsFVpRF4FdPnX1ROgck3IgYIIQK0gKokTAtULNfvrKUEYCsB+OuiBhSoIBcE49HRfx6tJDThBmcJGnbGRYpYKQoiyXtWTFLC9gVFJaOEAkrmd0ho/ou00MOm2DRGXUtjOSUxqakXH3TJxDwFygILSHxtTioUm84cpLG3hi/LzoTvJY5sgW0OXYv0NlavRUORHSncAAAAASUVORK5CYII="
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
                   percent: 0.1,
                   gradient: 0.1,
                 });
+
               } else if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
                 entityColor = new Cesium.Color(
@@ -393,8 +394,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   90 / 255,
                   1
                 );
-                imageColor = new Cesium.Color(0,1,1,1);
-                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAY5JREFUOE9jZKAQMFKon4FoA+YuXGjDzcG58djxYw2TJkyYDLOYKANAmo30DQ/fu3uHQVZO/sWGTRsK25qbV4AMwTCgt7f3uri4JKeSklKblZXFrIbm5hB7W/vVv3/9YnB0cmbYt2/f68mT+sO2bNlyAKsB8+cvfB4TGydx7eqVhtOnTxlcv3ljn6iwyKS4uASGJ0+fvGhqrI+EacYwYNrMmQXOTk5agoJCAiuWL3fLzMzmB9m4a/eOZklxibYDB/b7ImvG6gKQ4Jw5c9fHJyQFeG5YCQ6rNnnVF22tzZYbNmx4gB5rGGEACrCouDiGQ7v3rVssKyL688hxhmWJ6QyzZ80qzMpKn4DXAFho79+373NmYb7X5TPnVhsaGkm8fvWK4evXb+2qqopVOA2AaQYpBoX2tGlTHqXl5thvWLUmQ1xUjNfJyT4bW6IDeyEgIEDBzz/gvoy0DFjz+fPnMEIbV4qFh0FKWlprWEhYlYCgINGaMWKhqrY24srFiwybNm0CpzJiAFFJGZ9BFBsAAIS1qxFfqWZWAAAAAElFTkSuQmCC"
+                imageColor = new Cesium.Color(210/255, 51/255, 90/255,1);
+                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAATVJREFUOE+lU1FOg0AQfbPLMfzgAiXa+i/ESygxAU5SOYixTQx6i2L8tdXQA8hBZNfMwiICxRr3Z5OZee/N7Jsl/PPQGP7t9MqVUiyrSqVn70/llMaAoAF/NKCyqlQwRTIgKBYhg92O6srbZsl+Hi45NttlabejAQEXasJtW6SRgHQEkG9iGom3y1Y2P/oGDUkMIAfA9/c5hsBWF4vrTatcy+fe9jGYHMEm9+c3vtZq01cH4aLrzrgLQviVUrmU4gXACSsDxHbacVp3fhD0VE2R4zju7PUhP+SOISjmYWwUhfC5RatEJAIGc03PnZJIJJwzBMZjIZ61VpH61HdS0iVb2SXokMQWzLGaoH6we2ik3AGRWJuladSPWuXWe42Ux/ntD4wuUtNJRBplf2UPdTG6iX/54V8KW6IRUj57xgAAAABJRU5ErkJggg=="
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
