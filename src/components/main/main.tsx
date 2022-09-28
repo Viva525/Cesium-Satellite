@@ -165,6 +165,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       viewer.scene.primitives.add(Washington_tileset);
       // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
+       // 显示帧率
+      viewer.scene.debugShowFramesPerSecond = true;
+
 // 添加地形数据
 // viewer.terrainProvider = Cesium.createWorldTerrain();
 
@@ -435,7 +438,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               // 卫星底部的辐射半径
               let bottomRadius = Math.sqrt(
                 earthRadius * earthRadius - earthHeight * earthHeight
-              );
+              )/20;
               // 卫星辐射的长度
               let satelliteLenght = Math.abs(
                 height + earthRadius - earthHeight
@@ -1562,7 +1565,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         />
         <Box title="卫星数量统计图" component={<SatelliteBar />} />
-        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
+        {/* <Box title="卫星数量变化图" component={<SatelliteNumberChart />} /> */}
       </div>
       <div
         id="cesiumContainer"
@@ -1591,7 +1594,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           title="极地图"
           component={<PolarEarth position={polarPosition}></PolarEarth>}
         ></Box>
-        <Box
+        {/* <Box
           title="卫星实时高度图"
           component={
             <HeightChart
@@ -1599,7 +1602,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               nowSystemDate={nowSystemDate}
             />
           }
-        />
+        /> */}
         <Box
           title="地面基站信息列表"
           component={
