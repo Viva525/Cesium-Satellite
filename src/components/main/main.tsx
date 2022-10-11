@@ -313,7 +313,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/star-beidou-gps-1.czml"
+          "./data/star-beidou-gps.czml"
         );
         let nowSatelliteList: string[] = [];
         let baseStationTemp: BaseStation[] = [];
@@ -1393,6 +1393,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           );
           // 当高度小于一定值 显示模型
           if (height <= 2000) {
+
             baseStationEntity.billboard.show = false;
             if (baseStationEntity.model == undefined) {
               baseStationEntity.model = {
@@ -1424,7 +1425,18 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         }
       });
-      
+      console.log(viewer.entities);
+      // 添加build模型
+      viewer.entities.add({
+        name:"build",
+        position: Cesium.Cartesian3.fromDegrees(curBaseStation?.pos[0],curBaseStation?.pos[1],0),
+        model: {
+          uri: "./build-model/rp.gltf",
+          minimumPixelSize: 128,//最小的模型像素
+          maximumScale: 20000,//最大的模型像素
+        }
+      });
+
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
