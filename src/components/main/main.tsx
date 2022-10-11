@@ -44,6 +44,8 @@ let stages: any;
 let previousTime: any;
 let timeID: any;
 let polarTimeId: any;
+let clicked = false;
+let timerOpen, timerClose;
 const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const { setDashboard } = props;
   const [init, setInit] = useState<boolean>(false);
@@ -80,6 +82,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     null
   );
   const [polarPosition, setPolarPosition] = useState<PolarEarthProps>(null);
+  const [satelliteStatus, setSatelliteStatus] = useState<string>('关')
 
   useEffect(() => {
     setInit(true);
@@ -311,6 +314,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       };
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
+        if(clicked) return
+        clicked = true
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
           "./data/star-beidou-gps.czml"
@@ -544,22 +549,44 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
               setBaseStationList(baseStationTemp);
             }
+
             let re_linkToBaseStation = /^Place\/.*-to-.*$/;
+            let re_linkToBaseStation2 = /^Satellite\/.*-to-Place.*$/;
             if (re_linkToBaseStation.exec(ele.id) != null) {
-              let times = ele._availability._intervals.map((item) => {
-                return [
+              let curBase = ele.id.split("-to-")[0]   // 当前基站
+              if(!linkToBaseStation.hasOwnProperty(curBase)){
+                linkToBaseStation[curBase] = {}
+                linkToBaseStation[curBase]['linkTimes'] = []
+              }
+              ele._availability._intervals.forEach((item) => {
+                let time= [
                   Cesium.JulianDate.fromIso8601(item.start.toString()),
                   Cesium.JulianDate.fromIso8601(item.stop.toString()),
+                  ele.id.split("-to-")[1]
                 ];
+                linkToBaseStation[curBase]['linkTimes'].push(time)
               });
-              linkToBaseStation[ele.id.split("-to-")[0]] = {
-                id: ele.id,
-                satellite: ele.id.split("-to-")[1],
-                linkTimes: times,
-              };
             }
+            if (re_linkToBaseStation2.exec(ele.id) != null) {
+              let curBase = ele.id.split("-to-")[1]   // 当前基站
+              if(!linkToBaseStation.hasOwnProperty(curBase)){
+                linkToBaseStation[curBase] = {}
+                linkToBaseStation[curBase]['linkTimes'] = []
+              }
+              ele._availability._intervals.forEach((item) => {
+                let time= [
+                  Cesium.JulianDate.fromIso8601(item.start.toString()),
+                  Cesium.JulianDate.fromIso8601(item.stop.toString()),
+                  ele.id.split("-to-")[0]
+                ];
+                linkToBaseStation[curBase]['linkTimes'].push(time)
+              });
+            }
+
+            
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
+          console.log(linkToBaseStation);
         });
       });
 
@@ -607,10 +634,31 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
                 silhouetteSize: 0,
+                articulations: {
+                  "upkuai yTranslate": 0,
+                  "upkuai xTranslate": 0,
+                  "upkuai zTranslate": 0,
+                  "upkuai xRotate": 0,
+                  "upkuai yRotate": 0,
+                  "upkuai zRotate": 0,
+                  "chibang yTranslate": 0,
+                  "chibang xTranslate": 0,
+                  "chibang zTranslate": 0,
+                  "chibang xRotate": 0,
+                  "chibang yRotate": 0,
+                  "chibang zRotate": 0,
+                  "bottomkuai yTranslate": 0,
+                  "bottomkuai xTranslate": 0,
+                  "bottomkuai zTranslate": 0,
+                  "bottomkuai xRotate": 0,
+                  "bottomkuai yRotate": 0,
+                  "bottomkuai zRotate": 0
+                  
+                }
               };
               //设置方向,根据实体的位置来配置方向
               pick.id.orientation = new Cesium.VelocityOrientationProperty(
-                pick.id.position
+              pick.id.position  
               );
               //设置模型初始的位置
               pick.id.viewFrom = new Cesium.Cartesian3(0, -30, 30);
@@ -1403,7 +1451,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 minimumPixelSize: 1,
                 //配置模型大小的最大值
                 maximumScale: 50,
-                scale: 1.6,
+                scale: 1.0,
                 //配置模型轮廓的颜色
                 silhouetteColor: Cesium.Color.WHITE,
                 //配置轮廓的大小
@@ -1487,11 +1535,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //       }
       //     }
       //   );
-
       clearInterval(timeID);
       timeID = setInterval(() => {
         let currTime = viewer.clock.currentTime;
         let baseStation = `Place/${curBaseStation?.name}`;
+        
         linkToBaseStation[baseStation].linkTimes.forEach((interval) => {
           if (
             Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
@@ -1501,7 +1549,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let baseStationEntity = viewer.entities.getById(baseStation);
             let baseStationCar = baseStationEntity._position._value;
             let satelliteCar = viewer.entities
-              .getById(linkToBaseStation[baseStation].satellite)
+              .getById(interval[2])
               .position.getValue(viewer.clock.currentTime);
             let m = getModelMatrix(baseStationCar, satelliteCar);
             let hpr = getHeadingPitchRoll(m);
@@ -1566,6 +1614,37 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var hpr = Cesium.HeadingPitchRoll.fromQuaternion(q);
     return hpr;
   };
+
+
+  // 卫星动画
+  const satelliteAnimate = () =>{
+    let curEntity = viewer.entities.getById(`Satellite/${curSatellite}`)
+    if(curEntity !== undefined && curEntity.model.articulations !== undefined){
+      if(satelliteStatus === '关'){
+        setSatelliteStatus('开')
+        let dis = -0.5;
+        clearInterval(timerClose);
+        timerOpen = setInterval(()=>{
+          if(curEntity.model.articulations["upkuai yTranslate"]>dis){
+            curEntity.model.articulations["upkuai yTranslate"] -=0.01;
+          }else{
+            clearInterval(timerOpen);
+          }
+        },30);
+      }
+      else{ 
+        setSatelliteStatus('关')
+        clearInterval(timerOpen);
+        timerClose = setInterval(()=>{
+          if(curEntity.model.articulations["upkuai yTranslate"]<0){
+            curEntity.model.articulations["upkuai yTranslate"] +=0.01;
+          }else{
+            clearInterval(timerClose);
+          }
+        },30);
+      }
+    }
+  }
 
   return (
     <>
@@ -1655,7 +1734,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         >
           MeasureArea
         </button>
-
+        <button
+          type="button"
+          id="animation"
+          onClick={satelliteAnimate}
+          className="cesium-button"
+        >
+          {`Animation：${satelliteStatus}`}
+        </button>
       </div>
       <div id="left-border-line"></div>
       <div id="right-border-line"></div>
