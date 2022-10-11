@@ -1655,6 +1655,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         >
           MeasureArea
         </button>
+
       </div>
       <div id="left-border-line"></div>
       <div id="right-border-line"></div>
