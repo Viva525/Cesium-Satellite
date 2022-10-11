@@ -1394,6 +1394,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           // 当高度小于一定值 显示模型
           if (height <= 2000) {
             baseStationEntity.billboard.show = false;
+            // 添加基站模型
             if (baseStationEntity.model == undefined) {
               baseStationEntity.model = {
                 // 引入模型
@@ -1424,7 +1425,19 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         }
       });
-      
+      console.log(viewer.entities);
+      // 添加build模型
+      if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
+        viewer.entities.add({
+          id:`build/${curBaseStation.name}`,
+          position: Cesium.Cartesian3.fromDegrees(curBaseStation?.pos[0],curBaseStation?.pos[1],0),
+          model: {
+            uri: "./build-model/rp.gltf",
+            minimumPixelSize: 128,//最小的模型像素
+            maximumScale: 20000,//最大的模型像素
+          }
+        });
+      }
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
