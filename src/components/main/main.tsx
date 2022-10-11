@@ -313,7 +313,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/star-beidou-gps-1.czml"
+          "./data/star-beidou-gps.czml"
         );
         let nowSatelliteList: string[] = [];
         let baseStationTemp: BaseStation[] = [];
