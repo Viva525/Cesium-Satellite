@@ -144,9 +144,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         // 去掉地球表面的大气效果黑圈问题
         orderIndependentTranslucency: true,
         // terrainProvider : Cesium.createWorldTerrain(),
-        terrainProvider: new Cesium.CesiumTerrainProvider({
-          url: Cesium.IonResource.fromAssetId(1),
-        }),
+        // terrainProvider: new Cesium.CesiumTerrainProvider({
+        //   url: Cesium.IonResource.fromAssetId(1),
+        // }),
         contextOptions: {
           webgl: {
             alpha: true,
@@ -155,18 +155,22 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         timeline: true,
         animation: true,
       });
-      const Melbourne_tileset = new Cesium.Cesium3DTileset({
-        url: Cesium.IonResource.fromAssetId(69380),
-      });
-      const Washington_tileset = new Cesium.Cesium3DTileset({
-        url: Cesium.IonResource.fromAssetId(57588),
-      });
-      viewer.scene.primitives.add(Melbourne_tileset);
-      viewer.scene.primitives.add(Washington_tileset);
+      // const Melbourne_tileset = new Cesium.Cesium3DTileset({
+      //   url: Cesium.IonResource.fromAssetId(69380),
+      // });
+      // const Washington_tileset = new Cesium.Cesium3DTileset({
+      //   url: Cesium.IonResource.fromAssetId(57588),
+      // });
+      // const KangJuXinCheng_tileset = new Cesium.Cesium3DTileset({
+      //   url: "./KangJuXinCheng-3dtiles/tileset.json"
+      // })
+      // viewer.scene.primitives.add(Melbourne_tileset);
+      // viewer.scene.primitives.add(Washington_tileset);
+      // viewer.scene.primitives.add(KangJuXinCheng_tileset);
       // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
-       // 显示帧率
-      viewer.scene.debugShowFramesPerSecond = true;
+      //  // 显示帧率
+      // viewer.scene.debugShowFramesPerSecond = true;
 
 // 添加地形数据
 // viewer.terrainProvider = Cesium.createWorldTerrain();
@@ -309,7 +313,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/star-beidou-gps_3.czml"
+          "./data/star-beidou-gps-1.czml"
         );
         let nowSatelliteList: string[] = [];
         let baseStationTemp: BaseStation[] = [];
@@ -507,7 +511,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
 
             // 地面基站
-            let re_Place = /^Place\/Place[0-9]$/;
+            let re_Place = /^Place\/(?:(?!-to-).)*$/;
             if (re_Place.exec(ele.id) != null) {
               let position = GetWGS84FromDKR(ele._position._value, 1).map(
                 (item) => Number(item)
@@ -540,7 +544,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
               setBaseStationList(baseStationTemp);
             }
-            let re_linkToBaseStation = /^Place\/Place[0-9]-to-*/;
+            let re_linkToBaseStation = /^Place\/.*-to-.*$/;
             if (re_linkToBaseStation.exec(ele.id) != null) {
               let times = ele._availability._intervals.map((item) => {
                 return [
@@ -589,11 +593,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               nowPicksatellite = [pick.id._id, true, true];
             }
             setCurSatellite(pick.id._id.split("/")[1]);
+            pick.id.model = undefined;
             if (pick.id.model == undefined) {
               // 将点换成模型
               pick.id.model = {
                 // 引入模型
-                uri: "./Satellite.gltf",
+                uri: "./satellite-model/wx.gltf",
                 // 配置模型大小的最小值
                 minimumPixelSize: 50,
                 //配置模型大小的最大值
@@ -1428,22 +1433,21 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         ),
       });
       
-
       setIsRotate(false);
       viewer.camera.lookDown(5000);
       viewer.camera.moveBackward(100);
 
       // 生成雨雪天气
-      let randomNumber = Math.floor(Math.random() * 10);
-      if (randomNumber >= 8) {
-        addWeather("fog", 0.8);
-      } else if (randomNumber >= 5) {
-        addWeather("snow", 0.3);
-      } else if (randomNumber >= 3) {
-        addWeather("rain", 0.3);
-      } else {
-        addWeather();
-      }
+      // let randomNumber = Math.floor(Math.random() * 10);
+      // if (randomNumber >= 8) {
+      //   addWeather("fog", 0.8);
+      // } else if (randomNumber >= 5) {
+      //   addWeather("snow", 0.3);
+      // } else if (randomNumber >= 3) {
+      //   addWeather("rain", 0.3);
+      // } else {
+      //   addWeather();
+      // }
       //   Jsonp(
       //     `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
       //     {},
@@ -1565,7 +1569,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         />
         <Box title="卫星数量统计图" component={<SatelliteBar />} />
-        {/* <Box title="卫星数量变化图" component={<SatelliteNumberChart />} /> */}
+        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
       </div>
       <div
         id="cesiumContainer"
@@ -1594,7 +1598,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           title="极地图"
           component={<PolarEarth position={polarPosition}></PolarEarth>}
         ></Box>
-        {/* <Box
+        <Box
           title="卫星实时高度图"
           component={
             <HeightChart
@@ -1602,7 +1606,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               nowSystemDate={nowSystemDate}
             />
           }
-        /> */}
+        />
         <Box
           title="地面基站信息列表"
           component={
