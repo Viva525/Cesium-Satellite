@@ -190,13 +190,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
       stages = viewer.scene.postProcessStages;
 
-      //  GetWGS84FromDKR(new Cesium.Cartesian3(1114736.1760718708, -4849821.241711335, 3976255.3587589497),1)
+      //  GetWGS84FromDKR(new Cesium.Cartesian3(-2180335.9039053465, 4388094.640359055, 4069400.047373593),1)
+      
       //  place1
       // wgs84ToCartesign(
-      //   -77.05534486727545,
-      //   38.81411101983823,
-      //   -10
+      //   116.42145182931263,
+      //   39.8978797042195,
+      //   0
       // )
+
       // place2
       // wgs84ToCartesign(
       //   144.92242809864345,
@@ -513,6 +515,33 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 bottomRadius,
                 entityColor
               );
+
+              if (ele.model == undefined) {
+                // 将点换成模型
+                ele.model = {
+                  // 引入模型
+                  uri: "./satellite-model/wx.gltf",
+                  // 配置模型大小的最小值
+                  minimumPixelSize: 50,
+                  //配置模型大小的最大值
+                  maximumScale: 50,
+                  //配置模型轮廓的颜色
+                  silhouetteColor: Cesium.Color.WHITE,
+                  //配置轮廓的大小
+                  silhouetteSize: 0,
+                  articulations: {
+                    "satellite_back yTranslate": 0,
+                  }
+                };
+                //设置方向,根据实体的位置来配置方向
+                ele.orientation = new Cesium.VelocityOrientationProperty(
+                  ele.position  
+                );
+                //设置模型初始的位置
+                ele.viewFrom = new Cesium.Cartesian3(0, -30, 30);
+                //设置查看器，让模型动起来
+                viewer.clock.shouldAnimate = true;
+              }
             }
 
             // 地面基站
@@ -582,8 +611,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 linkToBaseStation[curBase]['linkTimes'].push(time)
               });
             }
-
-            
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
@@ -600,6 +627,17 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (click: { position: any }) {
+        let cartesian3 = viewer.scene.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid)
+        // 防止点击到地球之外报错，加个判断
+        if (cartesian3 && Cesium.defined(cartesian3)) {
+          let cartographic = Cesium.Cartographic.fromCartesian(cartesian3!)
+          let lng = Cesium.Math.toDegrees(cartographic.longitude)
+          let lat = Cesium.Math.toDegrees(cartographic.latitude)
+          let height = cartographic.height;
+          console.log(lng, lat, height);
+          wgs84ToCartesign(lng, lat, height)
+        }
+
         var pick = viewer.scene.pick(click.position);
         if (pick && pick.id) {
           if (pick.id._path != undefined) {
@@ -619,35 +657,34 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               nowPicksatellite = [pick.id._id, true, true];
             }
             setCurSatellite(pick.id._id.split("/")[1]);
-            pick.id.model = undefined;
-            if (pick.id.model == undefined) {
-              // 将点换成模型
-              pick.id.model = {
-                // 引入模型
-                uri: "./satellite-model/wx.gltf",
-                // 配置模型大小的最小值
-                minimumPixelSize: 50,
-                //配置模型大小的最大值
-                maximumScale: 50,
-                //配置模型轮廓的颜色
-                silhouetteColor: Cesium.Color.WHITE,
-                //配置轮廓的大小
-                silhouetteSize: 0,
-                articulations: {
-                  "satellite_back yTranslate": 0,
-                }
-              };
-              //设置方向,根据实体的位置来配置方向
-              pick.id.orientation = new Cesium.VelocityOrientationProperty(
-              pick.id.position  
-              );
-              //设置模型初始的位置
-              pick.id.viewFrom = new Cesium.Cartesian3(0, -30, 30);
-              //设置查看器，让模型动起来
-              viewer.clock.shouldAnimate = true;
-            } else {
-              pick.id.model.show = true;
-            }
+            // if (pick.id.model == undefined) {
+            //   // 将点换成模型
+            //   pick.id.model = {
+            //     // 引入模型
+            //     uri: "./satellite-model/wx.gltf",
+            //     // 配置模型大小的最小值
+            //     minimumPixelSize: 50,
+            //     //配置模型大小的最大值
+            //     maximumScale: 50,
+            //     //配置模型轮廓的颜色
+            //     silhouetteColor: Cesium.Color.WHITE,
+            //     //配置轮廓的大小
+            //     silhouetteSize: 0,
+            //     articulations: {
+            //       "satellite_back yTranslate": 0,
+            //     }
+            //   };
+            //   //设置方向,根据实体的位置来配置方向
+            //   pick.id.orientation = new Cesium.VelocityOrientationProperty(
+            //   pick.id.position  
+            //   );
+            //   //设置模型初始的位置
+            //   pick.id.viewFrom = new Cesium.Cartesian3(0, -30, 30);
+            //   //设置查看器，让模型动起来
+            //   viewer.clock.shouldAnimate = true;
+            // } else {
+            //   pick.id.model.show = true;
+            // }
           }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -764,7 +801,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    // console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
+    console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
     
     return cartesian3;
   };
@@ -1454,7 +1491,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         }
       });
-      console.log(viewer.entities);
+
       // 添加build模型
       if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
         viewer.entities.add({
