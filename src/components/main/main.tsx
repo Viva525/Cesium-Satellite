@@ -517,7 +517,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
 
               if (ele.model == undefined) {
-                // 将点换成模型 下
+                // 将点换成模型 0
                 ele.model = {
                   // 引入模型
                   uri: "./satellite-model/wx.gltf",
