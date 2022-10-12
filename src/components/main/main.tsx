@@ -586,7 +586,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
-          console.log(linkToBaseStation);
         });
       });
 
@@ -635,25 +634,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 //配置轮廓的大小
                 silhouetteSize: 0,
                 articulations: {
-                  "upkuai yTranslate": 0,
-                  "upkuai xTranslate": 0,
-                  "upkuai zTranslate": 0,
-                  "upkuai xRotate": 0,
-                  "upkuai yRotate": 0,
-                  "upkuai zRotate": 0,
-                  "chibang yTranslate": 0,
-                  "chibang xTranslate": 0,
-                  "chibang zTranslate": 0,
-                  "chibang xRotate": 0,
-                  "chibang yRotate": 0,
-                  "chibang zRotate": 0,
-                  "bottomkuai yTranslate": 0,
-                  "bottomkuai xTranslate": 0,
-                  "bottomkuai zTranslate": 0,
-                  "bottomkuai xRotate": 0,
-                  "bottomkuai yRotate": 0,
-                  "bottomkuai zRotate": 0
-                  
+                  "satellite_back yTranslate": 0,
                 }
               };
               //设置方向,根据实体的位置来配置方向
@@ -1490,13 +1471,16 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
           curBaseStation?.pos[1],
-          0
+          50
         ),
       });
       
       setIsRotate(false);
-      viewer.camera.lookDown(5000);
-      viewer.camera.moveBackward(100);
+      viewer.camera.lookAt(Cesium.Cartesian3.fromDegrees(
+        curBaseStation?.pos[0],
+        curBaseStation?.pos[1]
+      ),new Cesium.Cartesian3(0.0, -50.0, 50.0))
+      // viewer.camera.moveBackward(100);
 
       // 生成雨雪天气
       // let randomNumber = Math.floor(Math.random() * 10);
@@ -1625,8 +1609,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         let dis = -0.5;
         clearInterval(timerClose);
         timerOpen = setInterval(()=>{
-          if(curEntity.model.articulations["upkuai yTranslate"]>dis){
-            curEntity.model.articulations["upkuai yTranslate"] -=0.01;
+          if(curEntity.model.articulations["satellite_back yTranslate"]>dis){
+            curEntity.model.articulations["satellite_back yTranslate"] -=0.01;
           }else{
             clearInterval(timerOpen);
           }
@@ -1636,8 +1620,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         setSatelliteStatus('关')
         clearInterval(timerOpen);
         timerClose = setInterval(()=>{
-          if(curEntity.model.articulations["upkuai yTranslate"]<0){
-            curEntity.model.articulations["upkuai yTranslate"] +=0.01;
+          if(curEntity.model.articulations["satellite_back yTranslate"]<0){
+            curEntity.model.articulations["satellite_back yTranslate"] +=0.01;
           }else{
             clearInterval(timerClose);
           }

@@ -2,155 +2,33 @@
     "AGI_articulations": {
         "articulations": [
             {
-                "name": "upkuai",
+                "name": "satellite_front",
                 "stages": [
-                    {
-                        "name": "xRotate",
-                        "type": "xRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "yRotate",
-                        "type": "yRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "zRotate",
-                        "type": "zRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "xTranslate",
-                        "type": "xTranslate",
-                        "minimumValue": -5,
-                        "maximumValue": 5,
-                        "initialValue": 0
-                    },
                     {
                         "name": "yTranslate",
                         "type": "yTranslate",
                         "minimumValue": -5,
                         "maximumValue": 5,
                         "initialValue": 0
-                    },
-                    {
-                        "name": "zTranslate",
-                        "type": "zTranslate",
-                        "minimumValue": -5,
-                        "maximumValue": 5,
-                        "initialValue": 0
                     }
                 ],
                 "modelNodes": [
-                    "xuakuai001",
-                    "tynb",
-                    "xuakuai"
+                    "satellite_front"
                 ]
             },
             {
-                "name": "chibang",
+                "name": "satellite_back",
                 "stages": [
-                    {
-                        "name": "xRotate",
-                        "type": "xRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "yRotate",
-                        "type": "yRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "zRotate",
-                        "type": "zRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "xTranslate",
-                        "type": "xTranslate",
-                        "minimumValue": -5,
-                        "maximumValue": 5,
-                        "initialValue": 0
-                    },
                     {
                         "name": "yTranslate",
                         "type": "yTranslate",
                         "minimumValue": -5,
                         "maximumValue": 5,
                         "initialValue": 0
-                    },
-                    {
-                        "name": "zTranslate",
-                        "type": "zTranslate",
-                        "minimumValue": -5,
-                        "maximumValue": 5,
-                        "initialValue": 0
                     }
                 ],
                 "modelNodes": [
-                    "tynb"
-                ]
-            },
-            {
-                "name": "bottomkuai",
-                "stages": [
-                    {
-                        "name": "xRotate",
-                        "type": "xRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "yRotate",
-                        "type": "yRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "zRotate",
-                        "type": "zRotate",
-                        "minimumValue": -360,
-                        "maximumValue": 360,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "xTranslate",
-                        "type": "xTranslate",
-                        "minimumValue": -5,
-                        "maximumValue": 5,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "yTranslate",
-                        "type": "yTranslate",
-                        "minimumValue": -5,
-                        "maximumValue": 5,
-                        "initialValue": 0
-                    },
-                    {
-                        "name": "zTranslate",
-                        "type": "zTranslate",
-                        "minimumValue": -5,
-                        "maximumValue": 5,
-                        "initialValue": 0
-                    }
-                ],
-                "modelNodes": [
-                    "xuakuai"
+                    "satellite_back"
                 ]
             }
         ]
