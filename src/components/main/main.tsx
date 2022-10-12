@@ -83,6 +83,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   );
   const [polarPosition, setPolarPosition] = useState<PolarEarthProps>(null);
   const [satelliteStatus, setSatelliteStatus] = useState<string>('关')
+  const buildList = ["build/BeiJing", "build/ChongQing", "build/Los", "build/Seattle", "build/ShangHai"];
+
 
   useEffect(() => {
     setInit(true);
@@ -1411,7 +1413,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   useEffect(() => {
     if (init) {
-      if(curBaseStation === null) return 
+      if(curBaseStation === null){
+        buildList.forEach((buildName)=>{
+          viewer.entities.removeById(buildName);
+        });
+        return ;
+      } 
       // 监听摄像机高度变化
       viewer.camera.changed.addEventListener(() => {
         // 当前高度
