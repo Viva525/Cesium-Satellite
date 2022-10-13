@@ -83,14 +83,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   );
   const curBaseStationRef = useRef(curBaseStation)
   const [polarPosition, setPolarPosition] = useState<PolarEarthProps>(null);
-  const [satelliteStatus, setSatelliteStatus] = useState<string>("关");
-  const buildList = [
-    "build/BeiJing",
-    "build/ChongQing",
-    "build/Los",
-    "build/Seattle",
-    "build/ShangHai",
-  ];
+  const [satelliteStatus, setSatelliteStatus] = useState<string>('关')
+  const buildList = ["build/BeiJing", "build/ChongQing", "build/Los", "build/Seattle", "build/ShangHai"];
+  const buildPos = {
+    BeiJing: new Cesium.Cartesian3(-2180335.9039053465, 4388094.640359055, 4069380.047373593),
+    ChongQing: new Cesium.Cartesian3(-1579603.585281641, 5310429.915838377, 3149292.375687729),
+    Los: new Cesium.Cartesian3(-2502060.745497469, -4659329.313212606, 3553300.7055502607),
+    Seattle: new Cesium.Cartesian3(-2303907.7224253207, -3639668.571768946, 4688006.276536699),
+    ShangHai: new Cesium.Cartesian3(-2850792.7501941705, 4655337.072319152, 3287654.154921683)
+  }
 
   useEffect(() => {
     setInit(true);
@@ -1441,30 +1442,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
         return;
       }
-      // 加载城市模型
-      if (
-        viewer.entities.getById(`build/${curBaseStation.name}`) == undefined
-      ) {
-        viewer.entities.add({
-          id: `build/${curBaseStation.name}`,
-          position: Cesium.Cartesian3.fromDegrees(
-            curBaseStation?.pos[0],
-            curBaseStation?.pos[1],
-            0
-          ),
-          model: {
-            uri: "./build-model/rp.gltf",
-            minimumPixelSize: 128, //最小的模型像素
-            maximumScale: 20000, //最大的模型像素
-          },
-        });
-      }
+
       // 加载基站模型
       let baseStationEntity = viewer.entities.getById(
         `Place/${curBaseStation?.name}`
       );
       baseStationEntity.billboard.show = false;
-      // 添加基站模型
       if (baseStationEntity.model == undefined) {
         baseStationEntity.model = {
           // 引入模型
@@ -1487,6 +1470,20 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       } else {
         baseStationEntity.model.show = true;
       }
+
+       // 添加build模型
+       if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
+        viewer.entities.add({
+          id:`build/${curBaseStation.name}`,
+          position: buildPos[curBaseStation.name],
+          model: {
+            uri: "./build-model/rp.gltf",
+            minimumPixelSize: 128,//最小的模型像素
+            maximumScale: 20000,//最大的模型像素
+          }
+        });
+      }
+
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
