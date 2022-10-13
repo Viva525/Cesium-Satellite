@@ -1484,13 +1484,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
       }
 
-      viewer.camera.setView({
-        destination: Cesium.Cartesian3.fromDegrees(
-          curBaseStation?.pos[0],
-          curBaseStation?.pos[1],
-          50
-        ),
-      });
+      // viewer.camera.setView({
+      //   destination: Cesium.Cartesian3.fromDegrees(
+      //     curBaseStation?.pos[0],
+      //     curBaseStation?.pos[1],
+      //     50
+      //   ),
+      // });
       setIsRotate(false);
       viewer.camera.lookAt(
         Cesium.Cartesian3.fromDegrees(
