@@ -662,6 +662,20 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
             setCurSatellite(pick.id._id.split("/")[1]);
           }
+          let cartesian3 = viewer.scene.camera.pickEllipsoid(
+            click.position,
+            viewer.scene.globe.ellipsoid
+          );
+          // 防止点击到地球之外报错，加个判断
+          if (cartesian3 && Cesium.defined(cartesian3)) {
+            let cartographic = Cesium.Cartographic.fromCartesian(cartesian3!);
+            let lng = Cesium.Math.toDegrees(cartographic.longitude);
+            let lat = Cesium.Math.toDegrees(cartographic.latitude);
+            let height = cartographic.height;
+            //23 28
+            console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 28));
+            // wgs84ToCartesign(lng, lat, height)
+          }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
       handler.setInputAction(function (click: { position: any }) {
@@ -1491,27 +1505,27 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //     50
       //   ),
       // });
+      viewer.camera.moveForward(100);
       setIsRotate(false);
       viewer.camera.lookAt(
         Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
           curBaseStation?.pos[1]
         ),
-        new Cesium.Cartesian3(0.0, -50.0, 50.0)
+        new Cesium.Cartesian3(0.0, -180.0, 50.0)
       );
-      // viewer.camera.moveBackward(100);
 
       // 生成雨雪天气
-      // let randomNumber = Math.floor(Math.random() * 10);
-      // if (randomNumber >= 8) {
-      //   addWeather("fog", 0.8);
-      // } else if (randomNumber >= 5) {
-      //   addWeather("snow", 0.3);
-      // } else if (randomNumber >= 3) {
-      //   addWeather("rain", 0.3);
-      // } else {
-      //   addWeather();
-      // }
+      let randomNumber = Math.floor(Math.random() * 10);
+      if (randomNumber >= 8) {
+        addWeather("fog", 0.8);
+      } else if (randomNumber >= 5) {
+        addWeather("snow", 0.3);
+      } else if (randomNumber >= 3) {
+        addWeather("rain", 0.3);
+      } else {
+        addWeather();
+      }
       //   Jsonp(
       //     `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
       //     {},
