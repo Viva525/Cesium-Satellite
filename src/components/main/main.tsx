@@ -641,20 +641,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (click: { position: any }) {
-        let cartesian3 = viewer.scene.camera.pickEllipsoid(
-          click.position,
-          viewer.scene.globe.ellipsoid
-        );
-        // 防止点击到地球之外报错，加个判断
-        if (cartesian3 && Cesium.defined(cartesian3)) {
-          let cartographic = Cesium.Cartographic.fromCartesian(cartesian3!);
-          let lng = Cesium.Math.toDegrees(cartographic.longitude);
-          let lat = Cesium.Math.toDegrees(cartographic.latitude);
-          let height = cartographic.height;
-          console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 0));
-          // wgs84ToCartesign(lng, lat, height)
-        }
-
         var pick = viewer.scene.pick(click.position);
         if (pick && pick.id) {
           if (pick.id._path != undefined) {
@@ -674,34 +660,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               nowPicksatellite = [pick.id._id, true, true];
             }
             setCurSatellite(pick.id._id.split("/")[1]);
-            // if (pick.id.model == undefined) {
-            //   // 将点换成模型
-            //   pick.id.model = {
-            //     // 引入模型
-            //     uri: "./satellite-model/wx.gltf",
-            //     // 配置模型大小的最小值
-            //     minimumPixelSize: 50,
-            //     //配置模型大小的最大值
-            //     maximumScale: 50,
-            //     //配置模型轮廓的颜色
-            //     silhouetteColor: Cesium.Color.WHITE,
-            //     //配置轮廓的大小
-            //     silhouetteSize: 0,
-            //     articulations: {
-            //       "satellite_back yTranslate": 0,
-            //     }
-            //   };
-            //   //设置方向,根据实体的位置来配置方向
-            //   pick.id.orientation = new Cesium.VelocityOrientationProperty(
-            //   pick.id.position
-            //   );
-            //   //设置模型初始的位置
-            //   pick.id.viewFrom = new Cesium.Cartesian3(0, -30, 30);
-            //   //设置查看器，让模型动起来
-            //   viewer.clock.shouldAnimate = true;
-            // } else {
-            //   pick.id.model.show = true;
-            // }
           }
         }
       }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
@@ -738,7 +696,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
         if (
           curBaseStationRef.current !== null &&
-          viewer.entities.getById(`build/${curBaseStationRef.current.name}`) !== undefined
+          viewer.entities.getById(`Place/${curBaseStationRef.current.name}`) !== undefined
         ) {
           let baseStationEntity = viewer.entities.getById(`Place/${curBaseStationRef.current.name}`);
           if (height > 1000) {
@@ -1529,63 +1487,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       } else {
         baseStationEntity.model.show = true;
       }
-
-      // 监听摄像机高度变化
-      // viewer.camera.changed.addEventListener(() => {
-      //   // 当前高度
-      //   let height = viewer.camera.positionCartographic.height;
-      //   if (curBaseStation != null) {
-      //     let baseStationEntity = viewer.entities.getById(
-      //       `Place/${curBaseStation?.name}`
-      //     );
-
-      //     // 当高度小于一定值 显示模型
-      //     if (height <= 2000) {
-      //        // 添加build模型
-      //       if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
-      //         viewer.entities.add({
-      //           id:`build/${curBaseStation.name}`,
-      //           position: Cesium.Cartesian3.fromDegrees(curBaseStation?.pos[0],curBaseStation?.pos[1],0),
-      //           model: {
-      //             uri: "./build-model/rp.gltf",
-      //             minimumPixelSize: 128,//最小的模型像素
-      //             maximumScale: 20000,//最大的模型像素
-      //           }
-      //         });
-      //       }
-      //       baseStationEntity.billboard.show = false;
-      //       // 添加基站模型
-      //       if (baseStationEntity.model == undefined) {
-      //         baseStationEntity.model = {
-      //           // 引入模型
-      //           uri: "./Telescope_2.gltf",
-      //           // 配置模型大小的最小值
-      //           minimumPixelSize: 1,
-      //           //配置模型大小的最大值
-      //           maximumScale: 50,
-      //           scale: 1.0,
-      //           //配置模型轮廓的颜色
-      //           silhouetteColor: Cesium.Color.WHITE,
-      //           //配置轮廓的大小
-      //           silhouetteSize: 0,
-      //           articulations: {
-      //             "Dish DishX": 0,
-      //             "Dish DishY": 0,
-      //             "Dish DishZ": 0,
-      //           },
-      //         };
-      //       } else {
-      //         baseStationEntity.model.show = true;
-      //       }
-      //     } else {
-      //       if (baseStationEntity.model != undefined) {
-      //         baseStationEntity.model.show = false;
-      //         baseStationEntity.billboard.show = true;
-      //       }
-      //     }
-      //   }
-      // });
-
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
@@ -1593,7 +1494,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           50
         ),
       });
-
       setIsRotate(false);
       viewer.camera.lookAt(
         Cesium.Cartesian3.fromDegrees(
@@ -1641,6 +1541,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //       }
       //     }
       //   );
+      
       clearInterval(timeID);
       timeID = setInterval(() => {
         let currTime = viewer.clock.currentTime;
