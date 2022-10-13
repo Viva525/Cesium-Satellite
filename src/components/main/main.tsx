@@ -177,8 +177,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //  // 显示帧率
       // viewer.scene.debugShowFramesPerSecond = true;
 
-// 添加地形数据
-// viewer.terrainProvider = Cesium.createWorldTerrain();
+      // 添加地形数据
+      // viewer.terrainProvider = Cesium.createWorldTerrain();
 
       // let imageryProvider = new Cesium.UrlTemplateImageryProvider({
       //   url: "https://webst02.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
@@ -636,8 +636,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           let lng = Cesium.Math.toDegrees(cartographic.longitude)
           let lat = Cesium.Math.toDegrees(cartographic.latitude)
           let height = cartographic.height;
-          console.log(lng, lat, height);
-          wgs84ToCartesign(lng, lat, height)
+          console.log(Cesium.Cartesian3.fromDegrees(lng,lat,0));
+          // wgs84ToCartesign(lng, lat, height)
         }
 
         var pick = viewer.scene.pick(click.position);
@@ -1464,8 +1464,21 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           let baseStationEntity = viewer.entities.getById(
             `Place/${curBaseStation?.name}`
           );
+          console.log(baseStationEntity)
           // 当高度小于一定值 显示模型
           if (height <= 2000) {
+             // 添加build模型
+            if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
+              viewer.entities.add({
+                id:`build/${curBaseStation.name}`,
+                position: Cesium.Cartesian3.fromDegrees(curBaseStation?.pos[0],curBaseStation?.pos[1],0),
+                model: {
+                  uri: "./build-model/rp.gltf",
+                  minimumPixelSize: 128,//最小的模型像素
+                  maximumScale: 20000,//最大的模型像素
+                }
+              });
+            }
             baseStationEntity.billboard.show = false;
             // 添加基站模型
             if (baseStationEntity.model == undefined) {
@@ -1499,18 +1512,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
       });
 
-      // 添加build模型
-      if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
-        viewer.entities.add({
-          id:`build/${curBaseStation.name}`,
-          position: Cesium.Cartesian3.fromDegrees(curBaseStation?.pos[0],curBaseStation?.pos[1],0),
-          model: {
-            uri: "./build-model/rp.gltf",
-            minimumPixelSize: 128,//最小的模型像素
-            maximumScale: 20000,//最大的模型像素
-          }
-        });
-      }
       viewer.camera.setView({
         destination: Cesium.Cartesian3.fromDegrees(
           curBaseStation?.pos[0],
