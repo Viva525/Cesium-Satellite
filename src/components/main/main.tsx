@@ -81,6 +81,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [curBaseStation, setCurBaseStation] = useState<BaseStation | null>(
     null
   );
+  const curBaseStationRef = useRef(curBaseStation)
   const [polarPosition, setPolarPosition] = useState<PolarEarthProps>(null);
   const [satelliteStatus, setSatelliteStatus] = useState<string>('关')
   const buildList = ["build/BeiJing", "build/ChongQing", "build/Los", "build/Seattle", "build/ShangHai"];
@@ -199,7 +200,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       stages = viewer.scene.postProcessStages;
 
       //  GetWGS84FromDKR(new Cesium.Cartesian3(-2180335.9039053465, 4388094.640359055, 4069400.047373593),1)
-      
+
       //  place1
       // wgs84ToCartesign(
       //   116.42145182931263,
@@ -324,8 +325,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       };
       //@ts-ignore
       Sandcastle.addDefaultToolbarButton("Satellites", function () {
-        if(clicked) return
-        clicked = true
+        if (clicked) return;
+        clicked = true;
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
           "./data/star-beidou-gps.czml"
@@ -383,7 +384,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // 星链轨迹
                 entityColor = new Cesium.Color(1, 1, 1, 1);
                 // imageColor = new Cesium.Color(0,1,1,1);
-                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAUNJREFUOE+lkzFLA0EQhd8bmyQi2ggprS3USycE7CwEwUJEiwtXCjamtQqIsRXtrC6dICj+ARHsNWdjqdgYSCnksLgd2eiFeJeEg9tuh33fzLyZJXIe5tQjMyBsu1Wl3CFio1TxL+LEmQC/Yj7+iTqIpF6q+Ff2ngKEQe1VoUWhNAtLrcvvoLYdAdeDVhVdquwUHf9hJKAXuJ8AyxQ0VHUFhvcgzuPsNLIXi1OAXuAdkmZRlXNGsS7UWSi6AI5JbcJMbQ6LR1Zgg70X9xbKraEJdWhktej478mppT1ou1X7SMEbEPMaG2WkXnL8s4mA2G0CX1DdUNKaV+4DDU+nndbRWEBiVCDxgUjWSLMPykxh2T8YtXT9FsJnb0HFvCV6/uf2uI0deBAGtRMFbInWsEzi9BifvF0bjLcsyz/JtMqTQLkBP6zMdxEeVOCBAAAAAElFTkSuQmCC"
+                entityImage =
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAUNJREFUOE+lkzFLA0EQhd8bmyQi2ggprS3USycE7CwEwUJEiwtXCjamtQqIsRXtrC6dICj+ARHsNWdjqdgYSCnksLgd2eiFeJeEg9tuh33fzLyZJXIe5tQjMyBsu1Wl3CFio1TxL+LEmQC/Yj7+iTqIpF6q+Ff2ngKEQe1VoUWhNAtLrcvvoLYdAdeDVhVdquwUHf9hJKAXuJ8AyxQ0VHUFhvcgzuPsNLIXi1OAXuAdkmZRlXNGsS7UWSi6AI5JbcJMbQ6LR1Zgg70X9xbKraEJdWhktej478mppT1ou1X7SMEbEPMaG2WkXnL8s4mA2G0CX1DdUNKaV+4DDU+nndbRWEBiVCDxgUjWSLMPykxh2T8YtXT9FsJnb0HFvCV6/uf2uI0deBAGtRMFbInWsEzi9BifvF0bjLcsyz/JtMqTQLkBP6zMdxEeVOCBAAAAAElFTkSuQmCC";
                 // 流光材质
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
@@ -399,15 +401,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   222 / 255,
                   1
                 );
-                imageColor = new Cesium.Color(0,1,1,1);
-                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAWBJREFUOE+Nk01SAjEQhd/LeAB/DmCoUqo8hcNJkCV6CPQQylI4CXAKqmRhPIAUe4e01QkZZoI/ZDM/SX/z+vUbYrcunt/uxPDSo5puhjcuvf/vSj1wPl6N9EovH57sC6vBsRDmxSQdIO5YJTsArRYBtPR+oWqEGK3vux29Px0v7W+KGi3Qesi08GLFmFst1GcKRgRKT/Q2w+t57kkANH1QFSJitSioIicQPAYgq06upAY0Idq/kZN3AeYRtFvkZD28GjRVtABp4+xlNatraoA4z23vTwXRsFVpRF4FdPnX1ROgck3IgYIIQK0gKokTAtULNfvrKUEYCsB+OuiBhSoIBcE49HRfx6tJDThBmcJGnbGRYpYKQoiyXtWTFLC9gVFJaOEAkrmd0ho/ou00MOm2DRGXUtjOSUxqakXH3TJxDwFygILSHxtTioUm84cpLG3hi/LzoTvJY5sgW0OXYv0NlavRUORHSncAAAAASUVORK5CYII="
+                imageColor = new Cesium.Color(0, 1, 1, 1);
+                entityImage =
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAWBJREFUOE+Nk01SAjEQhd/LeAB/DmCoUqo8hcNJkCV6CPQQylI4CXAKqmRhPIAUe4e01QkZZoI/ZDM/SX/z+vUbYrcunt/uxPDSo5puhjcuvf/vSj1wPl6N9EovH57sC6vBsRDmxSQdIO5YJTsArRYBtPR+oWqEGK3vux29Px0v7W+KGi3Qesi08GLFmFst1GcKRgRKT/Q2w+t57kkANH1QFSJitSioIicQPAYgq06upAY0Idq/kZN3AeYRtFvkZD28GjRVtABp4+xlNatraoA4z23vTwXRsFVpRF4FdPnX1ROgck3IgYIIQK0gKokTAtULNfvrKUEYCsB+OuiBhSoIBcE49HRfx6tJDThBmcJGnbGRYpYKQoiyXtWTFLC9gVFJaOEAkrmd0ho/ou00MOm2DRGXUtjOSUxqakXH3TJxDwFygILSHxtTioUm84cpLG3hi/LzoTvJY5sgW0OXYv0NlavRUORHSncAAAAASUVORK5CYII=";
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
                   percent: 0.1,
                   gradient: 0.1,
                 });
-
               } else if (re_gps.exec(ele.id) != null) {
                 // gps轨迹
                 entityColor = new Cesium.Color(
@@ -416,8 +418,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   90 / 255,
                   1
                 );
-                imageColor = new Cesium.Color(210/255, 51/255, 90/255,1);
-                entityImage = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAATVJREFUOE+lU1FOg0AQfbPLMfzgAiXa+i/ESygxAU5SOYixTQx6i2L8tdXQA8hBZNfMwiICxRr3Z5OZee/N7Jsl/PPQGP7t9MqVUiyrSqVn70/llMaAoAF/NKCyqlQwRTIgKBYhg92O6srbZsl+Hi45NttlabejAQEXasJtW6SRgHQEkG9iGom3y1Y2P/oGDUkMIAfA9/c5hsBWF4vrTatcy+fe9jGYHMEm9+c3vtZq01cH4aLrzrgLQviVUrmU4gXACSsDxHbacVp3fhD0VE2R4zju7PUhP+SOISjmYWwUhfC5RatEJAIGc03PnZJIJJwzBMZjIZ61VpH61HdS0iVb2SXokMQWzLGaoH6we2ik3AGRWJuladSPWuXWe42Ux/ntD4wuUtNJRBplf2UPdTG6iX/54V8KW6IRUj57xgAAAABJRU5ErkJggg=="
+                imageColor = new Cesium.Color(210 / 255, 51 / 255, 90 / 255, 1);
+                entityImage =
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAATVJREFUOE+lU1FOg0AQfbPLMfzgAiXa+i/ESygxAU5SOYixTQx6i2L8tdXQA8hBZNfMwiICxRr3Z5OZee/N7Jsl/PPQGP7t9MqVUiyrSqVn70/llMaAoAF/NKCyqlQwRTIgKBYhg92O6srbZsl+Hi45NttlabejAQEXasJtW6SRgHQEkG9iGom3y1Y2P/oGDUkMIAfA9/c5hsBWF4vrTatcy+fe9jGYHMEm9+c3vtZq01cH4aLrzrgLQviVUrmU4gXACSsDxHbacVp3fhD0VE2R4zju7PUhP+SOISjmYWwUhfC5RatEJAIGc03PnZJIJJwzBMZjIZ61VpH61HdS0iVb2SXokMQWzLGaoH6we2ik3AGRWJuladSPWuXWe42Ux/ntD4wuUtNJRBplf2UPdTG6iX/54V8KW6IRUj57xgAAAABJRU5ErkJggg==";
                 ele.path.material = new Cesium.LineFlowMaterialProperty({
                   color: entityColor,
                   speed: 1,
@@ -426,7 +429,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 });
               }
               ele.billboard.color = imageColor;
-              ele.billboard.image = entityImage
+              ele.billboard.image = entityImage;
               // 改成点
               // ele.billboard = undefined;
               // ele.point = {
@@ -455,9 +458,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 (earthRadius * earthRadius) / (height + earthRadius);
               earthHeight = earthHeight + ((earthRadius - earthHeight) * 8) / 9;
               // 卫星底部的辐射半径
-              let bottomRadius = Math.sqrt(
-                earthRadius * earthRadius - earthHeight * earthHeight
-              )/20;
+              let bottomRadius =
+                Math.sqrt(
+                  earthRadius * earthRadius - earthHeight * earthHeight
+                ) / 20;
               // 卫星辐射的长度
               let satelliteLenght = Math.abs(
                 height + earthRadius - earthHeight
@@ -539,11 +543,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   silhouetteSize: 0,
                   articulations: {
                     "satellite_back yTranslate": 0,
-                  }
+                  },
                 };
                 //设置方向,根据实体的位置来配置方向
                 ele.orientation = new Cesium.VelocityOrientationProperty(
-                  ele.position  
+                  ele.position
                 );
                 //设置模型初始的位置
                 ele.viewFrom = new Cesium.Cartesian3(0, -30, 30);
@@ -590,33 +594,33 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let re_linkToBaseStation = /^Place\/.*-to-.*$/;
             let re_linkToBaseStation2 = /^Satellite\/.*-to-Place.*$/;
             if (re_linkToBaseStation.exec(ele.id) != null) {
-              let curBase = ele.id.split("-to-")[0]   // 当前基站
-              if(!linkToBaseStation.hasOwnProperty(curBase)){
-                linkToBaseStation[curBase] = {}
-                linkToBaseStation[curBase]['linkTimes'] = []
+              let curBase = ele.id.split("-to-")[0]; // 当前基站
+              if (!linkToBaseStation.hasOwnProperty(curBase)) {
+                linkToBaseStation[curBase] = {};
+                linkToBaseStation[curBase]["linkTimes"] = [];
               }
               ele._availability._intervals.forEach((item) => {
-                let time= [
+                let time = [
                   Cesium.JulianDate.fromIso8601(item.start.toString()),
                   Cesium.JulianDate.fromIso8601(item.stop.toString()),
-                  ele.id.split("-to-")[1]
+                  ele.id.split("-to-")[1],
                 ];
-                linkToBaseStation[curBase]['linkTimes'].push(time)
+                linkToBaseStation[curBase]["linkTimes"].push(time);
               });
             }
             if (re_linkToBaseStation2.exec(ele.id) != null) {
-              let curBase = ele.id.split("-to-")[1]   // 当前基站
-              if(!linkToBaseStation.hasOwnProperty(curBase)){
-                linkToBaseStation[curBase] = {}
-                linkToBaseStation[curBase]['linkTimes'] = []
+              let curBase = ele.id.split("-to-")[1]; // 当前基站
+              if (!linkToBaseStation.hasOwnProperty(curBase)) {
+                linkToBaseStation[curBase] = {};
+                linkToBaseStation[curBase]["linkTimes"] = [];
               }
               ele._availability._intervals.forEach((item) => {
-                let time= [
+                let time = [
                   Cesium.JulianDate.fromIso8601(item.start.toString()),
                   Cesium.JulianDate.fromIso8601(item.stop.toString()),
-                  ele.id.split("-to-")[0]
+                  ele.id.split("-to-")[0],
                 ];
-                linkToBaseStation[curBase]['linkTimes'].push(time)
+                linkToBaseStation[curBase]["linkTimes"].push(time);
               });
             }
           });
@@ -624,23 +628,29 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
       });
 
-      viewer.homeButton.viewModel.duration = 0
-      viewer.homeButton.viewModel.command.afterExecute.addEventListener(function(e) {
-        setCurBaseStation(null)
-        snow && viewer.scene.postProcessStages.remove(snow); // 移除
-        rain && viewer.scene.postProcessStages.remove(rain); // 移除
-        fog && viewer.scene.postProcessStages.remove(fog); // 移除
-      });
+      viewer.homeButton.viewModel.duration = 0;
+      viewer.homeButton.viewModel.command.afterExecute.addEventListener(
+        function (e) {
+          setCurBaseStation(null);
+          setIsRotate(true);
+          snow && viewer.scene.postProcessStages.remove(snow); // 移除
+          rain && viewer.scene.postProcessStages.remove(rain); // 移除
+          fog && viewer.scene.postProcessStages.remove(fog); // 移除
+        }
+      );
 
       // 鼠标事件
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function (click: { position: any }) {
-        let cartesian3 = viewer.scene.camera.pickEllipsoid(click.position, viewer.scene.globe.ellipsoid)
+        let cartesian3 = viewer.scene.camera.pickEllipsoid(
+          click.position,
+          viewer.scene.globe.ellipsoid
+        );
         // 防止点击到地球之外报错，加个判断
         if (cartesian3 && Cesium.defined(cartesian3)) {
-          let cartographic = Cesium.Cartographic.fromCartesian(cartesian3!)
-          let lng = Cesium.Math.toDegrees(cartographic.longitude)
-          let lat = Cesium.Math.toDegrees(cartographic.latitude)
+          let cartographic = Cesium.Cartographic.fromCartesian(cartesian3!);
+          let lng = Cesium.Math.toDegrees(cartographic.longitude);
+          let lat = Cesium.Math.toDegrees(cartographic.latitude);
           let height = cartographic.height;
           console.log(lng, lat);
           
@@ -686,7 +696,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             //   };
             //   //设置方向,根据实体的位置来配置方向
             //   pick.id.orientation = new Cesium.VelocityOrientationProperty(
-            //   pick.id.position  
+            //   pick.id.position
             //   );
             //   //设置模型初始的位置
             //   pick.id.viewFrom = new Cesium.Cartesian3(0, -30, 30);
@@ -723,13 +733,28 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
       handler.setInputAction(function () {
         let height = viewer.camera.positionCartographic.height;
+        // 当高度小于一定值的时候消除天气、基站模型的显示
         if (height > 1000) {
           snow && viewer.scene.postProcessStages.remove(snow); // 移除
           rain && viewer.scene.postProcessStages.remove(rain); // 移除
           fog && viewer.scene.postProcessStages.remove(fog); // 移除
         }
         if (
-          height > 10000000 &&
+          curBaseStationRef.current !== null &&
+          viewer.entities.getById(`build/${curBaseStationRef.current.name}`) !== undefined
+        ) {
+          let baseStationEntity = viewer.entities.getById(`Place/${curBaseStationRef.current.name}`);
+          if (height > 1000) {
+            baseStationEntity.model.show = false;
+            baseStationEntity.billboard.show = true;
+          } else {
+            baseStationEntity.model.show = true;
+            baseStationEntity.billboard.show = false;
+          }
+        }
+        // 控制地球旋转
+        if (
+          height > 20000000 &&
           viewer.scene.mode == Cesium.SceneMode.SCENE3D
         ) {
           setIsRotate(true);
@@ -748,9 +773,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       // 监听2d切换事件
       viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(
         () => {
-        snow && viewer.scene.postProcessStages.remove(snow); // 移除
-        rain && viewer.scene.postProcessStages.remove(rain); // 移除
-        fog && viewer.scene.postProcessStages.remove(fog); // 移除
+          snow && viewer.scene.postProcessStages.remove(snow); // 移除
+          rain && viewer.scene.postProcessStages.remove(rain); // 移除
+          fog && viewer.scene.postProcessStages.remove(fog); // 移除
           setIsRotate(false);
           let layer = viewer.imageryLayers.get(0);
           layer["brightness"] = 1.5;
@@ -801,7 +826,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let x = Cesium.Math.toDegrees(cartographic.longitude);
     let y = Cesium.Math.toDegrees(cartographic.latitude);
     // console.log(x, y);
-    
+
     if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
     else if (type === 1) return [x as number, y as number];
   };
@@ -812,7 +837,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
     console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
-    
+
     return cartesian3;
   };
 
@@ -1121,24 +1146,22 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       );
       let z = Math.ceil(cartographic.height / 1000);
       let nowDate = new Date(viewer.clock.currentTime).toUTCString();
-      let dataLength = 1000
+      let dataLength = 1000;
       // 时间没有暂停
       setNowSystemDate((prev) => {
-        let nowData = [...prev, nowDate]
-        if(nowData.length < dataLength){
+        let nowData = [...prev, nowDate];
+        if (nowData.length < dataLength) {
           return nowData;
-        }
-        else{
-          return nowData.slice(nowData.length - dataLength, nowData.length)
+        } else {
+          return nowData.slice(nowData.length - dataLength, nowData.length);
         }
       });
       setSatellitePostionData((prev) => {
-        let nowData = [...prev, z]
-        if(nowData.length < dataLength){
+        let nowData = [...prev, z];
+        if (nowData.length < dataLength) {
           return nowData;
-        }
-        else{
-          return nowData.slice(nowData.length - dataLength, nowData.length)
+        } else {
+          return nowData.slice(nowData.length - dataLength, nowData.length);
         }
       });
     }
@@ -1406,7 +1429,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   }, [selectSatelliteList]);
 
-
   // 当前选中的卫星
   useEffect(() => {
     // 实时展示被选中的实体的位置
@@ -1458,55 +1480,114 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   useEffect(() => {
     if (init) {
-      if(curBaseStation === null){
-        buildList.forEach((buildName)=>{
+      if (curBaseStation === null) {
+        buildList.forEach((buildName) => {
           viewer.entities.removeById(buildName);
         });
-        return ;
-      } 
+        return;
+      }
+      // 加载城市模型
+      if (
+        viewer.entities.getById(`build/${curBaseStation.name}`) == undefined
+      ) {
+        viewer.entities.add({
+          id: `build/${curBaseStation.name}`,
+          position: Cesium.Cartesian3.fromDegrees(
+            curBaseStation?.pos[0],
+            curBaseStation?.pos[1],
+            0
+          ),
+          model: {
+            uri: "./build-model/rp.gltf",
+            minimumPixelSize: 128, //最小的模型像素
+            maximumScale: 20000, //最大的模型像素
+          },
+        });
+      }
+      // 加载基站模型
+      let baseStationEntity = viewer.entities.getById(
+        `Place/${curBaseStation?.name}`
+      );
+      baseStationEntity.billboard.show = false;
+      // 添加基站模型
+      if (baseStationEntity.model == undefined) {
+        baseStationEntity.model = {
+          // 引入模型
+          uri: "./Telescope_2.gltf",
+          // 配置模型大小的最小值
+          minimumPixelSize: 1,
+          //配置模型大小的最大值
+          maximumScale: 50,
+          scale: 1.0,
+          //配置模型轮廓的颜色
+          silhouetteColor: Cesium.Color.WHITE,
+          //配置轮廓的大小
+          silhouetteSize: 0,
+          articulations: {
+            "Dish DishX": 0,
+            "Dish DishY": 0,
+            "Dish DishZ": 0,
+          },
+        };
+      } else {
+        baseStationEntity.model.show = true;
+      }
+
       // 监听摄像机高度变化
-      viewer.camera.changed.addEventListener(() => {
-        // 当前高度
-        let height = viewer.camera.positionCartographic.height;
-        if (curBaseStation != null) {
-          let baseStationEntity = viewer.entities.getById(
-            `Place/${curBaseStation?.name}`
-          );
-          console.log(baseStationEntity)
-          // 当高度小于一定值 显示模型
-          if (height <= 2000) {
-            baseStationEntity.billboard.show = false;
-            // 添加基站模型
-            if (baseStationEntity.model == undefined) {
-              baseStationEntity.model = {
-                // 引入模型
-                uri: "./Telescope_2.gltf",
-                // 配置模型大小的最小值
-                minimumPixelSize: 1,
-                //配置模型大小的最大值
-                maximumScale: 50,
-                scale: 1.0,
-                //配置模型轮廓的颜色
-                silhouetteColor: Cesium.Color.WHITE,
-                //配置轮廓的大小
-                silhouetteSize: 0,
-                articulations: {
-                  "Dish DishX": 0,
-                  "Dish DishY": 0,
-                  "Dish DishZ": 0,
-                },
-              };
-            } else {
-              baseStationEntity.model.show = true;
-            }
-          } else {
-            if (baseStationEntity.model != undefined) {
-              baseStationEntity.model.show = false;
-              baseStationEntity.billboard.show = true;
-            }
-          }
-        }
-      });
+      // viewer.camera.changed.addEventListener(() => {
+      //   // 当前高度
+      //   let height = viewer.camera.positionCartographic.height;
+      //   if (curBaseStation != null) {
+      //     let baseStationEntity = viewer.entities.getById(
+      //       `Place/${curBaseStation?.name}`
+      //     );
+
+      //     // 当高度小于一定值 显示模型
+      //     if (height <= 2000) {
+      //        // 添加build模型
+      //       if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
+      //         viewer.entities.add({
+      //           id:`build/${curBaseStation.name}`,
+      //           position: Cesium.Cartesian3.fromDegrees(curBaseStation?.pos[0],curBaseStation?.pos[1],0),
+      //           model: {
+      //             uri: "./build-model/rp.gltf",
+      //             minimumPixelSize: 128,//最小的模型像素
+      //             maximumScale: 20000,//最大的模型像素
+      //           }
+      //         });
+      //       }
+      //       baseStationEntity.billboard.show = false;
+      //       // 添加基站模型
+      //       if (baseStationEntity.model == undefined) {
+      //         baseStationEntity.model = {
+      //           // 引入模型
+      //           uri: "./Telescope_2.gltf",
+      //           // 配置模型大小的最小值
+      //           minimumPixelSize: 1,
+      //           //配置模型大小的最大值
+      //           maximumScale: 50,
+      //           scale: 1.0,
+      //           //配置模型轮廓的颜色
+      //           silhouetteColor: Cesium.Color.WHITE,
+      //           //配置轮廓的大小
+      //           silhouetteSize: 0,
+      //           articulations: {
+      //             "Dish DishX": 0,
+      //             "Dish DishY": 0,
+      //             "Dish DishZ": 0,
+      //           },
+      //         };
+      //       } else {
+      //         baseStationEntity.model.show = true;
+      //       }
+      //     } else {
+      //       if (baseStationEntity.model != undefined) {
+      //         baseStationEntity.model.show = false;
+      //         baseStationEntity.billboard.show = true;
+      //       }
+      //     }
+      //   }
+      // });
 
        // 添加build模型
        if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
@@ -1528,12 +1609,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           50
         ),
       });
-      
+
       setIsRotate(false);
-      viewer.camera.lookAt(Cesium.Cartesian3.fromDegrees(
-        curBaseStation?.pos[0],
-        curBaseStation?.pos[1]
-      ),new Cesium.Cartesian3(0.0, -50.0, 50.0))
+      viewer.camera.lookAt(
+        Cesium.Cartesian3.fromDegrees(
+          curBaseStation?.pos[0],
+          curBaseStation?.pos[1]
+        ),
+        new Cesium.Cartesian3(0.0, -50.0, 50.0)
+      );
       // viewer.camera.moveBackward(100);
 
       // 生成雨雪天气
@@ -1577,7 +1661,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       timeID = setInterval(() => {
         let currTime = viewer.clock.currentTime;
         let baseStation = `Place/${curBaseStation?.name}`;
-        
+
         linkToBaseStation[baseStation].linkTimes.forEach((interval) => {
           if (
             Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
@@ -1604,6 +1688,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
       });
     }
+    curBaseStationRef.current = curBaseStation
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
 
   const getModelMatrix = (pointA, pointB) => {
@@ -1653,36 +1738,39 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     return hpr;
   };
 
-
   // 卫星动画
-  const satelliteAnimate = () =>{
-    let curEntity = viewer.entities.getById(`Satellite/${curSatellite}`)
-    if(curEntity !== undefined && curEntity.model.articulations !== undefined){
-      if(satelliteStatus === '关'){
-        setSatelliteStatus('开')
+  const satelliteAnimate = () => {
+    let curEntity = viewer.entities.getById(`Satellite/${curSatellite}`);
+    if (
+      curEntity !== undefined &&
+      curEntity.model.articulations !== undefined
+    ) {
+      if (satelliteStatus === "关") {
+        setSatelliteStatus("开");
         let dis = -0.5;
         clearInterval(timerClose);
-        timerOpen = setInterval(()=>{
-          if(curEntity.model.articulations["satellite_back yTranslate"]>dis){
-            curEntity.model.articulations["satellite_back yTranslate"] -=0.01;
-          }else{
+        timerOpen = setInterval(() => {
+          if (
+            curEntity.model.articulations["satellite_back yTranslate"] > dis
+          ) {
+            curEntity.model.articulations["satellite_back yTranslate"] -= 0.01;
+          } else {
             clearInterval(timerOpen);
           }
-        },30);
-      }
-      else{ 
-        setSatelliteStatus('关')
+        }, 30);
+      } else {
+        setSatelliteStatus("关");
         clearInterval(timerOpen);
-        timerClose = setInterval(()=>{
-          if(curEntity.model.articulations["satellite_back yTranslate"]<0){
-            curEntity.model.articulations["satellite_back yTranslate"] +=0.01;
-          }else{
+        timerClose = setInterval(() => {
+          if (curEntity.model.articulations["satellite_back yTranslate"] < 0) {
+            curEntity.model.articulations["satellite_back yTranslate"] += 0.01;
+          } else {
             clearInterval(timerClose);
           }
-        },30);
+        }, 30);
       }
     }
-  }
+  };
 
   return (
     <>
