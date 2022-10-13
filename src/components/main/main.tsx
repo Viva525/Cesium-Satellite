@@ -43,6 +43,7 @@ let rain: any, snow: any, fog: any;
 let stages: any;
 let previousTime: any;
 let timeID: any;
+let timeID1: any;
 let polarTimeId: any;
 let clicked = false;
 let timerOpen, timerClose;
@@ -329,7 +330,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         clicked = true;
         // 读取轨迹数据
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/star-beidou-gps.czml"
+          "./data/star-beidou-gps-2.czml"
         );
         let nowSatelliteList: string[] = [];
         let baseStationTemp: BaseStation[] = [];
@@ -673,7 +674,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
             let height = cartographic.height;
             //23 28
-            console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 28));
+            console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 23));
             // wgs84ToCartesign(lng, lat, height)
           }
         }
@@ -714,12 +715,17 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           viewer.entities.getById(`Place/${curBaseStationRef.current.name}`) !== undefined
         ) {
           let baseStationEntity = viewer.entities.getById(`Place/${curBaseStationRef.current.name}`);
+          let baseStationEntity1 = viewer.entities.getById(`Place/${curBaseStationRef.current.name}1`);
           if (height > 1000) {
             baseStationEntity.model.show = false;
             baseStationEntity.billboard.show = true;
+            baseStationEntity1.model.show = false;
+            baseStationEntity1.billboard.show = true;
           } else {
             baseStationEntity.model.show = true;
             baseStationEntity.billboard.show = false;
+            baseStationEntity1.model.show = true;
+            baseStationEntity1.billboard.show = false;
           }
         }
         // 控制地球旋转
@@ -1456,34 +1462,97 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
         return;
       }
-
-      // 加载基站模型
-      let baseStationEntity = viewer.entities.getById(
-        `Place/${curBaseStation?.name}`
-      );
-      baseStationEntity.billboard.show = false;
-      if (baseStationEntity.model == undefined) {
-        baseStationEntity.model = {
-          // 引入模型
-          uri: "./Telescope_2.gltf",
-          // 配置模型大小的最小值
-          minimumPixelSize: 1,
-          //配置模型大小的最大值
-          maximumScale: 50,
-          scale: 1.0,
-          //配置模型轮廓的颜色
-          silhouetteColor: Cesium.Color.WHITE,
-          //配置轮廓的大小
-          silhouetteSize: 0,
-          articulations: {
-            "Dish DishX": 0,
-            "Dish DishY": 0,
-            "Dish DishZ": 0,
-          },
-        };
-      } else {
-        baseStationEntity.model.show = true;
+      for(let i = 0; i < 2; i++){
+        let baseStationName;
+      if(i==0){
+        baseStationName = `Place/${curBaseStation?.name}`;
+      }else{
+        baseStationName = `Place/${curBaseStation?.name}1`;
       }
+      let baseStationEntity = viewer.entities.getById(baseStationName);
+      // 加载基站模型
+      baseStationEntity.billboard.show = false;
+        if (baseStationEntity.model == undefined) {
+          baseStationEntity.model = {
+            // 引入模型
+            uri: "./Telescope_2.gltf",
+            // 配置模型大小的最小值
+            minimumPixelSize: 1,
+            //配置模型大小的最大值
+            maximumScale: 50,
+            scale: 1.0,
+            //配置模型轮廓的颜色
+            silhouetteColor: Cesium.Color.WHITE,
+            //配置轮廓的大小
+            silhouetteSize: 0,
+            articulations: {
+              "Dish DishX": 0,
+              "Dish DishY": 0,
+              "Dish DishZ": 0,
+            },
+          };
+        } else {
+          baseStationEntity.model.show = true;
+        }
+      }
+      
+        clearInterval(timeID1);
+        timeID1 = setInterval(() => {
+        let currTime = viewer.clock.currentTime;
+        linkToBaseStation[`Place/${curBaseStation?.name}`].linkTimes.forEach((interval) => {
+          if (
+            Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
+            Cesium.JulianDate.greaterThanOrEquals(interval[1], currTime)
+          ) {
+            // 旋转基站
+            let baseStationEntity = viewer.entities.getById(`Place/${curBaseStation?.name}`);
+            let baseStationCar = baseStationEntity._position._value;
+            let satelliteCar = viewer.entities
+              .getById(interval[2])
+              .position.getValue(viewer.clock.currentTime);
+            let m = getModelMatrix(baseStationCar, satelliteCar);
+            let hpr = getHeadingPitchRoll(m);
+            hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
+            if (baseStationEntity.model != undefined) {
+              baseStationEntity.model.articulations["Dish DishX"] =
+                ((-hpr.roll * 180) / Math.PI) % 360;
+              baseStationEntity.model.articulations["Dish DishY"] =
+                ((-hpr.heading * 180) / Math.PI) % 360;
+              baseStationEntity.model.articulations["Dish DishZ"] =
+                ((-hpr.pitch * 180) / Math.PI) % 360;
+            }
+          }
+        });
+      });
+
+      clearInterval(timeID);
+        timeID = setInterval(() => {
+        let currTime = viewer.clock.currentTime;
+        linkToBaseStation[`Place/${curBaseStation?.name}1`].linkTimes.forEach((interval) => {
+          if (
+            Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
+            Cesium.JulianDate.greaterThanOrEquals(interval[1], currTime)
+          ) {
+            // 旋转基站
+            let baseStationEntity = viewer.entities.getById(`Place/${curBaseStation?.name}1`);
+            let baseStationCar = baseStationEntity._position._value;
+            let satelliteCar = viewer.entities
+              .getById(interval[2])
+              .position.getValue(viewer.clock.currentTime);
+            let m = getModelMatrix(baseStationCar, satelliteCar);
+            let hpr = getHeadingPitchRoll(m);
+            hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
+            if (baseStationEntity.model != undefined) {
+              baseStationEntity.model.articulations["Dish DishX"] =
+                ((-hpr.roll * 180) / Math.PI) % 360;
+              baseStationEntity.model.articulations["Dish DishY"] =
+                ((-hpr.heading * 180) / Math.PI) % 360;
+              baseStationEntity.model.articulations["Dish DishZ"] =
+                ((-hpr.pitch * 180) / Math.PI) % 360;
+            }
+          }
+        });
+      });
 
        // 添加build模型
        if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
@@ -1498,13 +1567,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
       }
 
-      // viewer.camera.setView({
-      //   destination: Cesium.Cartesian3.fromDegrees(
-      //     curBaseStation?.pos[0],
-      //     curBaseStation?.pos[1],
-      //     50
-      //   ),
-      // });
       viewer.camera.moveForward(100);
       setIsRotate(false);
       viewer.camera.lookAt(
@@ -1526,63 +1588,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       } else {
         addWeather();
       }
-      //   Jsonp(
-      //     `https://api.caiyunapp.com/v2.5/8PdoZBYiEPf3PT7C/${curBaseStation?.pos[0]},${curBaseStation?.pos[1]}/realtime.json"`,
-      //     {},
-      //     function (err, res) {
-      //       let curWeather = res.result.realtime.skycon;
-      //       if (["CLEAR_DAY", "CLEAR_NIGHT"].includes(curWeather)) {
-      //         addWeather();
-      //       } else if (["HEAVY_RAIN", "STORM_RAIN"].includes(curWeather)) {
-      //         addWeather("rain", 0.7);
-      //       } else if (
-      //         ["LIGHT_RAIN", "MODERATE_RAIN"].includes(curWeather)
-      //       ) {
-      //         addWeather("rain", 0.3);
-      //       } else if (["HEAVY_SNOW", "STORM_SNOW"].includes(curWeather)) {
-      //         addWeather("snow", 0.7);
-      //       } else if (
-      //         ["LIGHT_SNOW", "MODERATE_SNOW"].includes(curWeather)
-      //       ) {
-      //         addWeather("snow", 0.3);
-      //       } else if (["FOG"].includes(curWeather)) {
-      //         addWeather("fog");
-      //       } else {
-      //         addWeather();
-      //       }
-      //     }
-      //   );
-      
-      clearInterval(timeID);
-      timeID = setInterval(() => {
-        let currTime = viewer.clock.currentTime;
-        let baseStation = `Place/${curBaseStation?.name}`;
 
-        linkToBaseStation[baseStation].linkTimes.forEach((interval) => {
-          if (
-            Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
-            Cesium.JulianDate.greaterThanOrEquals(interval[1], currTime)
-          ) {
-            // 旋转基站
-            let baseStationEntity = viewer.entities.getById(baseStation);
-            let baseStationCar = baseStationEntity._position._value;
-            let satelliteCar = viewer.entities
-              .getById(interval[2])
-              .position.getValue(viewer.clock.currentTime);
-            let m = getModelMatrix(baseStationCar, satelliteCar);
-            let hpr = getHeadingPitchRoll(m);
-            hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
-            if (baseStationEntity.model != undefined) {
-              baseStationEntity.model.articulations["Dish DishX"] =
-                ((-hpr.roll * 180) / Math.PI) % 360;
-              baseStationEntity.model.articulations["Dish DishY"] =
-                ((-hpr.heading * 180) / Math.PI) % 360;
-              baseStationEntity.model.articulations["Dish DishZ"] =
-                ((-hpr.pitch * 180) / Math.PI) % 360;
-            }
-          }
-        });
-      });
     }
     curBaseStationRef.current = curBaseStation
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);

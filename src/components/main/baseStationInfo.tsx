@@ -27,6 +27,9 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
       style={{ width: '100%', height: '15vh', overflowY: 'scroll' }}
     >
       {baseStationList.map((baseStation: BaseStation, index) => {
+        if(baseStation.name.includes('1')){
+          return;
+        }
         return (
           <Row
             className='row-style'
