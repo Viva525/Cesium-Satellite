@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import Jsonp from "jsonp";
-import { Table } from "antd";
+import { Button, Input, Modal, Table,  Col, Row, Space  } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
@@ -9,7 +8,7 @@ import type { TableRowSelection } from "antd/es/table/interface";
 import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
-import { BaseStation, PolarEarthProps } from "../../types/type";
+import { BaseStation, CesiumSettingType, PolarEarthProps, SceneDataType } from "../../types/type";
 import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
 import HeightChart from "../right/heightChart";
@@ -20,7 +19,6 @@ import SatelliteInfo from "../right/satelliteInfo";
 import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
-import { BlockPicker } from "react-color";
 
 //@ts-ignore
 let viewer: any;
@@ -52,22 +50,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [init, setInit] = useState<boolean>(false);
   const [isDrawLine, setIsDrawLine] = useState<boolean>(false);
   const [isDrawPolygon, setIsDrawPolygon] = useState<boolean>(false);
-  const [definitionChanged, setDefinitionChanged] = useState<any>(
-    new Cesium.Event()
-  );
   const [isRotate, setIsRotate] = useState<boolean>(false);
-  const [colorSubscription, setColorSubscription] = useState<any>(undefined);
-  const [duration, setDuration] = useState<any>(undefined);
-  const [color1, setColor1] = useState<any>(undefined);
-  const [color2, setColor2] = useState<any>(undefined);
-  const [count, setCount] = useState<any>(undefined);
-  const [gradient, setGradient] = useState<any>(undefined);
-  const [time, setTime] = useState<any>(undefined);
   const [satellitePostionData, setSatellitePostionData] = useState<number[]>(
     []
   );
   const [nowSystemDate, setNowSystemDate] = useState<string[]>([]);
-  const [isPostion, setIsPostion] = useState<boolean>(false);
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const [selectedSatelliteList, setSelectedSatelliteList] = useState<any[]>([]);
@@ -93,7 +80,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     Seattle: new Cesium.Cartesian3(-2303907.7224253207, -3639668.571768946, 4688006.276536699),
     ShangHai: new Cesium.Cartesian3(-2850792.7501941705, 4655337.072319152, 3287654.154921683)
   }
-
+  
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  // 场景列表数据
+  const [sceneList, setScenList] = useState<SceneDataType[]>([]);
+  const inputRef = useRef();
   useEffect(() => {
     setInit(true);
   }, []);
@@ -634,9 +625,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         function (e) {
           setCurBaseStation(null);
           setIsRotate(true);
-          snow && viewer.scene.postProcessStages.remove(snow); // 移除
-          rain && viewer.scene.postProcessStages.remove(rain); // 移除
-          fog && viewer.scene.postProcessStages.remove(fog); // 移除
         }
       );
 
@@ -748,6 +736,16 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
       // 监听2d切换事件
       viewer.sceneModePicker.viewModel.morphTo2D.afterExecute.addEventListener(
+        () => {
+          snow && viewer.scene.postProcessStages.remove(snow); // 移除
+          rain && viewer.scene.postProcessStages.remove(rain); // 移除
+          fog && viewer.scene.postProcessStages.remove(fog); // 移除
+          setIsRotate(false);
+          let layer = viewer.imageryLayers.get(0);
+          layer["brightness"] = 1.5;
+        }
+      );
+      viewer.sceneModePicker.viewModel.morphToColumbusView.afterExecute.addEventListener(
         () => {
           snow && viewer.scene.postProcessStages.remove(snow); // 移除
           rain && viewer.scene.postProcessStages.remove(rain); // 移除
@@ -1380,6 +1378,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   // 当前选择的卫星
   useEffect(() => {
+    console.log(selectSatelliteList);
     for (let i of selectSatelliteList) {
       let pick = viewer.entities.getById(i[1]);
       let curradarScanner = viewer.entities.getById("radarScan_" + i[1]);
@@ -1403,10 +1402,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         );
       }
     }
-  }, [selectSatelliteList]);
+  }, [selectSatelliteList.length]);
 
   // 当前选中的卫星
   useEffect(() => {
+    console.log("trick selected!");
+    
     // 实时展示被选中的实体的位置
     clearInterval(polarTimeId);
     if (selectedSatelliteList.length === 0) {
@@ -1440,7 +1441,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         nowPicksatellite = [nowPicksatellite[0], false, false];
       }
     }
-  }, [selectedSatelliteList]);
+  }, [selectedSatelliteList.length]);
 
   useEffect(() => {
     if (nowPicksatellite) {
@@ -1460,6 +1461,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         buildList.forEach((buildName) => {
           viewer.entities.removeById(buildName);
         });
+        snow && viewer.scene.postProcessStages.remove(snow); // 移除
+        rain && viewer.scene.postProcessStages.remove(rain); // 移除
+        fog && viewer.scene.postProcessStages.remove(fog); // 移除
+        viewer.camera.flyHome(0);
         return;
       }
       for(let i = 0; i < 2; i++){
@@ -1674,6 +1679,50 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   };
 
+  const showSaveScencePanel = () => {
+    console.log(viewer.scene.mode);
+    let temp: SceneDataType = {
+      selectedSatelliteList: selectedSatelliteList,
+      curBaseStation: curBaseStation,
+      cesiumSetting: {
+        mode: viewer.scene.mode
+      },
+      isEdit: true,
+      sceneName: ''
+    };
+    setScenList((prev: SceneDataType[])=>{
+      return [...prev, temp];
+    });
+    setIsModalOpen(true);
+  }
+
+  const closeSaveScenePanel = () => {
+    setIsModalOpen(false);
+    // 检查最后一项是否为空 为空则移除
+    if(sceneList[sceneList.length-1].sceneName == ""){
+      sceneList.pop();
+    }
+  }
+
+  const changeSceneMode = (mode: number) => {
+    if(mode != Cesium.SceneMode.SCENE3D){
+      setIsRotate(false);
+    }
+    if(mode === 0){
+      viewer.scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
+    }else{
+      viewer.scene.mode = mode;
+    }
+    viewer.camera.flyHome(0);
+  }
+
+  const loadingScene = (scene: SceneDataType) => {
+    setSelectedSatelliteList([...scene.selectedSatelliteList]);
+    setCurBaseStation(scene.curBaseStation);
+    changeSceneMode(scene.cesiumSetting.mode);
+  }
+
+
   return (
     <>
       <div id="title">卫星态势仿真监控平台</div>
@@ -1765,12 +1814,63 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         <button
           type="button"
           id="animation"
-          onClick={satelliteAnimate}
+          onClick={()=>{
+            satelliteAnimate()
+          }}
           className="cesium-button"
         >
           {`Animation：${satelliteStatus}`}
         </button>
+        <button
+          type="button"
+          id="animation"
+          onClick={()=>{
+            showSaveScencePanel()
+          }}
+          className="cesium-button"
+        >
+          Save Scence
+        </button>
       </div>
+      <Modal transitionName="" title="Scene List" visible={isModalOpen} onOk={closeSaveScenePanel} onCancel={closeSaveScenePanel}>
+        {
+          sceneList.map((scene:SceneDataType, index: number)=>{
+            return (
+              <Row gutter={16} key={index} style={{marginTop:"10px"}}>
+                <Col span={14}>
+                  {
+                    scene.isEdit?(<Input ref={inputRef} placeholder="please input scene name"></Input>):(<p
+                    className="loadingScene"
+                    onClick={()=>{
+                      loadingScene(scene);
+                    }}
+                    >{scene.sceneName}</p>)
+                  }
+                </Col>
+                <Col span={4} offset={1}>
+                  <Button type="primary" onClick={()=>{
+                    if(scene.isEdit === false){
+                      scene.sceneName = "";
+                    } else{
+                      scene.sceneName = inputRef.current.input.value;  
+                    }            
+                    scene.isEdit = !scene.isEdit;
+                  }}>
+                    {scene.isEdit?"Save Scene":"Rename"}
+                  </Button>
+                </Col>
+                <Col span={4} offset={1}>
+                  <Button type="default" danger={true} onClick={()=>{
+                    sceneList.splice(index,1);
+                  }}>
+                    Delete
+                  </Button>
+                </Col>
+              </Row>
+            )
+          })
+        }
+      </Modal>
       <div id="left-border-line"></div>
       <div id="right-border-line"></div>
     </>

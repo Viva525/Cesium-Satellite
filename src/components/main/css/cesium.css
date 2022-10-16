@@ -232,3 +232,17 @@ p {
     right: 1vw;
 }
 
+#modal {
+    z-index: 999;
+}
+
+.loadingScene {
+    box-sizing: border-box;
+    font-size: 18px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.loadingScene:hover {
+    color:#08acbd;
+}

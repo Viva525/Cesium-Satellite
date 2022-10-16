@@ -28,3 +28,16 @@ export type CesiumComponentType ={
 export type PolarEarthProps = {
   position: []
 }
+
+export type CesiumSettingType = {
+  mode: number
+}
+
+  /////////////////////////场景数据类型///////////////////////////////
+export type SceneDataType = {
+  selectedSatelliteList: string[],
+  curBaseStation: BaseStation,
+  cesiumSetting: CesiumSettingType,
+  isEdit: boolean,
+  sceneName: string
+}
