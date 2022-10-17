@@ -58,6 +58,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const [selectedSatelliteList, setSelectedSatelliteList] = useState<any[]>([]);
+  const [satelliteColor, setSatelliteColor] =  useState({})
   const [start, setStart] = useState(
     Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
   );
@@ -1378,7 +1379,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   // 当前选择的卫星
   useEffect(() => {
-    console.log(selectSatelliteList);
     for (let i of selectSatelliteList) {
       let pick = viewer.entities.getById(i[1]);
       let curradarScanner = viewer.entities.getById("radarScan_" + i[1]);
@@ -1402,12 +1402,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         );
       }
     }
-  }, [selectSatelliteList.length]);
+
+  }, [selectSatelliteList]);
 
   // 当前选中的卫星
   useEffect(() => {
-    console.log("trick selected!");
-    
     // 实时展示被选中的实体的位置
     clearInterval(polarTimeId);
     if (selectedSatelliteList.length === 0) {
@@ -1727,7 +1726,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           title="卫星列表"
           component={
             <SatelliteList
-              statelliteList={satelliteList}
+              satelliteList={satelliteList}
+              selectedSatelliteList={selectedSatelliteList}
               setSelectSatelliteList={setSelectSatelliteList}
               setSelectedSatelliteList={setSelectedSatelliteList}
             />
