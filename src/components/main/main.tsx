@@ -1455,6 +1455,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   }, [nowPicksatellite]);
 
+  
+
   useEffect(() => {
     if (init) {
       if (curBaseStation === null) {
@@ -1500,9 +1502,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           baseStationEntity.model.show = true;
         }
       }
-      
-        clearInterval(timeID1);
-        timeID1 = setInterval(() => {
+        clearInterval(timeID);
+        timeID = setInterval(() => {
         let currTime = viewer.clock.currentTime;
         linkToBaseStation[`Place/${curBaseStation?.name}`].linkTimes.forEach((interval) => {
           if (
@@ -1528,11 +1529,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
           }
         });
-      });
-
-      clearInterval(timeID);
-        timeID = setInterval(() => {
-        let currTime = viewer.clock.currentTime;
         linkToBaseStation[`Place/${curBaseStation?.name}1`].linkTimes.forEach((interval) => {
           if (
             Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
