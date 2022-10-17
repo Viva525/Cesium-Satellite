@@ -1,22 +1,22 @@
 //@ts-nocheck
-import { Table, Image} from 'antd';
+import { Table, Image } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';
 import './table.css'
 // import Item from 'antd/lib/list/Item';
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import ColorSelect, { SetState } from './color';
-import {DataType, satelliteListType} from "../../../types/type"
+import { DataType, satelliteListType } from "../../../types/type"
 
 
 const SatelliteList: React.FC<satelliteListType> = (props) => {
-  const {statelliteList, setSelectSatelliteList, setSelectedSatelliteList } = props
+  const { satelliteList, selectedSatelliteList, setSelectSatelliteList, setSelectedSatelliteList } = props
   const [satelliteColor, setSatelliteColor] = useState({})
   const columns: ColumnsType<DataType> = [
     {
       title: 'satelliteName',
       dataIndex: 'key',
-      width:"60%",
+      width: "60%",
       filters: [
         {
           text: '星链',
@@ -36,26 +36,26 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     },
     {
       title: 'color',
-      width:"30%",
-      align:'center',
+      width: "30%",
+      align: 'center',
       dataIndex: 'color',
       render: (_: any, record: DataType) => {
         return (
           <ColorSelect
-            initColor={satelliteColor[record.key]==undefined?(record.key.includes("BD") | record.key.includes("BEIDOU")  ? { r: "13", g: "126", b: "222", a: "1" }: record.key.includes("GPS") ?{ r: "210", g: '51', b: '90', a: "1" } : { r: '255', g: '255', b: '255',a: "1" }):satelliteColor[record.key]}
-            setSatelliteColor = {setSatelliteColor}
+            initColor={satelliteColor[record.key] == undefined ? (record.key.includes("BD") | record.key.includes("BEIDOU") ? { r: "13", g: "126", b: "222", a: "1" } : record.key.includes("GPS") ? { r: "210", g: '51', b: '90', a: "1" } : { r: '255', g: '255', b: '255', a: "1" }) : satelliteColor[record.key]}
+            setSatelliteColor={setSatelliteColor}
             satellityKey={record.key}
             setSelectSatelliteList={setSelectSatelliteList}
           />)
       }
     },
     {
-      title:'info',
-      width:"10%",
-      align:'center',
+      title: 'info',
+      width: "10%",
+      align: 'center',
       dataIndex: 'JumpImage',
-      render:(_: any, record: DataType) =>{
-        return(
+      render: (_: any, record: DataType) => {
+        return (
           <Image
             width={30}
             src="./images/dot_32.png"
@@ -76,15 +76,13 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
   ];
 
   const data: DataType[] = []
-  for (let i = 0; i < statelliteList.length; i++) {
+  for (let i = 0; i < satelliteList.length; i++) {
     data.push({
-      key: statelliteList[i],
+      key: satelliteList[i],
     })
   }
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-
     let nowSelectList = []
     if (selectedRowKeys.length < newSelectedRowKeys.length) {
       let nowSelectKey = newSelectedRowKeys.concat(selectedRowKeys).filter(item => !selectedRowKeys.includes(item))
@@ -98,12 +96,13 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
         nowSelectList.push([0, i, false])
       }
     }
-
     setSelectSatelliteList(nowSelectList)
     setSelectedSatelliteList(newSelectedRowKeys)
     setSelectedRowKeys(newSelectedRowKeys);
-
   };
+  useEffect(() => {
+      onSelectChange(selectedSatelliteList)
+  }, [selectedSatelliteList])
 
   const rowSelection: TableRowSelection<DataType> = {
     selectedRowKeys,
