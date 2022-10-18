@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Button, Input, Modal, Table,  Col, Row, Space  } from "antd";
+import { Button, Input, Modal, Table, Col, Row, Space } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
@@ -8,7 +8,12 @@ import type { TableRowSelection } from "antd/es/table/interface";
 import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
-import { BaseStation, CesiumSettingType, PolarEarthProps, SceneDataType } from "../../types/type";
+import {
+  BaseStation,
+  CesiumSettingType,
+  PolarEarthProps,
+  SceneDataType,
+} from "../../types/type";
 import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
 import HeightChart from "../right/heightChart";
@@ -58,7 +63,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const [selectedSatelliteList, setSelectedSatelliteList] = useState<any[]>([]);
-  const [satelliteColor, setSatelliteColor] =  useState({})
+  const [satelliteColor, setSatelliteColor] = useState({});
   const [start, setStart] = useState(
     Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
   );
@@ -70,18 +75,44 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [curBaseStation, setCurBaseStation] = useState<BaseStation | null>(
     null
   );
-  const curBaseStationRef = useRef(curBaseStation)
+  const curBaseStationRef = useRef(curBaseStation);
   const [polarPosition, setPolarPosition] = useState<PolarEarthProps>(null);
-  const [satelliteStatus, setSatelliteStatus] = useState<string>('关')
-  const buildList = ["build/BeiJing", "build/ChongQing", "build/Los", "build/Seattle", "build/ShangHai"];
+  const [satelliteStatus, setSatelliteStatus] = useState<string>("关");
+  const buildList = [
+    "build/BeiJing",
+    "build/ChongQing",
+    "build/Los",
+    "build/Seattle",
+    "build/ShangHai",
+  ];
   const buildPos = {
-    BeiJing: new Cesium.Cartesian3(-2180335.9039053465, 4388094.640359055, 4069380.047373593),
-    ChongQing: new Cesium.Cartesian3(-1579603.585281641, 5310429.915838377, 3149292.375687729),
-    Los: new Cesium.Cartesian3(-2502060.745497469, -4659329.313212606, 3553300.7055502607),
-    Seattle: new Cesium.Cartesian3(-2303907.7224253207, -3639668.571768946, 4688006.276536699),
-    ShangHai: new Cesium.Cartesian3(-2850792.7501941705, 4655337.072319152, 3287654.154921683)
-  }
-  
+    BeiJing: new Cesium.Cartesian3(
+      -2180335.9039053465,
+      4388094.640359055,
+      4069380.047373593
+    ),
+    ChongQing: new Cesium.Cartesian3(
+      -1579603.585281641,
+      5310429.915838377,
+      3149292.375687729
+    ),
+    Los: new Cesium.Cartesian3(
+      -2502060.745497469,
+      -4659329.313212606,
+      3553300.7055502607
+    ),
+    Seattle: new Cesium.Cartesian3(
+      -2303907.7224253207,
+      -3639668.571768946,
+      4688006.276536699
+    ),
+    ShangHai: new Cesium.Cartesian3(
+      -2850792.7501941705,
+      4655337.072319152,
+      3287654.154921683
+    ),
+  };
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // 场景列表数据
   const [sceneList, setScenList] = useState<SceneDataType[]>([]);
@@ -316,11 +347,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         },
         reset: function () {},
       };
-      //@ts-ignore
-      Sandcastle.addDefaultToolbarButton("Satellites", function () {
-        if (clicked) return;
-        clicked = true;
-        // 读取轨迹数据
+      setTimeout(() => {
         let dronePromise = Cesium.CzmlDataSource.load(
           "./data/star-beidou-gps-2.czml"
         );
@@ -619,7 +646,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
         });
-      });
+      }, 2000);
 
       viewer.homeButton.viewModel.duration = 0;
       viewer.homeButton.viewModel.command.afterExecute.addEventListener(
@@ -701,10 +728,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
         if (
           curBaseStationRef.current !== null &&
-          viewer.entities.getById(`Place/${curBaseStationRef.current.name}`) !== undefined
+          viewer.entities.getById(`Place/${curBaseStationRef.current.name}`) !==
+            undefined
         ) {
-          let baseStationEntity = viewer.entities.getById(`Place/${curBaseStationRef.current.name}`);
-          let baseStationEntity1 = viewer.entities.getById(`Place/${curBaseStationRef.current.name}1`);
+          let baseStationEntity = viewer.entities.getById(
+            `Place/${curBaseStationRef.current.name}`
+          );
+          let baseStationEntity1 = viewer.entities.getById(
+            `Place/${curBaseStationRef.current.name}1`
+          );
           if (height > 1000) {
             baseStationEntity.model.show = false;
             baseStationEntity.billboard.show = true;
@@ -1402,7 +1434,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         );
       }
     }
-
   }, [selectSatelliteList]);
 
   // 当前选中的卫星
@@ -1426,15 +1457,32 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
     if (selectedSatelliteList.length > 0) {
       if (nowPicksatellite) {
-        if (selectedSatelliteList[0] !== nowPicksatellite[0]) {
-          nowPicksatellite = [selectedSatelliteList[0], true, false];
+        if (
+          selectedSatelliteList[selectedSatelliteList.length - 1] !==
+          nowPicksatellite[0]
+        ) {
+          nowPicksatellite = [
+            selectedSatelliteList[selectedSatelliteList.length - 1],
+            true,
+            false,
+          ];
         } else {
-          nowPicksatellite = [selectedSatelliteList[0], true, true];
+          nowPicksatellite = [
+            selectedSatelliteList[selectedSatelliteList.length - 1],
+            true,
+            true,
+          ];
         }
       } else {
-        nowPicksatellite = [selectedSatelliteList[0], true, true];
+        nowPicksatellite = [
+          selectedSatelliteList[selectedSatelliteList.length - 1],
+          true,
+          true,
+        ];
       }
-      setCurSatellite(selectedSatelliteList[0].split("/")[1]);
+      setCurSatellite(
+        selectedSatelliteList[selectedSatelliteList.length - 1].split("/")[1]
+      );
     } else {
       if (nowPicksatellite) {
         nowPicksatellite = [nowPicksatellite[0], false, false];
@@ -1454,10 +1502,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   }, [nowPicksatellite]);
 
-  
-
   useEffect(() => {
     if (init) {
+      //@ts-ignore
+      let baseSet = document.getElementsByClassName("baseStationText_content");
+      Array.prototype.forEach.call(baseSet, function (ele) {
+        ele.style.color = "rgba(13, 126, 222, 1)";
+      });
+
       if (curBaseStation === null) {
         buildList.forEach((buildName) => {
           viewer.entities.removeById(buildName);
@@ -1468,16 +1520,20 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         viewer.camera.flyHome(0);
         return;
       }
-      for(let i = 0; i < 2; i++){
+
+      //@ts-ignore
+      document.getElementById(`${curBaseStation?.name}`).style.color =
+        "#e53e31";
+      for (let i = 0; i < 2; i++) {
         let baseStationName;
-      if(i==0){
-        baseStationName = `Place/${curBaseStation?.name}`;
-      }else{
-        baseStationName = `Place/${curBaseStation?.name}1`;
-      }
-      let baseStationEntity = viewer.entities.getById(baseStationName);
-      // 加载基站模型
-      baseStationEntity.billboard.show = false;
+        if (i == 0) {
+          baseStationName = `Place/${curBaseStation?.name}`;
+        } else {
+          baseStationName = `Place/${curBaseStation?.name}1`;
+        }
+        let baseStationEntity = viewer.entities.getById(baseStationName);
+        // 加载基站模型
+        baseStationEntity.billboard.show = false;
         if (baseStationEntity.model == undefined) {
           baseStationEntity.model = {
             // 引入模型
@@ -1501,69 +1557,79 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           baseStationEntity.model.show = true;
         }
       }
-        clearInterval(timeID);
-        timeID = setInterval(() => {
+      clearInterval(timeID);
+      timeID = setInterval(() => {
         let currTime = viewer.clock.currentTime;
-        linkToBaseStation[`Place/${curBaseStation?.name}`].linkTimes.forEach((interval) => {
-          if (
-            Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
-            Cesium.JulianDate.greaterThanOrEquals(interval[1], currTime)
-          ) {
-            // 旋转基站
-            let baseStationEntity = viewer.entities.getById(`Place/${curBaseStation?.name}`);
-            let baseStationCar = baseStationEntity._position._value;
-            let satelliteCar = viewer.entities
-              .getById(interval[2])
-              .position.getValue(viewer.clock.currentTime);
-            let m = getModelMatrix(baseStationCar, satelliteCar);
-            let hpr = getHeadingPitchRoll(m);
-            hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
-            if (baseStationEntity.model != undefined) {
-              baseStationEntity.model.articulations["Dish DishX"] =
-                ((-hpr.roll * 180) / Math.PI) % 360;
-              baseStationEntity.model.articulations["Dish DishY"] =
-                ((-hpr.heading * 180) / Math.PI) % 360;
-              baseStationEntity.model.articulations["Dish DishZ"] =
-                ((-hpr.pitch * 180) / Math.PI) % 360;
+        linkToBaseStation[`Place/${curBaseStation?.name}`].linkTimes.forEach(
+          (interval) => {
+            if (
+              Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
+              Cesium.JulianDate.greaterThanOrEquals(interval[1], currTime)
+            ) {
+              // 旋转基站
+              let baseStationEntity = viewer.entities.getById(
+                `Place/${curBaseStation?.name}`
+              );
+              let baseStationCar = baseStationEntity._position._value;
+              let satelliteCar = viewer.entities
+                .getById(interval[2])
+                .position.getValue(viewer.clock.currentTime);
+              let m = getModelMatrix(baseStationCar, satelliteCar);
+              let hpr = getHeadingPitchRoll(m);
+              hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
+              if (baseStationEntity.model != undefined) {
+                baseStationEntity.model.articulations["Dish DishX"] =
+                  ((-hpr.roll * 180) / Math.PI) % 360;
+                baseStationEntity.model.articulations["Dish DishY"] =
+                  ((-hpr.heading * 180) / Math.PI) % 360;
+                baseStationEntity.model.articulations["Dish DishZ"] =
+                  ((-hpr.pitch * 180) / Math.PI) % 360;
+              }
             }
           }
-        });
-        linkToBaseStation[`Place/${curBaseStation?.name}1`].linkTimes.forEach((interval) => {
-          if (
-            Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
-            Cesium.JulianDate.greaterThanOrEquals(interval[1], currTime)
-          ) {
-            // 旋转基站
-            let baseStationEntity = viewer.entities.getById(`Place/${curBaseStation?.name}1`);
-            let baseStationCar = baseStationEntity._position._value;
-            let satelliteCar = viewer.entities
-              .getById(interval[2])
-              .position.getValue(viewer.clock.currentTime);
-            let m = getModelMatrix(baseStationCar, satelliteCar);
-            let hpr = getHeadingPitchRoll(m);
-            hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
-            if (baseStationEntity.model != undefined) {
-              baseStationEntity.model.articulations["Dish DishX"] =
-                ((-hpr.roll * 180) / Math.PI) % 360;
-              baseStationEntity.model.articulations["Dish DishY"] =
-                ((-hpr.heading * 180) / Math.PI) % 360;
-              baseStationEntity.model.articulations["Dish DishZ"] =
-                ((-hpr.pitch * 180) / Math.PI) % 360;
+        );
+        linkToBaseStation[`Place/${curBaseStation?.name}1`].linkTimes.forEach(
+          (interval) => {
+            if (
+              Cesium.JulianDate.lessThanOrEquals(interval[0], currTime) &&
+              Cesium.JulianDate.greaterThanOrEquals(interval[1], currTime)
+            ) {
+              // 旋转基站
+              let baseStationEntity = viewer.entities.getById(
+                `Place/${curBaseStation?.name}1`
+              );
+              let baseStationCar = baseStationEntity._position._value;
+              let satelliteCar = viewer.entities
+                .getById(interval[2])
+                .position.getValue(viewer.clock.currentTime);
+              let m = getModelMatrix(baseStationCar, satelliteCar);
+              let hpr = getHeadingPitchRoll(m);
+              hpr.heading = hpr.heading + 3.14 / 2 + 3.14;
+              if (baseStationEntity.model != undefined) {
+                baseStationEntity.model.articulations["Dish DishX"] =
+                  ((-hpr.roll * 180) / Math.PI) % 360;
+                baseStationEntity.model.articulations["Dish DishY"] =
+                  ((-hpr.heading * 180) / Math.PI) % 360;
+                baseStationEntity.model.articulations["Dish DishZ"] =
+                  ((-hpr.pitch * 180) / Math.PI) % 360;
+              }
             }
           }
-        });
+        );
       });
 
-       // 添加build模型
-       if(viewer.entities.getById(`build/${curBaseStation.name}`) == undefined){
+      // 添加build模型
+      if (
+        viewer.entities.getById(`build/${curBaseStation.name}`) == undefined
+      ) {
         viewer.entities.add({
-          id:`build/${curBaseStation.name}`,
+          id: `build/${curBaseStation.name}`,
           position: buildPos[curBaseStation.name],
           model: {
             uri: "./build-model/rp.gltf",
-            minimumPixelSize: 128,//最小的模型像素
-            maximumScale: 20000,//最大的模型像素
-          }
+            minimumPixelSize: 128, //最小的模型像素
+            maximumScale: 20000, //最大的模型像素
+          },
         });
       }
 
@@ -1588,9 +1654,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       } else {
         addWeather();
       }
-
     }
-    curBaseStationRef.current = curBaseStation
+    curBaseStationRef.current = curBaseStation;
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
 
   const getModelMatrix = (pointA, pointB) => {
@@ -1675,48 +1740,46 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   };
 
   const showSaveScencePanel = () => {
-    console.log(viewer.scene.mode);
     let temp: SceneDataType = {
       selectedSatelliteList: selectedSatelliteList,
       curBaseStation: curBaseStation,
       cesiumSetting: {
-        mode: viewer.scene.mode
+        mode: viewer.scene.mode,
       },
       isEdit: true,
-      sceneName: ''
+      sceneName: "",
     };
-    setScenList((prev: SceneDataType[])=>{
+    setScenList((prev: SceneDataType[]) => {
       return [...prev, temp];
     });
     setIsModalOpen(true);
-  }
+  };
 
   const closeSaveScenePanel = () => {
     setIsModalOpen(false);
     // 检查最后一项是否为空 为空则移除
-    if(sceneList[sceneList.length-1].sceneName == ""){
+    if (sceneList[sceneList.length - 1].sceneName == "") {
       sceneList.pop();
     }
-  }
+  };
 
   const changeSceneMode = (mode: number) => {
-    if(mode != Cesium.SceneMode.SCENE3D){
+    if (mode != Cesium.SceneMode.SCENE3D) {
       setIsRotate(false);
     }
-    if(mode === 0){
+    if (mode === 0) {
       viewer.scene.mode = Cesium.SceneMode.COLUMBUS_VIEW;
-    }else{
+    } else {
       viewer.scene.mode = mode;
     }
     viewer.camera.flyHome(0);
-  }
+  };
 
   const loadingScene = (scene: SceneDataType) => {
     setSelectedSatelliteList([...scene.selectedSatelliteList]);
     setCurBaseStation(scene.curBaseStation);
     changeSceneMode(scene.cesiumSetting.mode);
-  }
-
+  };
 
   return (
     <>
@@ -1741,9 +1804,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         style={{
           height: "100%",
           width: "100%",
-          // backgroundRepeat: "no-repeat ",
-          // backgroundSize: "cover",
-          // backgroundImage: "url(./images/star_blue.png)",
           background: "#000",
         }}
       ></div>
@@ -1783,9 +1843,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }
         />
       </div>
-      {/* <div className="bottom-wrap">
-        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
-      </div> */}
       <div id="toolbar">
         <button
           type="button"
@@ -1810,8 +1867,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         <button
           type="button"
           id="animation"
-          onClick={()=>{
-            satelliteAnimate()
+          onClick={() => {
+            satelliteAnimate();
           }}
           className="cesium-button"
         >
@@ -1820,52 +1877,70 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         <button
           type="button"
           id="animation"
-          onClick={()=>{
-            showSaveScencePanel()
+          onClick={() => {
+            showSaveScencePanel();
           }}
           className="cesium-button"
         >
           Save Scence
         </button>
       </div>
-      <Modal transitionName="" title="Scene List" visible={isModalOpen} onOk={closeSaveScenePanel} onCancel={closeSaveScenePanel}>
-        {
-          sceneList.map((scene:SceneDataType, index: number)=>{
-            return (
-              <Row gutter={16} key={index} style={{marginTop:"10px"}}>
-                <Col span={14}>
-                  {
-                    scene.isEdit?(<Input ref={inputRef} placeholder="please input scene name"></Input>):(<p
+      <Modal
+        transitionName=""
+        title="Scene List"
+        visible={isModalOpen}
+        onOk={closeSaveScenePanel}
+        onCancel={closeSaveScenePanel}
+      >
+        {sceneList.map((scene: SceneDataType, index: number) => {
+          return (
+            <Row gutter={16} key={index} style={{ marginTop: "10px" }}>
+              <Col span={14}>
+                {scene.isEdit ? (
+                  <Input
+                    ref={inputRef}
+                    placeholder="please input scene name"
+                  ></Input>
+                ) : (
+                  <p
                     className="loadingScene"
-                    onClick={()=>{
+                    onClick={() => {
                       loadingScene(scene);
                     }}
-                    >{scene.sceneName}</p>)
-                  }
-                </Col>
-                <Col span={4} offset={1}>
-                  <Button type="primary" onClick={()=>{
-                    if(scene.isEdit === false){
+                  >
+                    {scene.sceneName}
+                  </p>
+                )}
+              </Col>
+              <Col span={4} offset={1}>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    if (scene.isEdit === false) {
                       scene.sceneName = "";
-                    } else{
-                      scene.sceneName = inputRef.current.input.value;  
-                    }            
+                    } else {
+                      scene.sceneName = inputRef.current.input.value;
+                    }
                     scene.isEdit = !scene.isEdit;
-                  }}>
-                    {scene.isEdit?"Save Scene":"Rename"}
-                  </Button>
-                </Col>
-                <Col span={4} offset={1}>
-                  <Button type="default" danger={true} onClick={()=>{
-                    sceneList.splice(index,1);
-                  }}>
-                    Delete
-                  </Button>
-                </Col>
-              </Row>
-            )
-          })
-        }
+                  }}
+                >
+                  {scene.isEdit ? "Save Scene" : "Rename"}
+                </Button>
+              </Col>
+              <Col span={4} offset={1}>
+                <Button
+                  type="default"
+                  danger={true}
+                  onClick={() => {
+                    sceneList.splice(index, 1);
+                  }}
+                >
+                  Delete
+                </Button>
+              </Col>
+            </Row>
+          );
+        })}
       </Modal>
       <div id="left-border-line"></div>
       <div id="right-border-line"></div>
