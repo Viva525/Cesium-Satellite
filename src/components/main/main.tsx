@@ -50,6 +50,7 @@ let timeID1: any;
 let polarTimeId: any;
 let clicked = false;
 let timerOpen, timerClose;
+let hexagon: any[] = [];
 const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const { setDashboard } = props;
   const [init, setInit] = useState<boolean>(false);
@@ -63,7 +64,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
   const [selectedSatelliteList, setSelectedSatelliteList] = useState<any[]>([]);
-  const [satelliteColor, setSatelliteColor] = useState({});
   const [start, setStart] = useState(
     Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
   );
@@ -270,8 +270,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () {},
-        highlight: function () {},
+        declare: function () { },
+        highlight: function () { },
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -345,7 +345,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             menu.appendChild(option);
           }
         },
-        reset: function () {},
+        reset: function () { },
       };
       setTimeout(() => {
         let dronePromise = Cesium.CzmlDataSource.load(
@@ -600,12 +600,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 show: true,
                 verticalOrigin: Cesium.VerticalOrigin.CENTER,
               };
-              let radius = 1.5;
               addHexagonAll(
                 position[1],
                 position[0],
-                radius,
-                `Hexagon/${ele.name}/`,
+                1.5,
+                `Hexagon/${ele.name}`,
+                "1",
                 1
               );
               setBaseStationList(baseStationTemp);
@@ -645,7 +645,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
           });
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
+          setHexagon(1.5)
         });
+        
       }, 2000);
 
       viewer.homeButton.viewModel.duration = 0;
@@ -729,7 +731,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         if (
           curBaseStationRef.current !== null &&
           viewer.entities.getById(`Place/${curBaseStationRef.current.name}`) !==
-            undefined
+          undefined
         ) {
           let baseStationEntity = viewer.entities.getById(
             `Place/${curBaseStationRef.current.name}`
@@ -962,7 +964,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -1111,7 +1113,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -1137,7 +1139,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
@@ -1330,52 +1332,109 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   };
 
   // 添加六边形
-  function addHexagonAll(lat, lng, radius, id, index) {
+  function addHexagonAll(lat, lng, radius, id, idIndex, index) {
+    // 判断该地区是否已经划过六边形
+    if(index === 1){
+      for(let i of hexagon){
+        if(id.indexOf(i[0]) >= 0 ){
+          return 
+        }
+      }
+    }
     // 最大添加次数
-    if (index >= 6) {
+    if (index >= 5) {
       return;
     }
-    addOneHexagon(lat, lng, radius, id + index);
+    // addOneHexagon(lat, lng, radius, id + index);
+    hexagon.push([id, lat, lng, idIndex])
     // 右边的六边形
     let lng2 = lng;
     let lat2 = lat + radius * Math.sqrt(3);
-    addOneHexagon(lat2, lng2, radius, id + index + "1");
+    // addOneHexagon(lat2, lng2, radius, id + index + "1");
+    hexagon.push([id, lat2, lng2, idIndex + "1"])
     if (Math.floor(Math.random() * 5) > 2) {
-      addHexagonAll(lat2, lng2, radius, id + "index" + "1", index + 1);
+      addHexagonAll(lat2, lng2, radius, id, idIndex + "1", index + 1);
     }
     // 左边的六边形
     lat2 = lat - radius * Math.sqrt(3);
-    addOneHexagon(lat2, lng2, radius, id + index + "2");
+    // addOneHexagon(lat2, lng2, radius, id + index + "2");
+    hexagon.push([id, lat2, lng2, idIndex + "2"])
     if (Math.floor(Math.random() * 5) > 2) {
-      addHexagonAll(lat2, lng2, radius, id + "index" + "2", index + 1);
+      addHexagonAll(lat2, lng2, radius, id, idIndex + "2", index + 1);
     }
     // 左上角六边形
     lng2 = lng + (radius * 3) / 2;
     lat2 = lat - (radius * Math.sqrt(3)) / 2;
-    addOneHexagon(lat2, lng2, radius, id + index + "3");
+    // addOneHexagon(lat2, lng2, radius, id + index + "3");
+    hexagon.push([id, lat2, lng2, idIndex + "3"])
     if (Math.floor(Math.random() * 5) > 2) {
-      addHexagonAll(lat2, lng2, radius, id + "index" + "3", index + 1);
+      addHexagonAll(lat2, lng2, radius, id, idIndex + "3", index + 1);
     }
     //左下角六边形
     lng2 = lng - (radius * 3) / 2;
-    addOneHexagon(lat2, lng2, radius, id + index + "4");
+    // addOneHexagon(lat2, lng2, radius, id + index + "4");
+    hexagon.push([id, lat2, lng2, idIndex + "4"])
     if (Math.floor(Math.random() * 5) > 2) {
-      addHexagonAll(lat2, lng2, radius, id + "index" + "4", index + 1);
+      addHexagonAll(lat2, lng2, radius, id, idIndex + "4", index + 1);
     }
     //右上角六边形
     lng2 = lng + (radius * 3) / 2;
     lat2 = lat + (radius * Math.sqrt(3)) / 2;
-    addOneHexagon(lat2, lng2, radius, id + index + "5");
+    // addOneHexagon(lat2, lng2, radius, id + index + "5");
+    hexagon.push([id, lat2, lng2, idIndex + "5"])
     if (Math.floor(Math.random() * 5) > 2) {
-      addHexagonAll(lat2, lng2, radius, id + "index" + "5", index + 1);
+      addHexagonAll(lat2, lng2, radius, id, idIndex + "5", index + 1);
     }
     //右下角六边形
     lng2 = lng - (radius * 3) / 2;
-    addOneHexagon(lat2, lng2, radius, id + index + "6");
+    // addOneHexagon(lat2, lng2, radius, id + index + "6");
+    hexagon.push([id, lat2, lng2, idIndex + "6"])
     if (Math.floor(Math.random() * 5) > 2) {
-      addHexagonAll(lat2, lng2, radius, id + "index" + "6", index + 1);
+      addHexagonAll(lat2, lng2, radius, id, idIndex + "6", index + 1);
     }
   }
+
+  function setHexagon(radius) {
+    for (let i = 0; i < hexagon.length; i++) {
+      let hexagonName = []
+      for (let j = i + 1; j < hexagon.length; j++){
+        if(hexagonName.indexOf(hexagon[j][0]) >= 0 || hexagon[i][0] === hexagon[j][0]){
+          continue
+        }
+        let latDistance = hexagon[i][1] - hexagon[j][1]
+        let lngDistance = hexagon[i][2] - hexagon[j][2]
+        let distance = latDistance * latDistance + lngDistance * lngDistance
+        if(distance < radius * radius * 9 / 4){
+          hexagonName.push(hexagon[j][0])
+          for(let k = 0; k < hexagon.length; k++){
+            if(hexagon[k][0] === hexagon[j][0]){
+              hexagon[k][1] += latDistance
+              hexagon[k][2] += lngDistance
+            }
+          }
+        }
+      }
+    }
+    let hexagonList = []
+    for (let i of hexagon){
+      let isIn = false
+      for(let j of hexagonList){
+        if(j[1] === i[1] && j[2] === i[2]){
+          isIn = true
+          break
+        }
+      }
+      if(!isIn){
+        hexagonList.push([i[0], i[1], i[2], i[3]])
+      }
+    }
+    console.log(hexagonList)
+    for(let i of hexagonList){
+      addOneHexagon(i[1], i[2], radius, i[0] + i[3])
+    }
+
+  }
+
   // 添加一个六边形
   function addOneHexagon(lat, lng, radius, id) {
     viewer.entities.add({
@@ -1916,12 +1975,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 <Button
                   type="primary"
                   onClick={() => {
-                    if (scene.isEdit === false) {
-                      scene.sceneName = "";
-                    } else {
-                      scene.sceneName = inputRef.current.input.value;
+                    let temp = sceneList
+                    if (scene.isEdit === true) {
+                      temp[index]['sceneName'] = inputRef.current.input.value;
                     }
-                    scene.isEdit = !scene.isEdit;
+                    temp[index]['isEdit'] = !temp[index]['isEdit']
+                    // scene.isEdit = !scene.isEdit;
+                    setScenList([...temp])
                   }}
                 >
                   {scene.isEdit ? "Save Scene" : "Rename"}
@@ -1932,7 +1992,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   type="default"
                   danger={true}
                   onClick={() => {
-                    sceneList.splice(index, 1);
+                    let temp = sceneList
+                    temp.splice(index, 1);
+                    setScenList([...temp])
                   }}
                 >
                   Delete
