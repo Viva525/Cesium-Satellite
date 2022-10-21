@@ -142,7 +142,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
                       width={"24%"}
                       height={"100%"}
                       xData={groundStabilityState["DateTime"]}
-                      yData={[groundReliabilityState["normal"]]}
+                      yData={[groundStabilityState["normal"]]}
                       legend={["normal"]}
                     />
                     <DashBoardChart
@@ -151,7 +151,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
                       width={"24%"}
                       height={"100%"}
                       xData={groundStabilityState["DateTime"]}
-                      yData={[groundReliabilityState["major fault"]]}
+                      yData={[groundStabilityState["major fault"]]}
                       legend={["major fault"]}
                     />
                     <DashBoardChart
@@ -160,7 +160,7 @@ const SatelliteDashboard: React.FC<{}> = () => {
                       width={"24%"}
                       height={"100%"}
                       xData={groundStabilityState["DateTime"]}
-                      yData={[groundReliabilityState["minor fault"]]}
+                      yData={[groundStabilityState["minor fault"]]}
                       legend={["minor fault"]}
                     />
                   </>

@@ -25,6 +25,11 @@
     border-color: transparent;
     box-shadow:none;
 }
+
+.cesium-btn-selected{
+    background: #4488bb !important;
+}
+
 #toolbar{
     width: 70vw;
     height: 3vh;

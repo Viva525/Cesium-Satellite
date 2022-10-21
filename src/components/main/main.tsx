@@ -21,6 +21,7 @@ import SatelliteBar from "../left/satelliteBar";
 import SatelliteNumberChart from "../left/satelliteNumberChart";
 import PolarEarth from "../right/palarEarth";
 import SatelliteInfo from "../right/satelliteInfo";
+import BasestationChart from "../right/basestationChart";
 import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
@@ -45,6 +46,7 @@ let nowPicksatellite: any;
 let rain: any, snow: any, fog: any;
 let stages: any;
 let previousTime: any;
+let netCollection: any[] = [];
 let timeID: any;
 let timeID1: any;
 let polarTimeId: any;
@@ -113,6 +115,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       3287654.154921683
     ),
   };
+  const [isShowNet, setIsShowNet] = useState<Boolean>(false);
+  const [isShowBasestationNet, setIsShowBasestationNet] =
+    useState<boolean>(false);
+  const [groundBusinessState, setGroundBusiniessState] = useState<any>(null);
+  const [groundReliabilityState, setGroundReliabilityState] =
+    useState<any>(null);
+  const [groundStabilityState, setGroundStabilityState] = useState<any>(null);
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // 场景列表数据
@@ -271,8 +280,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () { },
-        highlight: function () { },
+        declare: function () {},
+        highlight: function () {},
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -346,7 +355,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             menu.appendChild(option);
           }
         },
-        reset: function () { },
+        reset: function () {},
       };
       setTimeout(() => {
         let dronePromise = Cesium.CzmlDataSource.load(
@@ -614,7 +623,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
             let re_linkToBaseStation = /^Place\/.*-to-.*$/;
             let re_linkToBaseStation2 = /^Satellite\/.*-to-Place.*$/;
+            let re_sateToSate = /^Satellite\/.*-to-Satellite.*$/;
             if (re_linkToBaseStation.exec(ele.id) != null) {
+              viewer.entities.getById(ele.id).polyline.show = false;
+              netCollection.push(ele.id);
               let curBase = ele.id.split("-to-")[0]; // 当前基站
               if (!linkToBaseStation.hasOwnProperty(curBase)) {
                 linkToBaseStation[curBase] = {};
@@ -630,6 +642,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               });
             }
             if (re_linkToBaseStation2.exec(ele.id) != null) {
+              viewer.entities.getById(ele.id).polyline.show = false;
+              netCollection.push(ele.id);
               let curBase = ele.id.split("-to-")[1]; // 当前基站
               if (!linkToBaseStation.hasOwnProperty(curBase)) {
                 linkToBaseStation[curBase] = {};
@@ -644,9 +658,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 linkToBaseStation[curBase]["linkTimes"].push(time);
               });
             }
+            if (re_sateToSate.exec(ele.id) != null) {
+              viewer.entities.getById(ele.id).polyline.show = false;
+              netCollection.push(ele.id);
+            }
           });
+
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
-          setHexagon(1.5)
+          setHexagon(1.5);
         });
       }, 2000);
 
@@ -801,7 +820,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
       );
       // 添加设置按钮
-      let cesiumViewerToolbar = document.getElementsByClassName("cesium-viewer-toolbar")
+      let cesiumViewerToolbar = document.getElementsByClassName(
+        "cesium-viewer-toolbar"
+      );
     }
   }, [init]);
 
@@ -965,7 +986,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+            Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -1114,7 +1135,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -1140,7 +1161,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-        Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
@@ -1335,10 +1356,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   // 添加六边形
   function addHexagonAll(lat, lng, radius, id, idIndex, index) {
     // 判断该地区是否已经划过六边形
-    if(index === 1){
-      for(let i of hexagon){
-        if(id.indexOf(i[0]) >= 0 ){
-          return 
+    if (index === 1) {
+      for (let i of hexagon) {
+        if (id.indexOf(i[0]) >= 0) {
+          return;
         }
       }
     }
@@ -1347,19 +1368,19 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       return;
     }
     // addOneHexagon(lat, lng, radius, id + index);
-    hexagon.push([id, lat, lng, idIndex])
+    hexagon.push([id, lat, lng, idIndex]);
     // 右边的六边形
     let lng2 = lng;
     let lat2 = lat + radius * Math.sqrt(3);
     // addOneHexagon(lat2, lng2, radius, id + index + "1");
-    hexagon.push([id, lat2, lng2, idIndex + "1"])
+    hexagon.push([id, lat2, lng2, idIndex + "1"]);
     if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id, idIndex + "1", index + 1);
     }
     // 左边的六边形
     lat2 = lat - radius * Math.sqrt(3);
     // addOneHexagon(lat2, lng2, radius, id + index + "2");
-    hexagon.push([id, lat2, lng2, idIndex + "2"])
+    hexagon.push([id, lat2, lng2, idIndex + "2"]);
     if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id, idIndex + "2", index + 1);
     }
@@ -1367,14 +1388,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     lng2 = lng + (radius * 3) / 2;
     lat2 = lat - (radius * Math.sqrt(3)) / 2;
     // addOneHexagon(lat2, lng2, radius, id + index + "3");
-    hexagon.push([id, lat2, lng2, idIndex + "3"])
+    hexagon.push([id, lat2, lng2, idIndex + "3"]);
     if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id, idIndex + "3", index + 1);
     }
     //左下角六边形
     lng2 = lng - (radius * 3) / 2;
     // addOneHexagon(lat2, lng2, radius, id + index + "4");
-    hexagon.push([id, lat2, lng2, idIndex + "4"])
+    hexagon.push([id, lat2, lng2, idIndex + "4"]);
     if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id, idIndex + "4", index + 1);
     }
@@ -1382,14 +1403,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     lng2 = lng + (radius * 3) / 2;
     lat2 = lat + (radius * Math.sqrt(3)) / 2;
     // addOneHexagon(lat2, lng2, radius, id + index + "5");
-    hexagon.push([id, lat2, lng2, idIndex + "5"])
+    hexagon.push([id, lat2, lng2, idIndex + "5"]);
     if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id, idIndex + "5", index + 1);
     }
     //右下角六边形
     lng2 = lng - (radius * 3) / 2;
     // addOneHexagon(lat2, lng2, radius, id + index + "6");
-    hexagon.push([id, lat2, lng2, idIndex + "6"])
+    hexagon.push([id, lat2, lng2, idIndex + "6"]);
     if (Math.floor(Math.random() * 5) > 2) {
       addHexagonAll(lat2, lng2, radius, id, idIndex + "6", index + 1);
     }
@@ -1397,43 +1418,45 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   function setHexagon(radius) {
     for (let i = 0; i < hexagon.length; i++) {
-      let hexagonName = []
-      for (let j = i + 1; j < hexagon.length; j++){
-        if(hexagonName.indexOf(hexagon[j][0]) >= 0 || hexagon[i][0] === hexagon[j][0]){
-          continue
+      let hexagonName = [];
+      for (let j = i + 1; j < hexagon.length; j++) {
+        if (
+          hexagonName.indexOf(hexagon[j][0]) >= 0 ||
+          hexagon[i][0] === hexagon[j][0]
+        ) {
+          continue;
         }
-        let latDistance = hexagon[i][1] - hexagon[j][1]
-        let lngDistance = hexagon[i][2] - hexagon[j][2]
-        let distance = latDistance * latDistance + lngDistance * lngDistance
-        if(distance < radius * radius * 9 / 4){
-          hexagonName.push(hexagon[j][0])
-          for(let k = 0; k < hexagon.length; k++){
-            if(hexagon[k][0] === hexagon[j][0]){
-              hexagon[k][1] += latDistance
-              hexagon[k][2] += lngDistance
+        let latDistance = hexagon[i][1] - hexagon[j][1];
+        let lngDistance = hexagon[i][2] - hexagon[j][2];
+        let distance = latDistance * latDistance + lngDistance * lngDistance;
+        if (distance < (radius * radius * 9) / 4) {
+          hexagonName.push(hexagon[j][0]);
+          for (let k = 0; k < hexagon.length; k++) {
+            if (hexagon[k][0] === hexagon[j][0]) {
+              hexagon[k][1] += latDistance;
+              hexagon[k][2] += lngDistance;
             }
           }
         }
       }
     }
-    let hexagonList = []
-    for (let i of hexagon){
-      let isIn = false
-      for(let j of hexagonList){
-        if(j[1] === i[1] && j[2] === i[2]){
-          isIn = true
-          break
+    let hexagonList = [];
+    for (let i of hexagon) {
+      let isIn = false;
+      for (let j of hexagonList) {
+        if (j[1] === i[1] && j[2] === i[2]) {
+          isIn = true;
+          break;
         }
       }
-      if(!isIn){
-        hexagonList.push([i[0], i[1], i[2], i[3]])
+      if (!isIn) {
+        hexagonList.push([i[0], i[1], i[2], i[3]]);
       }
     }
-    console.log(hexagonList)
-    for(let i of hexagonList){
-      addOneHexagon(i[1], i[2], radius, i[0] + i[3])
-    }
 
+    for (let i of hexagonList) {
+      addOneHexagon(i[1], i[2], radius, i[0] + i[3]);
+    }
   }
 
   // 添加一个六边形
@@ -1841,24 +1864,64 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     changeSceneMode(scene.cesiumSetting.mode);
   };
 
+  useEffect(() => {
+    if (init) {
+      if (isShowNet) {
+        for (let i of netCollection) {
+          document
+            .getElementById("net-situation-btn")
+            ?.classList.add("cesium-btn-selected");
+          viewer.entities.getById(i).polyline.show = true;
+        }
+      } else {
+        for (let i of netCollection) {
+          document
+            .getElementById("net-situation-btn")
+            ?.classList.remove("cesium-btn-selected");
+          viewer.entities.getById(i).polyline.show = false;
+        }
+      }
+    }
+  }, [isShowNet]);
+
+  useEffect(() => {
+    if (init) {
+      if (isShowBasestationNet) {
+        document
+          .getElementById("basestation-net-situation")
+          ?.classList.add("cesium-btn-selected");
+        // 获取基站的数据
+        fetch("./data/groundData/groundBusiness.json")
+          .then((res) => res.json())
+          .then((data) => {
+            setGroundBusiniessState(data);
+          });
+        fetch("./data/groundData/groundReliability.json")
+          .then((res) => res.json())
+          .then((data) => {
+            setGroundReliabilityState(data);
+          });
+        fetch("./data/groundData/groundStability.json")
+          .then((res) => res.json())
+          .then((data) => {
+            setGroundStabilityState(data);
+          });
+          setCurBaseStation(baseStationList[0])
+      } else {
+        document
+          .getElementById("basestation-net-situation")
+          ?.classList.remove("cesium-btn-selected");
+      }
+    }
+  }, [isShowBasestationNet]);
+
+  useEffect(() => {
+    console.log(groundReliabilityState);
+  }, [groundReliabilityState]);
+
   return (
     <>
       <div id="title">星座运行态势感知平台</div>
-      <div className="left-wrap">
-        <Box
-          title="卫星列表"
-          component={
-            <SatelliteList
-              satelliteList={satelliteList}
-              selectedSatelliteList={selectedSatelliteList}
-              setSelectSatelliteList={setSelectSatelliteList}
-              setSelectedSatelliteList={setSelectedSatelliteList}
-            />
-          }
-        />
-        <Box title="卫星数量统计图" component={<SatelliteBar />} />
-        <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
-      </div>
       <div
         id="cesiumContainer"
         style={{
@@ -1867,42 +1930,149 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           background: "#000",
         }}
       ></div>
-      <div className="right-wrap">
-        <Box
-          title="卫星信息"
-          component={
-            <SatelliteInfo
-              sateName={curSatellite}
-              launch={"2021-08"}
-              status={"service"}
-              activity={"stable"}
+      {!isShowBasestationNet ? (
+        <>
+          <div className="left-wrap">
+            <Box
+              title="卫星列表"
+              component={
+                <SatelliteList
+                  satelliteList={satelliteList}
+                  selectedSatelliteList={selectedSatelliteList}
+                  setSelectSatelliteList={setSelectSatelliteList}
+                  setSelectedSatelliteList={setSelectedSatelliteList}
+                />
+              }
             />
-          }
-        />
-        <Box
-          title="极地图"
-          component={<PolarEarth position={polarPosition}></PolarEarth>}
-        ></Box>
-        <Box
-          title="卫星实时高度图"
-          component={
-            <HeightChart
-              satellitePostionData={satellitePostionData}
-              nowSystemDate={nowSystemDate}
+            <Box title="卫星数量统计图" component={<SatelliteBar />} />
+            <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
+          </div>
+          <div className="right-wrap">
+            <Box
+              title="卫星信息"
+              component={
+                <SatelliteInfo
+                  sateName={curSatellite}
+                  launch={"2021-08"}
+                  status={"service"}
+                  activity={"stable"}
+                  type={"satellite"}
+                />
+              }
             />
-          }
-        />
-        <Box
-          title="地面基站信息列表"
-          component={
-            <BaseStationInfo
-              baseStationList={baseStationList}
-              setBaseStation={setCurBaseStation}
-              setDashboard={setDashboard}
+            <Box
+              title="极地图"
+              component={<PolarEarth position={polarPosition}></PolarEarth>}
+            ></Box>
+            <Box
+              title="卫星实时高度图"
+              component={
+                <HeightChart
+                  satellitePostionData={satellitePostionData}
+                  nowSystemDate={nowSystemDate}
+                />
+              }
             />
-          }
-        />
-      </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="left-wrap">
+            <Box
+              title="地面基站信息列表"
+              component={
+                <BaseStationInfo
+                  baseStationList={baseStationList}
+                  setBaseStation={setCurBaseStation}
+                  setDashboard={setDashboard}
+                />
+              }
+            />
+            {groundBusinessState === null ? (
+              <></>
+            ) : (
+              <Box
+                title="groundBusiness"
+                component={
+                  <BasestationChart
+                    type={"Bar"}
+                    width={"100%"}
+                    height={20}
+                    xData={groundBusinessState["DateTime"]}
+                    yData={[
+                      groundBusinessState["Time percent"],
+                      groundBusinessState["SendTeraBytes"],
+                      groundBusinessState["RecTeraBytes"],
+                    ]}
+                    legend={["Time percent", "SendTeraBytes", "RecTeraBytes"]}
+                  />
+                }
+              />
+            )}
+          </div>
+          <div className="right-wrap">
+            <Box
+              title="基站信息"
+              component={
+                <SatelliteInfo
+                  sateName={`Place/${curBaseStation?.name}`}
+                  launch={"2021-08"}
+                  status={"service"}
+                  activity={"stable"}
+                  type={"basestation"}
+                />
+              }
+            />
+            {groundStabilityState === null ? (
+              <></>
+            ) : (
+              <Box title="" component={
+                <BasestationChart
+                title={"稳定性"}
+                type={"Line"}
+                width={"100%"}
+                height={20}
+                xData={groundStabilityState["DateTime"]}
+                yData={[groundStabilityState["AvgTime"]]}
+                legend={["AvgTime"]}
+              />
+              } />
+            )}
+            {groundReliabilityState === null ? (
+              <></>
+            ) : (
+              <>
+                <Box
+                  title="可靠性"
+                  component={
+                    <BasestationChart
+                      type={"Line"}
+                      width={"100%"}
+                      height={15}
+                      xData={groundReliabilityState["DateTime"]}
+                      yData={[groundReliabilityState["normal"]]}
+                      legend={["normal"]}
+                    />
+                  }
+                />
+                <Box
+                  title="可靠性"
+                  component={
+                    <BasestationChart
+                      type={"Line"}
+                      width={"100%"}
+                      height={15}
+                      xData={groundReliabilityState["DateTime"]}
+                      yData={[groundReliabilityState["major fault"]]}
+                      legend={["major fault"]}
+                    />
+                  }
+                />
+              </>
+            )}
+          </div>
+        </>
+      )}
       <div id="toolbar">
         {/* <button
           type="button"
@@ -1944,34 +2114,40 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         >
           Save Scence
         </button> */}
-        <button 
-        type="button"
-        className="cesium-button">
+        <button type="button" className="cesium-button">
           星座运行态势
         </button>
-        <button 
-        type="button"
-        className="cesium-button">
+        <button
+          type="button"
+          className="cesium-button"
+          id="net-situation-btn"
+          onClick={() => {
+            setIsShowNet(!isShowNet);
+          }}
+        >
           网络态势
         </button>
-        <button 
-        type="button"
-        className="cesium-button">
+        <button
+          type="button"
+          className="cesium-button"
+          id="basestation-net-situation"
+          onClick={() => {
+            setIsShowBasestationNet(!isShowBasestationNet);
+          }}
+        >
           站网态势
         </button>
-        <button 
-        type="button"
-        className="cesium-button">
+        <button type="button" className="cesium-button">
           资源态势
         </button>
-        <button 
-        type="button"
-        className="cesium-button">
+        <button type="button" className="cesium-button">
           业务态势
         </button>
-        <button 
-        type="button"
-        className="cesium-button" style={{float:"right"}}>
+        <button
+          type="button"
+          className="cesium-button"
+          style={{ float: "right" }}
+        >
           场景编辑
         </button>
       </div>
@@ -2006,12 +2182,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 <Button
                   type="primary"
                   onClick={() => {
-                    let temp = sceneList
-                    if (scene.isEdit === true){
-                      temp[index]['sceneName'] = inputRef.current.input.value;
+                    let temp = sceneList;
+                    if (scene.isEdit === true) {
+                      temp[index]["sceneName"] = inputRef.current.input.value;
                     }
-                    temp[index]['isEdit'] = !temp[index]['isEdit']
-                    setScenList([...temp])
+                    temp[index]["isEdit"] = !temp[index]["isEdit"];
+                    setScenList([...temp]);
                   }}
                 >
                   {scene.isEdit ? "Save Scene" : "Rename"}
@@ -2022,9 +2198,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   type="default"
                   danger={true}
                   onClick={() => {
-                    let temp = sceneList
+                    let temp = sceneList;
                     temp.splice(index, 1);
-                    setScenList([...temp])
+                    setScenList([...temp]);
                   }}
                 >
                   Delete
