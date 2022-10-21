@@ -7,8 +7,7 @@ export type DataType = {
   
 export type satelliteListType = {
     statelliteList: string[]
-    setSelectSatelliteList: SetState<any[]>
-    setSelectedSatelliteList: SetState<any[]>
+    setSatelliteList: SetState<any[]>
   }
 export type BaseStation = {
     name: string,
@@ -33,6 +32,11 @@ export type CesiumSettingType = {
   mode: number
 }
 
+export type StatelliteCardType = {
+  nowStatelliteName: any[]
+  statelliteType: string
+  setNowSatellite : SetState<any[]>
+}
   /////////////////////////场景数据类型///////////////////////////////
 export type SceneDataType = {
   selectedSatelliteList: string[],

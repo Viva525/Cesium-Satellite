@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CesiumComponent from "./components/main/main";
 import SatelliteDashboard from "./components/satelliteDashboard/satelliteDashboard";
+import SatelliteList from "./components/left/satelliteList/index";
 import { BrowserRouter, HashRouter, Link, Route, Routes } from "react-router-dom";
 import { Dashboard } from "./types/type";
 import "antd/dist/antd.min.css";

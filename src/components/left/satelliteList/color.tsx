@@ -10,10 +10,10 @@ type satelliteColor = {
   initColor: RGBColor|undefined
   setSatelliteColor:SetState<any>;
   satellityKey: React.Key;
-  setSelectSatelliteList: SetState<any[]>;
 };
+
 const ColorSelect: React.FC<satelliteColor> = (props) => {
-  const {initColor, setSatelliteColor, satellityKey, setSelectSatelliteList } = props;
+  const {initColor, setSatelliteColor, satellityKey } = props;
   const [color, setColor] = useState(initColor);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
@@ -59,12 +59,8 @@ const ColorSelect: React.FC<satelliteColor> = (props) => {
 
   const handleChange = (color: { rgb: RGBColor }) => {
     setColor(color.rgb);
-    setSelectSatelliteList([[1, satellityKey, color.rgb]]);
-    console.log(satellityKey);
     
-    setSatelliteColor((ele)=>{
-      return {...ele, [satellityKey]: color.rgb}
-    });
+    setSatelliteColor(color.rgb);
   };
 
   return (
