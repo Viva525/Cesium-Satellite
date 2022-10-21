@@ -29,7 +29,19 @@ export type PolarEarthProps = {
 }
 
 export type CesiumSettingType = {
-  mode: number
+  mode?: number,
+}
+export type SettingType = {
+  mode?: number,
+  light: {val: boolean, name: string},
+  sun: {val: boolean, name: string},
+  star:{val: boolean, name: string},
+  time: {val: boolean, name: string},
+  rotate: {val: boolean, name: string}
+  label: {val: boolean, name: string},
+  icon: {val: boolean, name: string},
+  model:{val: boolean, name: string},
+  track:{val: boolean, name: string},
 }
 
 export type StatelliteCardType = {

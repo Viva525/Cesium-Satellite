@@ -24,7 +24,7 @@ const BaseStationInfo: React.FC<BaseStationInfoProp> = (props) => {
   return (
     <div
       id="baseStationList"
-      style={{ width: "100%", height: "15vh", overflowY: "scroll" }}
+      style={{ width: "100%", height: "32vh", overflowY: "auto" }}
     >
       {baseStationList.map((baseStation: BaseStation, index) => {
         if (baseStation.name.includes("1")) {

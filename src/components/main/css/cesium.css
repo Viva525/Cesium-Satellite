@@ -25,17 +25,58 @@
     border-color: transparent;
     box-shadow:none;
 }
+
+.cesium-btn-selected{
+    background: #4488bb !important;
+}
+
 #toolbar{
     width: 100vw;
     height: 3vh;
-    margin-top: 5px;
+    margin-top: 6px;
     top: 5px;
     position: absolute;
-    padding-top: 1px;
-    padding-left: 1.5vw;
-    background-image: url("../assets/top.png");
-    background-position: center;
+    padding-top: 5px;
+    padding-left: 20vw;
+    z-index: 998;
+}
+
+.settingPanel{
+    width: 6vw;
+    display: block;
+    position: absolute;
+    box-sizing: content-box;
+    top: 4vh;
+    right: 1.5vw;
+    max-height: 500px;
+    margin-top: 5px;
+    background-color: rgba(38, 38, 38, 0.75);
+    border: 1px solid #444;
+    padding: 6px;
+    overflow: auto;
+    border-radius: 10px;
     z-index: 999;
+    color: #fff;
+    font-size: 18px;
+}
+
+.settingPanel ul{
+    padding: 8px;
+}
+
+.settingPanel ul li {
+    list-style: none;
+    margin-top: 2px;
+    padding-left: 12px;
+}
+
+.fade {
+    -webkit-user-select: none;
+    user-select: none;
+    transform: translate(0, -20%);
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.2s, opacity 0.2s ease-in, transform 0.2s ease-in;
 }
 
 #satelliteList {
@@ -52,7 +93,7 @@
     color: rgba(13, 126, 222, 1);
     position: absolute;
     z-index: 999;
-    left: 50%;
+    left: 10%;
     font-weight: 600;
     letter-spacing: 3px;
     font-size: 40px;
@@ -113,10 +154,9 @@
 }
 
 .cesium-viewer-toolbar{
-    width: 10vw;
-    left: 50vw;
-    margin-top: 5vh;
-    transform: translateX(-50%);
+    right: 5vw !important;
+    margin-top: 1vh;
+    z-index: 999;
 }
 
 .right-box {

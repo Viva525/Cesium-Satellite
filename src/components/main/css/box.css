@@ -1,13 +1,13 @@
 #box{
     margin-bottom: 50px;
-    background: linear-gradient(to left, #09fcfe, #09fcfe) left top no-repeat,
+    /* background: linear-gradient(to left, #09fcfe, #09fcfe) left top no-repeat,
     linear-gradient(to bottom, #09fcfe, #09fcfe) left top no-repeat,
     linear-gradient(to left, #09fcfe, #09fcfe) right top no-repeat,
     linear-gradient(to bottom, #09fcfe, #09fcfe) right top no-repeat,
     linear-gradient(to left, #09fcfe, #09fcfe) left bottom no-repeat,
     linear-gradient(to bottom, #09fcfe, #09fcfe) left bottom no-repeat,
     linear-gradient(to left, #09fcfe, #09fcfe) right bottom no-repeat,
-    linear-gradient(to left, #09fcfe, #09fcfe) right bottom no-repeat;
+    linear-gradient(to left, #09fcfe, #09fcfe) right bottom no-repeat; */
     background-size: 2px 20px, 20px 2px, 2px 20px, 20px 2px;
 }
 .boxTitle{
@@ -53,3 +53,4 @@
     position: absolute;
     padding-left: 5px;
 }
+

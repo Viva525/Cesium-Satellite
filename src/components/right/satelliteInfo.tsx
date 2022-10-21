@@ -5,23 +5,26 @@ import React, { useEffect, useState } from "react";
 import "./satelliteInfo.css";
 
 type SatelliteInfoProp = {
-  sateName: String;
-  launch?: String;
-  status?: String;
-  activity?: String;
+  sateName: string;
+  launch?: string;
+  status?: string;
+  activity?: string;
+  type:string;
 };
 
 const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
-  const { sateName, launch, status, activity } = props;
-  const [bgImg, setBgImg] = useState<String>("");
+  var { sateName, launch, status, activity, type } = props;
+  const [bgImg, setBgImg] = useState<string>("");
 
   useEffect(() => {
     if (sateName.includes("BEIDOU")) {
-      setBgImg("BEIDOU");
+      setBgImg("BEIDOU.png");
     } else if (sateName.includes("GPS")) {
-      setBgImg("GPS");
+      setBgImg("GPS.png");
     } else if (sateName.includes("STARLINK")) {
-      setBgImg("STARLINK");
+      setBgImg("STARLINK.png");
+    }else if(sateName.includes("Place/") && sateName !== "Place/undefined"){
+      setBgImg("BASESTATION.jpg")
     }
   }, [sateName]);
 
@@ -32,26 +35,26 @@ const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
     <div id="satellite-info">
       <div
         id="sate-model"
-        style={{ backgroundImage: `url(./images/${bgImg}.png)` }}
+        style={{ backgroundImage: `url(./images/${bgImg})` }}
       ></div>
       <div id="sate-info">
         <div id="up">
-          <div className="name-item">卫星名称</div>
-          <div className="name-sate">{sateName}</div>
+          <div className="name-item">{type === "satellite"?"卫星名称": "基站名称"}</div>
+          <div className="name-sate">{sateName === "Place/undefined"?'——': sateName}</div>
         </div>
         <div id="bottom">
           <div id="launch-time-container">
-            <div className="item-value">{launch}</div>
+            <div className="item-value">{sateName === "Place/undefined"? '——':launch}</div>
             <img className="sate-info-img" src="./images/a.png" alt="" />
-            <div className="item">发射时间</div>
+            <div className="item">{type === "satellite"?"发射时间": "建设时间"}</div>
           </div>
           <div id="status-container">
-            <div className="item-value">{status}</div>
+            <div className="item-value">{sateName === "Place/undefined"? '——':status}</div>
             <img className="sate-info-img" src="./images/b.png" alt="" />
             <div className="item">状态</div>
           </div>
           <div id="activity-container">
-            <div className="item-value">{activity}</div>
+            <div className="item-value">{sateName === "Place/undefined"? '——':activity}</div>
             <img className="sate-info-img" src="./images/c.png" alt="" />
             <div className="item">活动</div>
           </div>
