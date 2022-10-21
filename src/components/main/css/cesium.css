@@ -26,15 +26,14 @@
     box-shadow:none;
 }
 #toolbar{
-    width: 100vw;
+    width: 70vw;
     height: 3vh;
     margin-top: 5px;
     top: 5px;
+    left: 19vw;
     position: absolute;
-    padding-top: 1px;
+    padding-top: 5px;
     padding-left: 1.5vw;
-    background-image: url("../assets/top.png");
-    background-position: center;
     z-index: 999;
 }
 
@@ -52,7 +51,7 @@
     color: rgba(13, 126, 222, 1);
     position: absolute;
     z-index: 999;
-    left: 50%;
+    left: 10%;
     font-weight: 600;
     letter-spacing: 3px;
     font-size: 40px;
@@ -113,10 +112,9 @@
 }
 
 .cesium-viewer-toolbar{
-    width: 10vw;
-    left: 50vw;
-    margin-top: 5vh;
-    transform: translateX(-50%);
+    right: 3vw !important;
+    margin-top: 1vh;
+    z-index: 999;
 }
 
 .right-box {
