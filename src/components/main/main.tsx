@@ -13,6 +13,7 @@ import {
   CesiumSettingType,
   PolarEarthProps,
   SceneDataType,
+  SettingType,
 } from "../../types/type";
 import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
@@ -24,6 +25,7 @@ import SatelliteInfo from "../right/satelliteInfo";
 import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
+import $ from 'jquery';
 
 //@ts-ignore
 let viewer: any;
@@ -113,7 +115,18 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       3287654.154921683
     ),
   };
-
+  // 设置数据
+  const [setting, setSetting] = useState<SettingType>({
+      label: {val: true, name: "卫星标注"},
+      icon: {val: true, name: "卫星图标"},
+      model: {val: false, name: "卫星模型"},
+      track: {val: false, name: "卫星轨迹"},
+      light: {val: false, name: "显示光照"},
+      sun: {val: true, name: "显示太阳"},
+      star: {val: false, name: "显示星空"},
+      time: {val: true, name: "显示时间轴"},
+      rotate: {val: true, name: "地球旋转"}
+  })
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // 场景列表数据
   const [sceneList, setScenList] = useState<SceneDataType[]>([]);
@@ -240,12 +253,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //   19
       // )
 
-      // 开启光照 & 亮度设置: 两种方式
-      viewer.scene.globe.enableLighting = false;
-      viewer.shadows = false;
-
-      let layer = imageryLayers.get(0);
-      layer["brightness"] = 1;
 
       // 背景切换为图片
       // 去掉黑色星空背景
@@ -452,13 +459,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               ele.billboard.color = imageColor;
               ele.billboard.image = entityImage;
               // 改成点
-              // ele.billboard = undefined;
-              // ele.point = {
-              //   show: true,
-              //   color: entityColor,
-              //   // outlineWidth: 4,
-              //   pixelSize: 5,
-              // };
+              ele.point = {
+                show: false,
+                color: entityColor,
+                // outlineWidth: 4,
+                pixelSize: 5,
+              };
 
               // 绘制雷达扫描
               let lineFlowPosition = [];
@@ -801,9 +807,95 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
       );
       // 添加设置按钮
-      let cesiumViewerToolbar = document.getElementsByClassName("cesium-viewer-toolbar")
+      let cesiumViewerToolbar = document.getElementsByClassName("cesium-viewer-toolbar");
+      if(cesiumViewerToolbar[0] != null){
+        let settingButton = document.createElement('button');
+        settingButton.className = "cesium-button cesium-toolbar-button";
+
+        const settingPanelStr = '<div id="settingPanel" class="settingPanel fade" style="max-height: 1164px;"><ul id="settingList"></ul></div>';
+        settingButton.innerHTML = '<svg t="1666321531272" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1392" width="30" height="30"><path d="M940 596l-76-57.6c0.8-8 1.6-16.8 1.6-26.4s-0.8-18.4-1.6-26.4l76-57.6c20.8-16 26.4-44 12.8-68l-84.8-143.2c-9.6-16.8-28-27.2-47.2-27.2-6.4 0-12 0.8-18.4 3.2L712 228c-15.2-10.4-31.2-19.2-47.2-26.4l-13.6-92c-4-26.4-26.4-45.6-53.6-45.6H426.4c-27.2 0-49.6 19.2-53.6 44.8L360 201.6c-16 7.2-31.2 16-47.2 26.4l-90.4-35.2c-6.4-2.4-12.8-3.2-19.2-3.2-19.2 0-37.6 9.6-46.4 26.4L71.2 360c-13.6 22.4-8 52 12.8 68l76 57.6c-0.8 9.6-1.6 18.4-1.6 26.4s0 16.8 1.6 26.4l-76 57.6c-20.8 16-26.4 44-12.8 68l84.8 143.2c9.6 16.8 28 27.2 47.2 27.2 6.4 0 12-0.8 18.4-3.2L312 796c15.2 10.4 31.2 19.2 47.2 26.4l13.6 92c3.2 25.6 26.4 45.6 53.6 45.6h171.2c27.2 0 49.6-19.2 53.6-44.8l13.6-92.8c16-7.2 31.2-16 47.2-26.4l90.4 35.2c6.4 2.4 12.8 3.2 19.2 3.2 19.2 0 37.6-9.6 46.4-26.4l85.6-144.8c12.8-23.2 7.2-51.2-13.6-67.2zM704 512c0 105.6-86.4 192-192 192S320 617.6 320 512s86.4-192 192-192 192 86.4 192 192z" p-id="1393"></path></svg>';
+        cesiumViewerToolbar[0].appendChild(settingButton);
+        cesiumViewerToolbar[0].insertAdjacentHTML('afterend',settingPanelStr);
+        let settingDom = document.getElementById("settingPanel");
+        let isSetting = false;
+        settingButton.onclick = () => {
+          if(isSetting === true){
+            settingDom?.classList.add("fade");
+          }else{
+            settingDom?.classList.remove("fade");
+          }
+          isSetting = !isSetting
+        }
+        
+        let checkBoxStr = "";
+        let settingList = document.getElementById("settingList");
+        Object.keys(setting).forEach((key)=>{
+          checkBoxStr += `<li><label><input name=${key} ${setting[key]["val"]==true?'checked':''} class="checkItem" type="checkbox" value="${setting[key]["val"]}"/>&nbsp;&nbsp;&nbsp;${setting[key]["name"]}</label></li>`;
+        });
+        settingList.innerHTML = checkBoxStr;
+        $(".checkItem").click(function(e){
+          let checkName = e.target.name;
+          let checkVal = $(this)[0].checked;
+          setSetting((prev: SettingType)=>{
+            return {...prev, ...{[checkName]:{val:checkVal, name:prev[checkName]["name"]}}};
+          });
+          settingDeal(checkName, checkVal);
+        })
+      }
     }
   }, [init]);
+
+  const settingDeal = (settingName: string, settingValue: boolean) => {
+    switch(settingName){
+      case "label":
+        //没做
+        break;
+      case "icon":
+        if(settingValue == true){
+          console.log(viewer.entities);
+        }else{
+          console.log(viewer.entities);
+          
+        }
+        break;
+      case "model":
+        if(settingValue == true){
+
+        }else{
+
+        }
+        break;
+      case "track":
+        if(settingValue == true){
+
+        }else{
+
+        }
+        break;
+      case "light":
+        // 开启光照 & 亮度设置: 两种方式
+        viewer.scene.globe.enableLighting = settingValue;
+        viewer.shadows = settingValue;
+        break;
+      case "sun":
+        // 显示太阳
+        viewer.scene.sun.show = settingValue;
+        break;
+      case "star":
+        // 显示星空
+        viewer.scene.skyBox.show = settingValue;
+        break;
+      case "time":
+        // 显示时间轴
+        viewer.animation.container.style.visibility = (settingValue == true?'visible':'hidden');
+        viewer.timeline.container.style.visibility =  (settingValue == true?'visible':'hidden');
+        break;
+      case "rotate":
+        // 是否旋转
+        setIsRotate(settingValue);
+        break;
+    }
+  }
 
   useEffect(() => {
     if (init) {
@@ -1971,7 +2063,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         </button>
         <button 
         type="button"
-        className="cesium-button" style={{float:"right"}}>
+        className="cesium-button" style={{float:"right",marginRight:"1.5vw"}}>
           场景编辑
         </button>
       </div>
