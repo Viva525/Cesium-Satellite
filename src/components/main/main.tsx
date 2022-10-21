@@ -65,9 +65,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     []
   );
   const [nowSystemDate, setNowSystemDate] = useState<string[]>([]);
+  // 卫星列表
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
-  const [selectSatelliteList, setSelectSatelliteList] = useState<any[]>([]);
-  const [selectedSatelliteList, setSelectedSatelliteList] = useState<any[]>([]);
   const [satelliteColor, setSatelliteColor] = useState({});
   const [start, setStart] = useState(
     Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
@@ -411,7 +410,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             }
 
             if (ele.path != undefined) {
-              nowSatelliteList.push(ele.id);
+
               ele.path.show = false; // 设置路径不可看
               // 设置路径样式
               let re_starlink = /Satellite\/STARLINK*/;
@@ -488,6 +487,16 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               );
 
               let height = Math.abs(cartographic.height);
+              // 根据卫星高度添加卫星信息
+              if(height > 1000000){
+                nowSatelliteList.push([ele.id, true, false, false, false, false, "高轨", "", false]);
+              }
+              else if(height < 100000){
+                nowSatelliteList.push([ele.id, true, false, false, false, false, "低轨", "", false]);
+              }
+              else{
+                nowSatelliteList.push([ele.id, true, false, false, false, false, "中轨", "", false]);
+              }
               let earthRadius = 6371393;
               // 卫星底部据地球中心的距离
               let earthHeight =
@@ -932,6 +941,54 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       );
     }
   }, [curSatellite]);
+
+  useEffect(() => {
+    for(let i in satelliteList){
+      if(satelliteList[i][8] == true){
+        satelliteList[i][8] = false
+        let pick = viewer.entities.getById(satelliteList[i][0]);
+
+        let curradarScanner = viewer.entities.getById("radarScan_" + satelliteList[i][0]);
+        
+        // 显示2D模型
+        pick.billboard.show = satelliteList[i][1]
+        // 显示3D模型
+        pick.model.show = satelliteList[i][2]
+        console.log(pick)
+        // 设置轨迹        
+        if (pick.id) {
+          if (pick._path != undefined) {
+            pick._path.show = satelliteList[i][4];
+          }
+        }
+        // 设置圆柱
+        curradarScanner.show = satelliteList[i][5];
+        // 设置颜色
+        if(satelliteList[i][7] != ""){
+          curradarScanner.cylinder.material = new Cesium.Color(
+            satelliteList[i][7].r / 255,
+            satelliteList[i][7].g / 255,
+            satelliteList[i][7].b / 255,
+          );
+
+        }
+
+        // 显示2D模型
+        if(satelliteList[i][1] == true){
+
+        }
+        // 显示3D模型
+        if(satelliteList[i][2] == true){
+
+        }
+        // 显示标注
+        if(satelliteList[i][3] == true){
+
+        }
+
+      }
+    }
+  },[satelliteList])
 
   const earthRotate = useCallback(() => {
     var spinRate = 1;
@@ -1508,40 +1565,41 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   function setHexagon(radius) {
     for (let i = 0; i < hexagon.length; i++) {
-      let hexagonName = [];
+      let hexagonName = []
       for (let j = i + 1; j < hexagon.length; j++) {
-        if (
-          hexagonName.indexOf(hexagon[j][0]) >= 0 ||
-          hexagon[i][0] === hexagon[j][0]
-        ) {
-          continue;
+        if (hexagonName.indexOf(hexagon[j][0]) >= 0 || hexagon[i][0] === hexagon[j][0]) {
+          continue
         }
-        let latDistance = hexagon[i][1] - hexagon[j][1];
-        let lngDistance = hexagon[i][2] - hexagon[j][2];
-        let distance = latDistance * latDistance + lngDistance * lngDistance;
-        if (distance < (radius * radius * 9) / 4) {
-          hexagonName.push(hexagon[j][0]);
+        let latDistance = hexagon[i][1] - hexagon[j][1]
+        let lngDistance = hexagon[i][2] - hexagon[j][2]
+        let distance = latDistance * latDistance + lngDistance * lngDistance
+        if (distance < radius * radius * 9 / 4) {
+          hexagonName.push(hexagon[j][0])
           for (let k = 0; k < hexagon.length; k++) {
             if (hexagon[k][0] === hexagon[j][0]) {
-              hexagon[k][1] += latDistance;
-              hexagon[k][2] += lngDistance;
+              hexagon[k][1] += latDistance
+              hexagon[k][2] += lngDistance
             }
           }
         }
       }
     }
-    let hexagonList = [];
+    let hexagonList = []
     for (let i of hexagon) {
-      let isIn = false;
+      let isIn = false
       for (let j of hexagonList) {
         if (j[1] === i[1] && j[2] === i[2]) {
-          isIn = true;
-          break;
+          isIn = true
+          break
         }
       }
       if (!isIn) {
-        hexagonList.push([i[0], i[1], i[2], i[3]]);
+        hexagonList.push([i[0], i[1], i[2], i[3]])
       }
+    }
+    console.log(hexagonList)
+    for (let i of hexagonList) {
+      addOneHexagon(i[1], i[2], radius, i[0] + i[3])
     }
 
     for (let i of hexagonList) {
@@ -1581,87 +1639,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       },
     });
   }
-
-  // 当前选择的卫星
-  useEffect(() => {
-    for (let i of selectSatelliteList) {
-      let pick = viewer.entities.getById(i[1]);
-      let curradarScanner = viewer.entities.getById("radarScan_" + i[1]);
-      if (i[0] === 0) {
-        if (i[1] === true) {
-          count += 1;
-          current = i[1];
-        }
-        curradarScanner.show = i[2];
-        if (pick.id) {
-          if (pick._path != undefined) {
-            pick._path.show = i[2];
-          }
-        }
-      } else if (i[0] === 1) {
-        curradarScanner.cylinder.material = new Cesium.Color(
-          i[2].r / 255,
-          i[2].g / 255,
-          i[2].b / 255,
-          i[2].a
-        );
-      }
-    }
-  }, [selectSatelliteList]);
-
-  // 当前选中的卫星
-  useEffect(() => {
-    // 实时展示被选中的实体的位置
-    clearInterval(polarTimeId);
-    if (selectedSatelliteList.length === 0) {
-      setPolarPosition([]);
-    } else {
-      polarTimeId = setInterval(() => {
-        let t = [];
-        for (let i of selectedSatelliteList) {
-          let curPosition = viewer.entities
-            .getById(i)
-            .position.getValue(viewer.clock.currentTime);
-          let [lng, lat] = GetWGS84FromDKR(curPosition, 1);
-          t.push([lng, lat, i]);
-        }
-        setPolarPosition(t);
-      }, 1000);
-    }
-    if (selectedSatelliteList.length > 0) {
-      if (nowPicksatellite) {
-        if (
-          selectedSatelliteList[selectedSatelliteList.length - 1] !==
-          nowPicksatellite[0]
-        ) {
-          nowPicksatellite = [
-            selectedSatelliteList[selectedSatelliteList.length - 1],
-            true,
-            false,
-          ];
-        } else {
-          nowPicksatellite = [
-            selectedSatelliteList[selectedSatelliteList.length - 1],
-            true,
-            true,
-          ];
-        }
-      } else {
-        nowPicksatellite = [
-          selectedSatelliteList[selectedSatelliteList.length - 1],
-          true,
-          true,
-        ];
-      }
-      setCurSatellite(
-        selectedSatelliteList[selectedSatelliteList.length - 1].split("/")[1]
-      );
-    } else {
-      if (nowPicksatellite) {
-        nowPicksatellite = [nowPicksatellite[0], false, false];
-      }
-    }
-  }, [selectedSatelliteList.length]);
 
   useEffect(() => {
     if (nowPicksatellite) {
@@ -1914,7 +1891,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   const showSaveScencePanel = () => {
     let temp: SceneDataType = {
-      selectedSatelliteList: selectedSatelliteList,
+      // selectedSatelliteList: selectedSatelliteList,
       curBaseStation: curBaseStation,
       cesiumSetting: {
         mode: viewer.scene.mode,
@@ -1949,7 +1926,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   };
 
   const loadingScene = (scene: SceneDataType) => {
-    setSelectedSatelliteList([...scene.selectedSatelliteList]);
+    // setSelectedSatelliteList([...scene.selectedSatelliteList]);
     setCurBaseStation(scene.curBaseStation);
     changeSceneMode(scene.cesiumSetting.mode);
   };
@@ -2028,14 +2005,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               component={
                 <SatelliteList
                   satelliteList={satelliteList}
-                  selectedSatelliteList={selectedSatelliteList}
-                  setSelectSatelliteList={setSelectSatelliteList}
-                  setSelectedSatelliteList={setSelectedSatelliteList}
+                  setSatelliteList = {setSatelliteList}
                 />
               }
             />
-            <Box title="卫星数量统计图" component={<SatelliteBar />} />
-            <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
+            {/* <Box title="卫星数量统计图" component={<SatelliteBar />} />
+            <Box title="卫星数量变化图" component={<SatelliteNumberChart />} /> */}
           </div>
           <div className="right-wrap">
             <Box

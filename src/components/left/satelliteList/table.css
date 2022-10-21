@@ -1,62 +1,96 @@
-.ant-table-cell, .ant-empty-description, .ant-pagination-item-link, .ant-pagination-item>a, .ant-select-selector,.ant-pagination-simple-pager input{
+.ant-table-cell,
+.ant-empty-description,
+.ant-pagination-item-link,
+.ant-pagination-item>a,
+.ant-select-selector,
+.ant-pagination-simple-pager input {
     /* background: #303336 !important; */
     background: rgba(255, 255, 255, 0.07) !important;
-    border:1px #fff;
-    color: #fff !important;
+    border: 1px #fff;
+    /* color: #fff !important; */
 }
+
 .ant-table.ant-table-small {
     font-size: 12px !important;
 }
-.ant-table{
+
+.ant-table {
     background: transparent !important;
     /* background-image: url("../main//assets/rightCon01.png") !important; */
     background-size: cover !important;
     background-repeat: no-repeat !important;
 }
-tbody td{
+
+tbody td {
     padding: 2px !important;
 }
+
 .ant-table-pagination.ant-pagination {
     margin-top: 10px !important;
 }
 
-.ant-pagination-item-ellipsis, .ant-select-arrow, .ant-pagination-slash, .ant-pagination-simple-pager{
+.ant-pagination-item-ellipsis,
+.ant-select-arrow,
+.ant-pagination-slash,
+.ant-pagination-simple-pager {
     color: #fff !important;
 }
 
-.ant-table-tbody > tr.ant-table-row-selected > td {
+.ant-table-tbody>tr.ant-table-row-selected>td {
     border-color: white !important
 }
 
-.ant-table-filter-dropdown, .ant-dropdown-menu{
+.ant-table-filter-dropdown,
+.ant-dropdown-menu {
     background-color: rgba(40, 37, 37, 0.8) !important;
 }
-.ant-dropdown-menu-item-active,.ant-dropdown-menu-item:hover{
-    background-color:rgba(40, 37, 37, 0.8) !important;
+
+.ant-dropdown-menu-item-active,
+.ant-dropdown-menu-item:hover {
+    background-color: rgba(40, 37, 37, 0.8) !important;
 }
 
-.ant-table-filter-dropdown-btns{
-    background: rgba(221, 217, 217, 0.1)!important;
+.ant-table-filter-dropdown-btns {
+    background: rgba(221, 217, 217, 0.1) !important;
 }
 
-.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title, .ant-btn-link[disabled], .ant-btn-link[disabled]:hover, .ant-btn-link[disabled]:focus, .ant-btn-link[disabled]:active{
-    color:#fff !important;
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu-title,
+.ant-btn-link[disabled],
+.ant-btn-link[disabled]:hover,
+.ant-btn-link[disabled]:focus,
+.ant-btn-link[disabled]:active {
+    color: #fff !important;
 }
-.ant-btn-primary{
+
+.ant-btn-primary {
     background: #74b0e5 !important;
     border: 0 ! important;
 }
-.ant-dropdown-menu-item-selected, .ant-dropdown-menu-submenu-title-selected {
+
+.ant-dropdown-menu-item-selected,
+.ant-dropdown-menu-submenu-title-selected {
     color: #fff;
     background-color: rgba(40, 37, 37, 0.8) !important;
 }
-.flexbox-fix input{
+
+.flexbox-fix input {
     color: black;
     width: 100% !important;
     font-size: 12px !important;
     text-align: center;
 }
 
-.ant-image-mask-info{
+.ant-image-mask-info {
     display: none !important;
+}
+
+.statelliteButton {
+    background-color: rgba(0, 0, 0, 0);
+    width: 60px;
+    border: 0ch;
+    color: rgb(44, 79, 172);
+}
+.ant-list-item-meta-title{
+    color: rgb(44, 79, 172)!important
 }
