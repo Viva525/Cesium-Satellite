@@ -87,10 +87,28 @@ tbody td {
 
 .statelliteButton {
     background-color: rgba(0, 0, 0, 0);
-    width: 60px;
+    width: 50px;
     border: 0ch;
     color: rgb(44, 79, 172);
 }
-.ant-list-item-meta-title{
-    color: rgb(44, 79, 172)!important
+
+.ant-list-item-meta-title {
+    color: rgb(44, 79, 172) !important
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* 滚动槽 */
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+    border-radius: inherit;
+    background-color: rgba(144, 147, 153, 0);
+    -webkit-transition: 0.3s background-color;
+    transition: 0.3s background-color;
 }
