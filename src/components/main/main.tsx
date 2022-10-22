@@ -126,15 +126,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [groundStabilityState, setGroundStabilityState] = useState<any>(null);
   // 设置数据
   const [setting, setSetting] = useState<SettingType>({
-      label: {val: false, name: "卫星标注"},
-      icon: {val: true, name: "卫星图标"},
-      model: {val: false, name: "卫星模型"},
-      track: {val: false, name: "卫星轨迹"},
-      light: {val: false, name: "显示光照"},
-      sun: {val: true, name: "显示太阳"},
-      star: {val: false, name: "显示星空"},
-      time: {val: true, name: "显示时间轴"},
-      rotate: {val: true, name: "地球旋转"}
+    label: { val: false, name: "卫星标注" },
+    icon: { val: true, name: "卫星图标" },
+    model: { val: false, name: "卫星模型" },
+    track: { val: false, name: "卫星轨迹" },
+    light: { val: false, name: "显示光照" },
+    sun: { val: true, name: "显示太阳" },
+    star: { val: false, name: "显示星空" },
+    time: { val: true, name: "显示时间轴" },
+    rotate: { val: true, name: "地球旋转" }
   })
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // 场景列表数据
@@ -489,10 +489,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
               let height = Math.abs(cartographic.height);
               // 根据卫星高度添加卫星信息
-              if (ele.id.indexOf("BEIDOU") >= 0 ) {
+              if (ele.id.indexOf("BEIDOU") >= 0) {
                 nowSatelliteList.push([ele.id, true, false, false, false, false, "高轨", "", false]);
               }
-              else if (ele.id.indexOf("STARLINK") >= 0 ) {
+              else if (ele.id.indexOf("STARLINK") >= 0) {
                 nowSatelliteList.push([ele.id, true, false, false, false, false, "低轨", "", false]);
               }
               else {
@@ -880,11 +880,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       case "label":
         satelliteListRef.current.forEach(satellite => {
           let satelliteEntity = viewer.entities.getById(satellite[0]);
-          if(satelliteEntity.label == undefined){
+          if (satelliteEntity.label == undefined) {
             satelliteEntity.label.text = satellite[0];
             satelliteEntity.label.font = '14pt Source Han Sans CN';
             satelliteEntity.label.fillColor = Cesium.Color.WHITE;
-          }else{
+          } else {
             satelliteEntity.label.show = settingValue;
           }
         });
@@ -952,7 +952,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [curSatellite]);
 
   useEffect(() => {
-    
+
     clearInterval(polarTimeId);
     polarTimeId = setInterval(() => {
       let t = [];
@@ -985,16 +985,24 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             nowPicksatellite = [satelliteList[i][0], true, true]
           }
         }
-        console.log(i)
         satelliteList[i][8] = false
         let pick = viewer.entities.getById(satelliteList[i][0]);
-
+        console.log(pick)
         let curradarScanner = viewer.entities.getById("radarScan_" + satelliteList[i][0]);
 
         // 显示2D模型
         pick.billboard.show = satelliteList[i][1]
         // 显示3D模型
         pick.model.show = satelliteList[i][2]
+        console.log(satelliteList[i][2])
+        if (satelliteList[i][2]) {
+          viewer.trackedEntity = pick
+        }
+        else {
+          
+          viewer.trackedEntity = undefined
+          viewer.camera.flyHome(0);
+        }
         // 设置轨迹        
         if (pick.id) {
           if (pick._path != undefined) {
@@ -1013,7 +1021,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
         }
         // 显示标注
-        if(satelliteList[i][3] == true){
+        if (satelliteList[i][3] == true) {
 
         }
 
