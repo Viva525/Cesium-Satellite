@@ -9,11 +9,10 @@ export type SetState<T> = Dispatch<SetStateAction<T>>;
 type satelliteColor = {
   initColor: RGBColor|undefined
   setSatelliteColor:SetState<any>;
-  satellityKey: React.Key;
 };
 
 const ColorSelect: React.FC<satelliteColor> = (props) => {
-  const {initColor, setSatelliteColor, satellityKey } = props;
+  const {initColor, setSatelliteColor } = props;
   const [color, setColor] = useState(initColor);
   const [displayColorPicker, setDisplayColorPicker] = useState<boolean>(false);
 
