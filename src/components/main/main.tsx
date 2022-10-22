@@ -19,11 +19,13 @@ import BaseStationInfo from "./baseStationInfo";
 import Box from "./box";
 import HeightChart from "../right/heightChart";
 import SatelliteBar from "../left/satelliteBar";
+import BasestationHourChart from "../left/basestationHourChart";
 import BasestationList from "../bottom/basestationList";
 import SatelliteNumberChart from "../left/satelliteNumberChart";
 import PolarEarth from "../right/palarEarth";
 import SatelliteInfo from "../right/satelliteInfo";
 import BasestationChart from "../right/basestationChart";
+import BasestationBar from "../left/basestationBar";
 import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
@@ -121,6 +123,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [isShowNet, setIsShowNet] = useState<Boolean>(false);
   const [isShowBasestationNet, setIsShowBasestationNet] =
     useState<boolean>(false);
+  const [weather, setWeather] = useState<Object>({ type: "", strong: 0 });
+  const [weatherKey, setWeatherKey] = useState<string>("0");
   const [groundBusinessState, setGroundBusiniessState] = useState<any>(null);
   const [groundReliabilityState, setGroundReliabilityState] =
     useState<any>(null);
@@ -135,8 +139,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     sun: { val: true, name: "显示太阳" },
     star: { val: false, name: "显示星空" },
     time: { val: true, name: "显示时间轴" },
-    rotate: { val: true, name: "地球旋转" }
-  })
+    rotate: { val: true, name: "地球旋转" },
+  });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // 场景列表数据
   const [sceneList, setScenList] = useState<SceneDataType[]>([]);
@@ -287,8 +291,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () { },
-        highlight: function () { },
+        declare: function () {},
+        highlight: function () {},
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -362,7 +366,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             menu.appendChild(option);
           }
         },
-        reset: function () { },
+        reset: function () {},
       };
       setTimeout(() => {
         let dronePromise = Cesium.CzmlDataSource.load(
@@ -489,13 +493,41 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               let height = Math.abs(cartographic.height);
               // 根据卫星高度添加卫星信息
               if (ele.id.indexOf("BEIDOU") >= 0) {
-                nowSatelliteList.push([ele.id, true, false, false, false, false, "高轨", "", false]);
-              }
-              else if (ele.id.indexOf("STARLINK") >= 0) {
-                nowSatelliteList.push([ele.id, true, false, false, false, false, "低轨", "", false]);
-              }
-              else {
-                nowSatelliteList.push([ele.id, true, false, false, false, false, "中轨", "", false]);
+                nowSatelliteList.push([
+                  ele.id,
+                  true,
+                  false,
+                  false,
+                  false,
+                  false,
+                  "高轨",
+                  "",
+                  false,
+                ]);
+              } else if (ele.id.indexOf("STARLINK") >= 0) {
+                nowSatelliteList.push([
+                  ele.id,
+                  true,
+                  false,
+                  false,
+                  false,
+                  false,
+                  "低轨",
+                  "",
+                  false,
+                ]);
+              } else {
+                nowSatelliteList.push([
+                  ele.id,
+                  true,
+                  false,
+                  false,
+                  false,
+                  false,
+                  "中轨",
+                  "",
+                  false,
+                ]);
               }
               let earthRadius = 6371393;
               // 卫星底部据地球中心的距离
@@ -710,8 +742,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               } else {
                 nowPicksatellite = [pick.id._id, true, true];
               }
-            }
-            else {
+            } else {
               nowPicksatellite = [pick.id._id, true, true];
             }
             setCurSatellite(pick.id._id.split("/")[1]);
@@ -766,7 +797,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         if (
           curBaseStationRef.current !== null &&
           viewer.entities.getById(`Place/${curBaseStationRef.current.name}`) !==
-          undefined
+            undefined
         ) {
           let baseStationEntity = viewer.entities.getById(
             `Place/${curBaseStationRef.current.name}`
@@ -855,7 +886,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //     }
       //     isSetting = !isSetting
       //   }
-        
+
       //   let checkBoxStr = "";
       //   let settingList = document.getElementById("settingList");
       //   Object.keys(setting).forEach((key)=>{
@@ -877,11 +908,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const settingDeal = (settingName: string, settingValue: boolean) => {
     switch (settingName) {
       case "label":
-        satelliteListRef.current.forEach(satellite => {
+        satelliteListRef.current.forEach((satellite) => {
           let satelliteEntity = viewer.entities.getById(satellite[0]);
           if (satelliteEntity.label == undefined) {
             satelliteEntity.label.text = satellite[0];
-            satelliteEntity.label.font = '14pt Source Han Sans CN';
+            satelliteEntity.label.font = "14pt Source Han Sans CN";
             satelliteEntity.label.fillColor = Cesium.Color.WHITE;
           } else {
             satelliteEntity.label.show = settingValue;
@@ -889,21 +920,21 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
         break;
       case "icon":
-        satelliteListRef.current.forEach(satellite => {
+        satelliteListRef.current.forEach((satellite) => {
           let satelliteEntity = viewer.entities.getById(satellite[0]);
           satelliteEntity.billboard.show = settingValue;
           satelliteEntity.model.show = !settingValue;
         });
         break;
       case "model":
-        satelliteListRef.current.forEach(satellite => {
+        satelliteListRef.current.forEach((satellite) => {
           let satelliteEntity = viewer.entities.getById(satellite[0]);
           satelliteEntity.model.show = settingValue;
           satelliteEntity.billboard.show = !settingValue;
         });
         break;
       case "track":
-        satelliteListRef.current.forEach(satellite => {
+        satelliteListRef.current.forEach((satellite) => {
           let satelliteEntity = viewer.entities.getById(satellite[0]);
           satelliteEntity.path.show = settingValue;
         });
@@ -923,8 +954,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         break;
       case "time":
         // 显示时间轴
-        viewer.animation.container.style.visibility = (settingValue == true ? 'visible' : 'hidden');
-        viewer.timeline.container.style.visibility = (settingValue == true ? 'visible' : 'hidden');
+        viewer.animation.container.style.visibility =
+          settingValue == true ? "visible" : "hidden";
+        viewer.timeline.container.style.visibility =
+          settingValue == true ? "visible" : "hidden";
         break;
       case "rotate":
         // 是否旋转
@@ -951,7 +984,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [curSatellite]);
 
   useEffect(() => {
-
     clearInterval(polarTimeId);
     polarTimeId = setInterval(() => {
       let t = [];
@@ -969,7 +1001,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
     for (let i in satelliteList) {
       if (satelliteList[i][8].toString() == "true") {
-        setCurSatellite(satelliteList[i][0].split("/")[1])
+        setCurSatellite(satelliteList[i][0].split("/")[1]);
         // 如果当前选择了该卫星则继续
         if (satelliteList[i][3] || satelliteList[i][4] || satelliteList[i][5]) {
           // 如果当前选择了该卫星
@@ -979,30 +1011,29 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             } else {
               nowPicksatellite = [satelliteList[i][0], true, true];
             }
-          }
-          else {
-            nowPicksatellite = [satelliteList[i][0], true, true]
+          } else {
+            nowPicksatellite = [satelliteList[i][0], true, true];
           }
         }
-        satelliteList[i][8] = false
+        satelliteList[i][8] = false;
         let pick = viewer.entities.getById(satelliteList[i][0]);
-        console.log(pick)
-        let curradarScanner = viewer.entities.getById("radarScan_" + satelliteList[i][0]);
+        console.log(pick);
+        let curradarScanner = viewer.entities.getById(
+          "radarScan_" + satelliteList[i][0]
+        );
 
         // 显示2D模型
         pick.billboard.show = satelliteList[i][1];
         // 显示3D模型
-        pick.model.show = satelliteList[i][2]
-        console.log(satelliteList[i][2])
+        pick.model.show = satelliteList[i][2];
+        console.log(satelliteList[i][2]);
         if (satelliteList[i][2]) {
-          viewer.trackedEntity = pick
-        }
-        else {
-          
-          viewer.trackedEntity = undefined
+          viewer.trackedEntity = pick;
+        } else {
+          viewer.trackedEntity = undefined;
           viewer.camera.flyHome(0);
         }
-        // 设置轨迹        
+        // 设置轨迹
         if (pick.id) {
           if (pick._path != undefined) {
             pick._path.show = satelliteList[i][4];
@@ -1017,15 +1048,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             satelliteList[i][7].g / 255,
             satelliteList[i][7].b / 255
           );
-
         }
         // 显示标注
         if (satelliteList[i][3] == true) {
-
         }
       }
     }
-  }, [satelliteList])
+  }, [satelliteList]);
 
   const earthRotate = useCallback(() => {
     var spinRate = 1;
@@ -1170,7 +1199,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+            Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -1319,7 +1348,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -1345,7 +1374,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-        Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
@@ -1411,130 +1440,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         material: color.withAlpha(0.4),
       },
     });
-  };
-
-  const addWeather = (type?: string, strong?: number) => {
-    snow && viewer.scene.postProcessStages.remove(snow); // 移除
-    rain && viewer.scene.postProcessStages.remove(rain); // 移除
-    fog && viewer.scene.postProcessStages.remove(fog); // 移除
-
-    if (type === "snow") {
-      //定义下雪场景 着色器
-      function FS_Snow() {
-        return `uniform sampler2D colorTexture;\n\
-            varying vec2 v_textureCoordinates;\n\
-          \n\
-            float snow(vec2 uv,float scale)\n\
-            {\n\
-                float time = czm_frameNumber / 60.0;\n\
-                float w=smoothstep(1.,0.,-uv.y*(scale/10.));if(w<.1)return 0.;\n\
-                uv+=time/scale;uv.y+=time*2./scale;uv.x+=sin(uv.y+time*.5)/scale;\n\
-                uv*=scale;vec2 s=floor(uv),f=fract(uv),p;float k=3.,d;\n\
-                p=.5+.35*sin(11.*fract(sin((s+p+scale)*mat2(7,3,6,5))*5.))-f;d=length(p);k=min(d,k);\n\
-                k=smoothstep(0.,k,sin(f.x+f.y)*0.01);\n\
-                return k*w;\n\
-            }\n\
-          \n\
-            void main(void){\n\
-                vec2 resolution = czm_viewport.zw;\n\
-                vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
-                vec3 finalColor=vec3(0);\n\
-                float c = 0.0;\n\
-                c+=snow(uv,30.)*.0;\n\
-                c+=snow(uv,20.)*.0;\n\
-                c+=snow(uv,15.)*.0;\n\
-                c+=snow(uv,10.);\n\
-                c+=snow(uv,8.);\n\
-            c+=snow(uv,6.);\n\
-                c+=snow(uv,5.);\n\
-                finalColor=(vec3(c)); \n\
-                gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), ${strong}); \n\
-          \n\
-            }\n\
-          `;
-      }
-      let fs_snow = FS_Snow();
-      snow = new Cesium.PostProcessStage({
-        name: "czm_snow",
-        fragmentShader: fs_snow,
-      });
-      stages.add(snow);
-      viewer.scene.skyAtmosphere.hueShift = -0.8;
-      viewer.scene.skyAtmosphere.saturationShift = -0.7;
-      viewer.scene.skyAtmosphere.brightnessShift = -0.33;
-      viewer.scene.fog.density = 0.001;
-      viewer.scene.fog.minimumBrightness = 0.8;
-    } else if (type === "rain") {
-      // 定义下雨场景 着色器
-      function FS_Rain() {
-        return `uniform sampler2D colorTexture;\n\
-            varying vec2 v_textureCoordinates;\n\
-        \n\
-            float hash(float x){\n\
-                return fract(sin(x*133.3)*13.13);\n\
-        }\n\
-        \n\
-        void main(void){\n\
-        \n\
-            float time = czm_frameNumber / 60.0;\n\
-        vec2 resolution = czm_viewport.zw;\n\
-        \n\
-        vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
-        vec3 c=vec3(.6,.7,.8);\n\
-        \n\
-        float a=-.4;\n\
-        float si=sin(a),co=cos(a);\n\
-        uv*=mat2(co,-si,si,co);\n\
-        uv*=length(uv+vec2(0,4.9))*.3+1.;\n\
-        \n\
-        float v=1.-sin(hash(floor(uv.x*100.))*2.);\n\
-        float b=clamp(abs(sin(20.*time*v+uv.y*(5./(2.+v))))-.95,0.,1.)*20.;\n\
-        c*=v*b; \n\
-        \n\
-        gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), ${strong});  \n\
-        }\n\
-`;
-      }
-      let fs_rain = FS_Rain();
-      rain = new Cesium.PostProcessStage({
-        name: "czm_rain",
-        fragmentShader: fs_rain,
-      });
-      stages.add(rain);
-      viewer.scene.skyAtmosphere.hueShift = -0.8;
-      viewer.scene.skyAtmosphere.saturationShift = -0.7;
-      viewer.scene.skyAtmosphere.brightnessShift = -0.33;
-      viewer.scene.fog.density = 0.001;
-      viewer.scene.fog.minimumBrightness = 0.8;
-    } else if (type === "fog") {
-      function FS_Fog() {
-        return (
-          "  uniform sampler2D colorTexture;\n" +
-          "  uniform sampler2D depthTexture;\n" +
-          "  varying vec2 v_textureCoordinates;\n" +
-          "  void main(void)\n" +
-          "  {\n" +
-          "      vec4 origcolor=texture2D(colorTexture, v_textureCoordinates);\n" +
-          "      vec4 fogcolor=vec4(0.8,0.8,0.8,0.1);\n" +
-          "\n" +
-          "      float depth = czm_readDepth(depthTexture, v_textureCoordinates);\n" +
-          "      vec4 depthcolor=texture2D(depthTexture, v_textureCoordinates);\n" +
-          "\n" +
-          "      float f=(depthcolor.r-0.40)/0.2;\n" +
-          "      if(f<0.0) f=0.0;\n" +
-          `      else if(f>1.0) f=${strong};\n` +
-          "      gl_FragColor = mix(origcolor,fogcolor,f);\n" +
-          "   }"
-        );
-      }
-      let fs_fog = FS_Fog();
-      fog = new Cesium.PostProcessStage({
-        name: "self",
-        //sampleMode:PostProcessStageSampleMode.LINEAR,
-        fragmentShader: fs_fog,
-      });
-      stages.add(fog);
-    }
   };
 
   // 添加六边形
@@ -1679,6 +1584,132 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       },
     });
   }
+
+  useEffect(() => {
+    if (init) {
+      console.log(weather);
+      snow && viewer.scene.postProcessStages.remove(snow); // 移除
+      rain && viewer.scene.postProcessStages.remove(rain); // 移除
+      fog && viewer.scene.postProcessStages.remove(fog); // 移除
+      if (weather["type"] === "snow") {
+        //定义下雪场景 着色器
+        function FS_Snow() {
+          return `uniform sampler2D colorTexture;\n\
+              varying vec2 v_textureCoordinates;\n\
+            \n\
+              float snow(vec2 uv,float scale)\n\
+              {\n\
+                  float time = czm_frameNumber / 60.0;\n\
+                  float w=smoothstep(1.,0.,-uv.y*(scale/10.));if(w<.1)return 0.;\n\
+                  uv+=time/scale;uv.y+=time*2./scale;uv.x+=sin(uv.y+time*.5)/scale;\n\
+                  uv*=scale;vec2 s=floor(uv),f=fract(uv),p;float k=3.,d;\n\
+                  p=.5+.35*sin(11.*fract(sin((s+p+scale)*mat2(7,3,6,5))*5.))-f;d=length(p);k=min(d,k);\n\
+                  k=smoothstep(0.,k,sin(f.x+f.y)*0.01);\n\
+                  return k*w;\n\
+              }\n\
+            \n\
+              void main(void){\n\
+                  vec2 resolution = czm_viewport.zw;\n\
+                  vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+                  vec3 finalColor=vec3(0);\n\
+                  float c = 0.0;\n\
+                  c+=snow(uv,30.)*.0;\n\
+                  c+=snow(uv,20.)*.0;\n\
+                  c+=snow(uv,15.)*.0;\n\
+                  c+=snow(uv,10.);\n\
+                  c+=snow(uv,8.);\n\
+              c+=snow(uv,6.);\n\
+                  c+=snow(uv,5.);\n\
+                  finalColor=(vec3(c)); \n\
+                  gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), ${weather["strong"]}); \n\
+            \n\
+              }\n\
+            `;
+        }
+        let fs_snow = FS_Snow();
+        snow = new Cesium.PostProcessStage({
+          name: "czm_snow",
+          fragmentShader: fs_snow,
+        });
+        stages.add(snow);
+        viewer.scene.skyAtmosphere.hueShift = -0.8;
+        viewer.scene.skyAtmosphere.saturationShift = -0.7;
+        viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+        viewer.scene.fog.density = 0.001;
+        viewer.scene.fog.minimumBrightness = 0.8;
+      } else if (weather["type"] === "rain") {
+        // 定义下雨场景 着色器
+        function FS_Rain() {
+          return `uniform sampler2D colorTexture;\n\
+              varying vec2 v_textureCoordinates;\n\
+          \n\
+              float hash(float x){\n\
+                  return fract(sin(x*133.3)*13.13);\n\
+          }\n\
+          \n\
+          void main(void){\n\
+          \n\
+              float time = czm_frameNumber / 60.0;\n\
+          vec2 resolution = czm_viewport.zw;\n\
+          \n\
+          vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+          vec3 c=vec3(.6,.7,.8);\n\
+          \n\
+          float a=-.4;\n\
+          float si=sin(a),co=cos(a);\n\
+          uv*=mat2(co,-si,si,co);\n\
+          uv*=length(uv+vec2(0,4.9))*.3+1.;\n\
+          \n\
+          float v=1.-sin(hash(floor(uv.x*100.))*2.);\n\
+          float b=clamp(abs(sin(20.*time*v+uv.y*(5./(2.+v))))-.95,0.,1.)*20.;\n\
+          c*=v*b; \n\
+          \n\
+          gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), ${weather["strong"]});  \n\
+          }\n\
+  `;
+        }
+        let fs_rain = FS_Rain();
+        rain = new Cesium.PostProcessStage({
+          name: "czm_rain",
+          fragmentShader: fs_rain,
+        });
+        stages.add(rain);
+        viewer.scene.skyAtmosphere.hueShift = -0.8;
+        viewer.scene.skyAtmosphere.saturationShift = -0.7;
+        viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+        viewer.scene.fog.density = 0.001;
+        viewer.scene.fog.minimumBrightness = 0.8;
+      } else if (weather["type"] === "fog") {
+        function FS_Fog() {
+          return (
+            "  uniform sampler2D colorTexture;\n" +
+            "  uniform sampler2D depthTexture;\n" +
+            "  varying vec2 v_textureCoordinates;\n" +
+            "  void main(void)\n" +
+            "  {\n" +
+            "      vec4 origcolor=texture2D(colorTexture, v_textureCoordinates);\n" +
+            "      vec4 fogcolor=vec4(0.8,0.8,0.8,0.1);\n" +
+            "\n" +
+            "      float depth = czm_readDepth(depthTexture, v_textureCoordinates);\n" +
+            "      vec4 depthcolor=texture2D(depthTexture, v_textureCoordinates);\n" +
+            "\n" +
+            "      float f=(depthcolor.r-0.40)/0.2;\n" +
+            "      if(f<0.0) f=0.0;\n" +
+            `      else if(f>1.0) f=${weather["strong"]};\n` +
+            "      gl_FragColor = mix(origcolor,fogcolor,f);\n" +
+            "   }"
+          );
+        }
+        let fs_fog = FS_Fog();
+        fog = new Cesium.PostProcessStage({
+          name: "self",
+          //sampleMode:PostProcessStageSampleMode.LINEAR,
+          fragmentShader: fs_fog,
+        });
+        stages.add(fog);
+      }
+    }
+  }, [weather]);
 
   useEffect(() => {
     if (nowPicksatellite) {
@@ -1836,13 +1867,17 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       // 生成雨雪天气
       let randomNumber = Math.floor(Math.random() * 10);
       if (randomNumber >= 8) {
-        addWeather("fog", 0.8);
+        setWeather({ type: "fog", strong: 0.8 });
+        setWeatherKey("5");
       } else if (randomNumber >= 5) {
-        addWeather("snow", 0.3);
+        setWeather({ type: "snow", strong: 0.3 });
+        setWeatherKey("3");
       } else if (randomNumber >= 3) {
-        addWeather("rain", 0.3);
+        setWeather({ type: "rain", strong: 0.3 });
+        setWeatherKey("1");
       } else {
-        addWeather();
+        setWeather({ type: "", strong: 0.3 });
+        setWeatherKey("0");
       }
     }
     curBaseStationRef.current = curBaseStation;
@@ -2013,14 +2048,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           .then((data) => {
             setGroundStabilityState(data);
           });
-        setCurBaseStation(baseStationList[0])
+        setCurBaseStation(baseStationList[0]);
       } else {
         document
           .getElementById("basestation-net-situation")
           ?.classList.remove("cesium-btn-selected");
-          viewer.camera.flyHome(0)
-          setCurBaseStation(null)
-          setIsRotate(true);
+        viewer.camera.flyHome(0);
+        setCurBaseStation(null);
+        setIsRotate(true);
       }
     }
   }, [isShowBasestationNet]);
@@ -2086,6 +2121,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       ) : (
         <>
           <div className="left-wrap">
+            <Box
+              title="平均在网时长"
+              component={
+                <BasestationHourChart data={19.24} width={"100%"} height={20} />
+              }
+            />
             {groundBusinessState === null ? (
               <></>
             ) : (
@@ -2107,6 +2148,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 }
               />
             )}
+            <Box title="111" component={<BasestationBar></BasestationBar>} />
           </div>
           <div className="right-wrap">
             <Box
@@ -2118,6 +2160,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   status={"service"}
                   activity={"stable"}
                   type={"basestation"}
+                  setWeather={setWeather}
+                  weatherKey={weatherKey}
                 />
               }
             />
@@ -2151,12 +2195,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                       width={"100%"}
                       height={15}
                       xData={groundReliabilityState["DateTime"]}
-                      yData={[groundReliabilityState["normal"]]}
-                      legend={["normal"]}
+                      yData={[
+                        groundReliabilityState["normal"],
+                        groundReliabilityState["major fault"],
+                      ]}
+                      legend={["normal", "major fault"]}
                     />
                   }
                 />
-                <Box
+                {/* <Box
                   title="可靠性"
                   component={
                     <BasestationChart
@@ -2168,7 +2215,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                       legend={["major fault"]}
                     />
                   }
-                />
+                /> */}
               </>
             )}
           </div>
@@ -2250,9 +2297,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         <button type="button" className="cesium-button">
           业务态势
         </button>
-        <button 
-        type="button"
-        className="cesium-button" style={{float:"right",marginRight:"1.5vw"}} onClick={()=>{showScenceEditPanel()}}>
+        <button
+          type="button"
+          className="cesium-button"
+          style={{ float: "right", marginRight: "1.5vw" }}
+          onClick={() => {
+            showScenceEditPanel();
+          }}
+        >
           场景编辑
         </button>
       </div>
@@ -2266,35 +2318,62 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       >
         <Row gutter={12}>
           <Col span={10}>
-          <header className="sceneEditTitle">卫星加载</header>
-          <SatelliteList
-                  satelliteList={satelliteList}
-                  setSatelliteList = {setSatelliteList}
-                />
+            <header className="sceneEditTitle">卫星加载</header>
+            <SatelliteList
+              satelliteList={satelliteList}
+              setSatelliteList={setSatelliteList}
+            />
           </Col>
           <Col span={14}>
             <header className="sceneEditTitle">场景配置</header>
             <div className="scenceSetting">
               <div>
-                <p style={{fontSize:"16px", color:"#017efc", borderBottom:"2px solid #017efc"}}>设置</p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    color: "#017efc",
+                    borderBottom: "2px solid #017efc",
+                  }}
+                >
+                  设置
+                </p>
                 <ul id="settingList">
-                  {
-                    Object.keys(setting).map((key)=>{
-                      let checked = setting[key]["val"];
-                      if(checked){
-                        return (<li><label ><input name={key} checked className="checkItem" type="checkbox" value={setting[key]["val"]}/>&nbsp;&nbsp;{setting[key]["name"]}</label></li>)
-                      }else{
-                        return (<li><label ><input name={key} className="checkItem" type="checkbox" value={setting[key]["val"]}/>&nbsp;&nbsp;{setting[key]["name"]}</label></li>)
-                      }       
-                    })
-                    
-                  }
+                  {Object.keys(setting).map((key) => {
+                    let checked = setting[key]["val"];
+                    if (checked) {
+                      return (
+                        <li>
+                          <label>
+                            <input
+                              name={key}
+                              checked
+                              className="checkItem"
+                              type="checkbox"
+                              value={setting[key]["val"]}
+                            />
+                            &nbsp;&nbsp;{setting[key]["name"]}
+                          </label>
+                        </li>
+                      );
+                    } else {
+                      return (
+                        <li>
+                          <label>
+                            <input
+                              name={key}
+                              className="checkItem"
+                              type="checkbox"
+                              value={setting[key]["val"]}
+                            />
+                            &nbsp;&nbsp;{setting[key]["name"]}
+                          </label>
+                        </li>
+                      );
+                    }
+                  })}
                 </ul>
               </div>
-              <Row>
-
-
-              </Row>
+              <Row></Row>
             </div>
           </Col>
         </Row>

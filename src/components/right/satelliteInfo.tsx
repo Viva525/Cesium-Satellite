@@ -1,9 +1,11 @@
+//@ts-nocheck
 import { Col, Dropdown, Menu, Row, Space, Typography } from "antd";
 import { DownOutlined, UserOutlined } from "@ant-design/icons";
 import { type } from "os";
 import React, { useEffect, useState } from "react";
 
 import "./satelliteInfo.css";
+import { SetState } from "../../types/type";
 
 type SatelliteInfoProp = {
   sateName: string;
@@ -11,12 +13,15 @@ type SatelliteInfoProp = {
   status?: string;
   activity?: string;
   type: string;
+  setWeather?: SetState<any>;
+  weatherKey?: string;
 };
 
 const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
-  var { sateName, launch, status, activity, type } = props;
+  var { sateName, launch, status, activity, type, setWeather, weatherKey } =
+    props;
   const [bgImg, setBgImg] = useState<string>("");
-  const [weatherKey, setWeatherKey] = useState<number>(0)
+  const [weatherKey1, setWeatherKey1] = useState<string>(weatherKey);
 
   useEffect(() => {
     if (sateName.includes("BEIDOU")) {
@@ -34,14 +39,27 @@ const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
     return <div id="satellite-info"></div>;
   }
 
-  const onWeatherClick=({key}: any)=>{
-    setWeatherKey(key)
-  }
+  const onWeatherClick = ({ key }: any) => {
+    setWeatherKey1(key);
+    if (key === "0") {
+      setWeather({ type: "", strong: 0.3 });
+    } else if (key === "1") {
+      setWeather({ type: "rain", strong: 0.3 });
+    } else if (key === "2") {
+      setWeather({ type: "rain", strong: 0.8 });
+    } else if (key === "3") {
+      setWeather({ type: "snow", strong: 0.3 });
+    } else if (key === "4") {
+      setWeather({ type: "snow", strong: 0.8 });
+    } else if (key === "5") {
+      setWeather({ type: "fog", strong: 0.8 });
+    }
+  };
 
   const menu = (
     <Menu
       selectable
-      defaultSelectedKeys={["0"]}
+      defaultSelectedKeys={[{ weatherKey1 }]}
       onClick={onWeatherClick}
       items={[
         {
@@ -90,19 +108,25 @@ const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
             {type === "satellite" ? "卫星名称" : "基站名称"}
           </div>
           <div className="name-weather">
-          <div className="name-sate">
-            {sateName === "Place/undefined" ? "——" : sateName}
-          </div>
-          {type !== "satellite" ? (
-            <div className="weather-icon">
-              <Dropdown overlay={menu}>
-                <div className="weather-wrap">
-                    <div className={`weather weather${weatherKey}`}/>
-                    <DownOutlined />
-                </div>
-              </Dropdown>
+            <div className="name-sate">
+              {sateName === "Place/undefined" ? "——" : sateName}
             </div>
-          ): null}
+            {type !== "satellite" ? (
+              <div className="weather-icon">
+                <Dropdown overlay={menu}>
+                  <div className="weather-wrap">
+                    <div
+                      className={
+                        weatherKey1 === "-1"
+                          ? `weather weather${weatherKey}`
+                          : `weather weather${weatherKey1}`
+                      }
+                    />
+                    <DownOutlined />
+                  </div>
+                </Dropdown>
+              </div>
+            ) : null}
           </div>
         </div>
         <div id="bottom">
