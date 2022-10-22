@@ -1,4 +1,5 @@
-import { Col, Row } from "antd";
+import { Col, Dropdown, Menu, Row, Space, Typography } from "antd";
+import { DownOutlined, UserOutlined } from "@ant-design/icons";
 import { type } from "os";
 import React, { useEffect, useState } from "react";
 
@@ -9,12 +10,13 @@ type SatelliteInfoProp = {
   launch?: string;
   status?: string;
   activity?: string;
-  type:string;
+  type: string;
 };
 
 const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
   var { sateName, launch, status, activity, type } = props;
   const [bgImg, setBgImg] = useState<string>("");
+  const [weatherKey, setWeatherKey] = useState<number>(0)
 
   useEffect(() => {
     if (sateName.includes("BEIDOU")) {
@@ -23,14 +25,59 @@ const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
       setBgImg("GPS.png");
     } else if (sateName.includes("STARLINK")) {
       setBgImg("STARLINK.png");
-    }else if(sateName.includes("Place/") && sateName !== "Place/undefined"){
-      setBgImg("BASESTATION.jpg")
+    } else if (sateName.includes("Place/") && sateName !== "Place/undefined") {
+      setBgImg("BASESTATION.jpg");
     }
   }, [sateName]);
 
   if (sateName === "") {
     return <div id="satellite-info"></div>;
   }
+
+  const onWeatherClick=({key}: any)=>{
+    setWeatherKey(key)
+  }
+
+  const menu = (
+    <Menu
+      selectable
+      defaultSelectedKeys={["0"]}
+      onClick={onWeatherClick}
+      items={[
+        {
+          key: "0",
+          label: "晴",
+          icon: <UserOutlined />,
+        },
+        {
+          key: "1",
+          label: "小雨",
+          icon: <UserOutlined />,
+        },
+        {
+          key: "2",
+          label: "大雨",
+          icon: <UserOutlined />,
+        },
+        {
+          key: "3",
+          label: "小雪",
+          icon: <UserOutlined />,
+        },
+        {
+          key: "4",
+          label: "大雪",
+          icon: <UserOutlined />,
+        },
+        {
+          key: "5",
+          label: "雾",
+          icon: <UserOutlined />,
+        },
+      ]}
+    />
+  );
+
   return (
     <div id="satellite-info">
       <div
@@ -39,22 +86,46 @@ const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
       ></div>
       <div id="sate-info">
         <div id="up">
-          <div className="name-item">{type === "satellite"?"卫星名称": "基站名称"}</div>
-          <div className="name-sate">{sateName === "Place/undefined"?'——': sateName}</div>
+          <div className="name-item">
+            {type === "satellite" ? "卫星名称" : "基站名称"}
+          </div>
+          <div className="name-weather">
+          <div className="name-sate">
+            {sateName === "Place/undefined" ? "——" : sateName}
+          </div>
+          {type !== "satellite" ? (
+            <div className="weather-icon">
+              <Dropdown overlay={menu}>
+                <div className="weather-wrap">
+                    <div className={`weather weather${weatherKey}`}/>
+                    <DownOutlined />
+                </div>
+              </Dropdown>
+            </div>
+          ): null}
+          </div>
         </div>
         <div id="bottom">
           <div id="launch-time-container">
-            <div className="item-value">{sateName === "Place/undefined"? '——':launch}</div>
+            <div className="item-value">
+              {sateName === "Place/undefined" ? "——" : launch}
+            </div>
             <img className="sate-info-img" src="./images/a.png" alt="" />
-            <div className="item">{type === "satellite"?"发射时间": "建设时间"}</div>
+            <div className="item">
+              {type === "satellite" ? "发射时间" : "建设时间"}
+            </div>
           </div>
           <div id="status-container">
-            <div className="item-value">{sateName === "Place/undefined"? '——':status}</div>
+            <div className="item-value">
+              {sateName === "Place/undefined" ? "——" : status}
+            </div>
             <img className="sate-info-img" src="./images/b.png" alt="" />
             <div className="item">状态</div>
           </div>
           <div id="activity-container">
-            <div className="item-value">{sateName === "Place/undefined"? '——':activity}</div>
+            <div className="item-value">
+              {sateName === "Place/undefined" ? "——" : activity}
+            </div>
             <img className="sate-info-img" src="./images/c.png" alt="" />
             <div className="item">活动</div>
           </div>
