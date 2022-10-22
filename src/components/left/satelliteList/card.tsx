@@ -41,6 +41,10 @@ const StatelliteCard: React.FC<StatelliteCardType> = (props) => {
 
   useEffect(() => {
     if (satelliteState.length > 0) {
+      let titleId = document.getElementById(satelliteState[0]);
+      //@ts-ignore
+      titleId.style.color = satelliteState[3] || satelliteState[4] || satelliteState[5] ? "rgb(255,0,0)" : "rgb(44, 79, 172)"
+
       for (let i in stateList) {
         let buttonId = document.getElementById(satelliteState[0] + stateList[i]);
         //@ts-ignore
@@ -50,21 +54,25 @@ const StatelliteCard: React.FC<StatelliteCardType> = (props) => {
   }, [satelliteState])
   return (
     <>
+      <div className="statelliteTitle" id={nowStatelliteName[0]}>
+        {nowStatelliteName[0]}
+      </div>
       <div>
         <button type="button" id={nowStatelliteName[0] + stateList[0]} className="statelliteButton" onClick={e => buttonClick(e)}>2D</button>
         <button type="button" id={nowStatelliteName[0] + stateList[1]} className="statelliteButton" onClick={e => buttonClick(e)}>3D</button>
-        <button type="button" id={nowStatelliteName[0] + stateList[2]} className="statelliteButton" onClick={e => buttonClick(e)}>标注</button>
-        <button type="button" id={nowStatelliteName[0] + stateList[3]} className="statelliteButton" onClick={e => buttonClick(e)}>轨迹</button>
-        <button type="button" id={nowStatelliteName[0] + stateList[4]} className="statelliteButton" onClick={e => buttonClick(e)} style={{"width": "60px" }}>
-          星下点
-        </button>        
-        <button type="button" value="color" className="statelliteButton" style={{"width": "80px" }}>
+        <button type="button" value="color" className="statelliteButton" style={{ "width": "80px" }}>
           <ColorSelect
             //@ts-ignore
             initColor={nowStatelliteName[7] == "" ? (nowStatelliteName[0].includes("BD") | nowStatelliteName[0].includes("BEIDOU") ? { r: "13", g: "126", b: "222", a: "1" } : nowStatelliteName[0].includes("GPS") ? { r: "210", g: '51', b: '90', a: "1" } : { r: '255', g: '255', b: '255', a: "1" }) : nowStatelliteName[7]}
             setSatelliteColor={setSatelliteColor}
           />
         </button>
+        <button type="button" id={nowStatelliteName[0] + stateList[2]} className="statelliteButton" onClick={e => buttonClick(e)}>标注</button>
+        <button type="button" id={nowStatelliteName[0] + stateList[3]} className="statelliteButton" onClick={e => buttonClick(e)}>轨迹</button>
+        <button type="button" id={nowStatelliteName[0] + stateList[4]} className="statelliteButton" onClick={e => buttonClick(e)} style={{ "width": "60px" }}>
+          星下点
+        </button>
+
         <button type="button" value="statelliteType" className="statelliteButton" style={{ 'color': "rgb(255,255,255)", "width": "80px" }}>
           {nowStatelliteName[6]}
         </button>

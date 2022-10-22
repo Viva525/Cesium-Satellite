@@ -84,15 +84,18 @@ tbody td {
 .ant-image-mask-info {
     display: none !important;
 }
-
+.statelliteTitle{
+    color: rgb(44, 79, 172);
+    height: 30px;
+}
 .statelliteButton {
     background-color: rgba(0, 0, 0, 0);
     width: 50px;
     border: 0ch;
     color: rgb(44, 79, 172);
 }
-
-.ant-list-item-meta-title {
+.ant-checkbox-group-item{
+    width: 100px;
     color: rgb(44, 79, 172) !important
 }
 

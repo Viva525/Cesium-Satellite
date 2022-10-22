@@ -125,15 +125,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [groundStabilityState, setGroundStabilityState] = useState<any>(null);
   // 设置数据
   const [setting, setSetting] = useState<SettingType>({
-      label: {val: true, name: "卫星标注"},
-      icon: {val: true, name: "卫星图标"},
-      model: {val: false, name: "卫星模型"},
-      track: {val: false, name: "卫星轨迹"},
-      light: {val: false, name: "显示光照"},
-      sun: {val: true, name: "显示太阳"},
-      star: {val: false, name: "显示星空"},
-      time: {val: true, name: "显示时间轴"},
-      rotate: {val: true, name: "地球旋转"}
+    label: { val: true, name: "卫星标注" },
+    icon: { val: true, name: "卫星图标" },
+    model: { val: false, name: "卫星模型" },
+    track: { val: false, name: "卫星轨迹" },
+    light: { val: false, name: "显示光照" },
+    sun: { val: true, name: "显示太阳" },
+    star: { val: false, name: "显示星空" },
+    time: { val: true, name: "显示时间轴" },
+    rotate: { val: true, name: "地球旋转" }
   })
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // 场景列表数据
@@ -286,8 +286,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       let defaultAction: (() => void) | undefined;
       let Sandcastle = {
         // bucket: bucket,
-        declare: function () {},
-        highlight: function () {},
+        declare: function () { },
+        highlight: function () { },
         registered: [],
         finishedLoading: function () {
           Sandcastle.reset();
@@ -361,7 +361,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             menu.appendChild(option);
           }
         },
-        reset: function () {},
+        reset: function () { },
       };
       setTimeout(() => {
         let dronePromise = Cesium.CzmlDataSource.load(
@@ -488,13 +488,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
               let height = Math.abs(cartographic.height);
               // 根据卫星高度添加卫星信息
-              if(height > 1000000){
+              if (ele.id.indexOf("BEIDOU") >= 0 ) {
                 nowSatelliteList.push([ele.id, true, false, false, false, false, "高轨", "", false]);
               }
-              else if(height < 100000){
+              else if (ele.id.indexOf("STARLINK") >= 0 ) {
                 nowSatelliteList.push([ele.id, true, false, false, false, false, "低轨", "", false]);
               }
-              else{
+              else {
                 nowSatelliteList.push([ele.id, true, false, false, false, false, "中轨", "", false]);
               }
               let earthRadius = 6371393;
@@ -705,12 +705,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             );
             curradarScanner.show = true;
             if (nowPicksatellite) {
-              if (pick.id._id !== nowPicksatellite[0]) {
+              if (pick.id._id === nowPicksatellite[0]) {
                 nowPicksatellite = [pick.id._id, true, false];
               } else {
                 nowPicksatellite = [pick.id._id, true, true];
               }
-            } else {
+            }
+            else {
               nowPicksatellite = [pick.id._id, true, true];
             }
             setCurSatellite(pick.id._id.split("/")[1]);
@@ -765,7 +766,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         if (
           curBaseStationRef.current !== null &&
           viewer.entities.getById(`Place/${curBaseStationRef.current.name}`) !==
-            undefined
+          undefined
         ) {
           let baseStationEntity = viewer.entities.getById(
             `Place/${curBaseStationRef.current.name}`
@@ -836,36 +837,36 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       );
       // 添加设置按钮
       let cesiumViewerToolbar = document.getElementsByClassName("cesium-viewer-toolbar");
-      if(cesiumViewerToolbar[0] != null){
+      if (cesiumViewerToolbar[0] != null) {
         let settingButton = document.createElement('button');
         settingButton.className = "cesium-button cesium-toolbar-button";
 
         const settingPanelStr = '<div id="settingPanel" class="settingPanel fade" style="max-height: 1164px;"><ul id="settingList"></ul></div>';
         settingButton.innerHTML = '<svg t="1666321531272" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1392" width="30" height="30"><path d="M940 596l-76-57.6c0.8-8 1.6-16.8 1.6-26.4s-0.8-18.4-1.6-26.4l76-57.6c20.8-16 26.4-44 12.8-68l-84.8-143.2c-9.6-16.8-28-27.2-47.2-27.2-6.4 0-12 0.8-18.4 3.2L712 228c-15.2-10.4-31.2-19.2-47.2-26.4l-13.6-92c-4-26.4-26.4-45.6-53.6-45.6H426.4c-27.2 0-49.6 19.2-53.6 44.8L360 201.6c-16 7.2-31.2 16-47.2 26.4l-90.4-35.2c-6.4-2.4-12.8-3.2-19.2-3.2-19.2 0-37.6 9.6-46.4 26.4L71.2 360c-13.6 22.4-8 52 12.8 68l76 57.6c-0.8 9.6-1.6 18.4-1.6 26.4s0 16.8 1.6 26.4l-76 57.6c-20.8 16-26.4 44-12.8 68l84.8 143.2c9.6 16.8 28 27.2 47.2 27.2 6.4 0 12-0.8 18.4-3.2L312 796c15.2 10.4 31.2 19.2 47.2 26.4l13.6 92c3.2 25.6 26.4 45.6 53.6 45.6h171.2c27.2 0 49.6-19.2 53.6-44.8l13.6-92.8c16-7.2 31.2-16 47.2-26.4l90.4 35.2c6.4 2.4 12.8 3.2 19.2 3.2 19.2 0 37.6-9.6 46.4-26.4l85.6-144.8c12.8-23.2 7.2-51.2-13.6-67.2zM704 512c0 105.6-86.4 192-192 192S320 617.6 320 512s86.4-192 192-192 192 86.4 192 192z" p-id="1393"></path></svg>';
         cesiumViewerToolbar[0].appendChild(settingButton);
-        cesiumViewerToolbar[0].insertAdjacentHTML('afterend',settingPanelStr);
+        cesiumViewerToolbar[0].insertAdjacentHTML('afterend', settingPanelStr);
         let settingDom = document.getElementById("settingPanel");
         let isSetting = false;
         settingButton.onclick = () => {
-          if(isSetting === true){
+          if (isSetting === true) {
             settingDom?.classList.add("fade");
-          }else{
+          } else {
             settingDom?.classList.remove("fade");
           }
           isSetting = !isSetting
         }
-        
+
         let checkBoxStr = "";
         let settingList = document.getElementById("settingList");
-        Object.keys(setting).forEach((key)=>{
-          checkBoxStr += `<li><label><input name=${key} ${setting[key]["val"]==true?'checked':''} class="checkItem" type="checkbox" value="${setting[key]["val"]}"/>&nbsp;&nbsp;&nbsp;${setting[key]["name"]}</label></li>`;
+        Object.keys(setting).forEach((key) => {
+          checkBoxStr += `<li><label><input name=${key} ${setting[key]["val"] == true ? 'checked' : ''} class="checkItem" type="checkbox" value="${setting[key]["val"]}"/>&nbsp;&nbsp;&nbsp;${setting[key]["name"]}</label></li>`;
         });
         settingList.innerHTML = checkBoxStr;
-        $(".checkItem").click(function(e){
+        $(".checkItem").click(function (e) {
           let checkName = e.target.name;
           let checkVal = $(this)[0].checked;
-          setSetting((prev: SettingType)=>{
-            return {...prev, ...{[checkName]:{val:checkVal, name:prev[checkName]["name"]}}};
+          setSetting((prev: SettingType) => {
+            return { ...prev, ...{ [checkName]: { val: checkVal, name: prev[checkName]["name"] } } };
           });
           settingDeal(checkName, checkVal);
         })
@@ -874,29 +875,29 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [init]);
 
   const settingDeal = (settingName: string, settingValue: boolean) => {
-    switch(settingName){
+    switch (settingName) {
       case "label":
         //没做
         break;
       case "icon":
-        if(settingValue == true){
+        if (settingValue == true) {
           console.log(viewer.entities);
-        }else{
+        } else {
           console.log(viewer.entities);
-          
+
         }
         break;
       case "model":
-        if(settingValue == true){
+        if (settingValue == true) {
 
-        }else{
+        } else {
 
         }
         break;
       case "track":
-        if(settingValue == true){
+        if (settingValue == true) {
 
-        }else{
+        } else {
 
         }
         break;
@@ -915,8 +916,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         break;
       case "time":
         // 显示时间轴
-        viewer.animation.container.style.visibility = (settingValue == true?'visible':'hidden');
-        viewer.timeline.container.style.visibility =  (settingValue == true?'visible':'hidden');
+        viewer.animation.container.style.visibility = (settingValue == true ? 'visible' : 'hidden');
+        viewer.timeline.container.style.visibility = (settingValue == true ? 'visible' : 'hidden');
         break;
       case "rotate":
         // 是否旋转
@@ -943,18 +944,49 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [curSatellite]);
 
   useEffect(() => {
-    for(let i in satelliteList){
-      if(satelliteList[i][8] == true){
+    
+    clearInterval(polarTimeId);
+    polarTimeId = setInterval(() => {
+      let t = [];
+      for (let i of satelliteList) {
+        if (i[3] || i[4] || i[5]) {
+          let curPosition = viewer.entities
+            .getById(i[0])
+            .position.getValue(viewer.clock.currentTime);
+          let [lng, lat] = GetWGS84FromDKR(curPosition, 1);
+          t.push([lng, lat, i[0]]);
+        }
+      }
+      setPolarPosition(t);
+    }, 1000);
+
+    for (let i in satelliteList) {
+      if (satelliteList[i][8].toString() == "true") {
+        setCurSatellite(satelliteList[i][0].split("/")[1])
+        // 如果当前选择了该卫星则继续
+        if (satelliteList[i][3] || satelliteList[i][4] || satelliteList[i][5]) {
+          // 如果当前选择了该卫星
+          if (nowPicksatellite) {
+            if (satelliteList[i][0] === nowPicksatellite[0]) {
+              nowPicksatellite = [satelliteList[i][0], true, false];
+            } else {
+              nowPicksatellite = [satelliteList[i][0], true, true];
+            }
+          }
+          else {
+            nowPicksatellite = [satelliteList[i][0], true, true]
+          }
+        }
+        console.log(i)
         satelliteList[i][8] = false
         let pick = viewer.entities.getById(satelliteList[i][0]);
 
         let curradarScanner = viewer.entities.getById("radarScan_" + satelliteList[i][0]);
-        
+
         // 显示2D模型
         pick.billboard.show = satelliteList[i][1]
         // 显示3D模型
         pick.model.show = satelliteList[i][2]
-        console.log(pick)
         // 设置轨迹        
         if (pick.id) {
           if (pick._path != undefined) {
@@ -964,7 +996,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         // 设置圆柱
         curradarScanner.show = satelliteList[i][5];
         // 设置颜色
-        if(satelliteList[i][7] != ""){
+        if (satelliteList[i][7] != "") {
           curradarScanner.cylinder.material = new Cesium.Color(
             satelliteList[i][7].r / 255,
             satelliteList[i][7].g / 255,
@@ -972,23 +1004,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           );
 
         }
-
-        // 显示2D模型
-        if(satelliteList[i][1] == true){
-
-        }
-        // 显示3D模型
-        if(satelliteList[i][2] == true){
-
-        }
-        // 显示标注
-        if(satelliteList[i][3] == true){
-
-        }
-
       }
     }
-  },[satelliteList])
+  }, [satelliteList])
 
   const earthRotate = useCallback(() => {
     var spinRate = 1;
@@ -1133,7 +1151,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         //返回两点之间的距离
         s = Math.sqrt(
           Math.pow(s, 2) +
-            Math.pow(point2cartographic.height - point1cartographic.height, 2)
+          Math.pow(point2cartographic.height - point1cartographic.height, 2)
         );
         distance = distance + s;
       }
@@ -1282,7 +1300,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       var angle = -Math.atan2(
         Math.sin(lon1 - lon2) * Math.cos(lat2),
         Math.cos(lat1) * Math.sin(lat2) -
-          Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
+        Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon1 - lon2)
       );
       if (angle < 0) {
         angle += Math.PI * 2.0;
@@ -1308,7 +1326,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       //返回两点之间的距离
       s = Math.sqrt(
         Math.pow(s, 2) +
-          Math.pow(point2cartographic.height - point1cartographic.height, 2)
+        Math.pow(point2cartographic.height - point1cartographic.height, 2)
       );
       return s;
     }
@@ -1644,7 +1662,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     if (nowPicksatellite) {
       if (nowPicksatellite[1] && nowPicksatellite[2]) {
         viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
-      } else {
+      } else if (nowPicksatellite[1] == false) {
         viewer.clock.onTick.removeEventListener(nowSatellitePostion, false);
         setNowSystemDate([]);
         setSatellitePostionData([]);
@@ -1973,7 +1991,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           .then((data) => {
             setGroundStabilityState(data);
           });
-          setCurBaseStation(baseStationList[0])
+        setCurBaseStation(baseStationList[0])
       } else {
         document
           .getElementById("basestation-net-situation")
@@ -2005,7 +2023,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               component={
                 <SatelliteList
                   satelliteList={satelliteList}
-                  setSatelliteList = {setSatelliteList}
+                  setSatelliteList={setSatelliteList}
                 />
               }
             />
@@ -2093,14 +2111,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             ) : (
               <Box title="" component={
                 <BasestationChart
-                title={"稳定性"}
-                type={"Line"}
-                width={"100%"}
-                height={20}
-                xData={groundStabilityState["DateTime"]}
-                yData={[groundStabilityState["AvgTime"]]}
-                legend={["AvgTime"]}
-              />
+                  title={"稳定性"}
+                  type={"Line"}
+                  width={"100%"}
+                  height={20}
+                  xData={groundStabilityState["DateTime"]}
+                  yData={[groundStabilityState["AvgTime"]]}
+                  legend={["AvgTime"]}
+                />
               } />
             )}
             {groundReliabilityState === null ? (
@@ -2208,9 +2226,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         <button type="button" className="cesium-button">
           业务态势
         </button>
-        <button 
-        type="button"
-        className="cesium-button" style={{float:"right",marginRight:"1.5vw"}}>
+        <button
+          type="button"
+          className="cesium-button" style={{ float: "right", marginRight: "1.5vw" }}>
           场景编辑
         </button>
       </div>
