@@ -23,8 +23,9 @@ const SatelliteList: React.FC<StatelliteCardType> = (props) => {
     <List
       itemLayout="horizontal"
       dataSource={satelliteList}
-      pagination={{
-        pageSize: 10,
+      style={{
+        height: 800,
+        overflowY: "scroll"
       }}
       renderItem={item => (
         <List.Item style={{ 'height': "80px" }}>

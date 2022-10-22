@@ -55,20 +55,20 @@ const StatelliteCard: React.FC<StatelliteCardType> = (props) => {
         <button type="button" id={nowStatelliteName[0] + stateList[1]} className="statelliteButton" onClick={e => buttonClick(e)}>3D</button>
         <button type="button" id={nowStatelliteName[0] + stateList[2]} className="statelliteButton" onClick={e => buttonClick(e)}>标注</button>
         <button type="button" id={nowStatelliteName[0] + stateList[3]} className="statelliteButton" onClick={e => buttonClick(e)}>轨迹</button>
-        <button type="button" id={nowStatelliteName[0] + stateList[4]} className="statelliteButton" onClick={e => buttonClick(e)}>
+        <button type="button" id={nowStatelliteName[0] + stateList[4]} className="statelliteButton" onClick={e => buttonClick(e)} style={{"width": "60px" }}>
           星下点
-        </button>
-        <button type="button" value="statelliteType" className="statelliteButton" style={{ 'color': "rgb(255,255,255)" }}>
-          {nowStatelliteName[6]}
-        </button>
-        <button type="button" value="轨迹" className="statelliteButton">
+        </button>        
+        <button type="button" value="color" className="statelliteButton" style={{"width": "80px" }}>
           <ColorSelect
             //@ts-ignore
             initColor={nowStatelliteName[7] == "" ? (nowStatelliteName[0].includes("BD") | nowStatelliteName[0].includes("BEIDOU") ? { r: "13", g: "126", b: "222", a: "1" } : nowStatelliteName[0].includes("GPS") ? { r: "210", g: '51', b: '90', a: "1" } : { r: '255', g: '255', b: '255', a: "1" }) : nowStatelliteName[7]}
             setSatelliteColor={setSatelliteColor}
-            satellityKey={nowStatelliteName[0]}
           />
         </button>
+        <button type="button" value="statelliteType" className="statelliteButton" style={{ 'color': "rgb(255,255,255)", "width": "80px" }}>
+          {nowStatelliteName[6]}
+        </button>
+
 
       </div>
     </>
