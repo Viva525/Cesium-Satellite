@@ -41,6 +41,12 @@
     z-index: 998;
 }
 
+#settingList{
+    list-style: none;
+    color: #fff;
+    font-size: 16px;
+}
+
 .settingPanel{
     width: 6vw;
     display: block;
@@ -77,6 +83,51 @@
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s 0.2s, opacity 0.2s ease-in, transform 0.2s ease-in;
+}
+
+.sceneEdit {
+    width: 50vw !important;
+}
+
+.sceneEditTitle{
+    color: #fff !important;
+    font-size: 18px !important;
+}
+
+.ant-modal-title {
+    color: #017efc !important;
+    font-size: 24px !important;
+}
+
+.ant-modal-header{
+    background-color: #2c333d !important;
+    border: none !important;
+}
+
+.ant-list{
+    max-height: 70vh !important;
+    overflow-y: scroll !important;
+}
+
+.ant-modal-content {
+    background-color: #21292f !important;
+}
+
+.ant-modal-footer{
+    border-top: 2px solid #2c333d !important;
+}
+
+.ant-list-item{
+    border-bottom: 2px solid #2c333d !important;
+}
+
+.scenceSetting{
+    padding-top: 1vh;
+}
+
+.checkItem{
+    margin-right: 16px;
+
 }
 
 #satelliteList {

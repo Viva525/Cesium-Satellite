@@ -22,11 +22,8 @@ const SatelliteList: React.FC<StatelliteCardType> = (props) => {
   return <>
     <List
       itemLayout="horizontal"
+      className='satelliteList'
       dataSource={satelliteList}
-      style={{
-        height: 800,
-        overflowY: "scroll"
-      }}
       renderItem={item => (
         <List.Item style={{ 'height': "80px" }}>
           <List.Item.Meta
