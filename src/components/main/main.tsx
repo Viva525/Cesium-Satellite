@@ -67,6 +67,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [nowSystemDate, setNowSystemDate] = useState<string[]>([]);
   // 卫星列表
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
+  const satelliteListRef = useRef(satelliteList);
   const [satelliteColor, setSatelliteColor] = useState({});
   const [start, setStart] = useState(
     Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
@@ -125,7 +126,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [groundStabilityState, setGroundStabilityState] = useState<any>(null);
   // 设置数据
   const [setting, setSetting] = useState<SettingType>({
-      label: {val: true, name: "卫星标注"},
+      label: {val: false, name: "卫星标注"},
       icon: {val: true, name: "卫星图标"},
       model: {val: false, name: "卫星模型"},
       track: {val: false, name: "卫星轨迹"},
@@ -579,9 +580,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   // 引入模型
                   uri: "./satellite-model/wx.gltf",
                   // 配置模型大小的最小值
-                  minimumPixelSize: 50,
+                  minimumPixelSize: 150,
                   //配置模型大小的最大值
-                  maximumScale: 50,
+                  maximumScale: 150,
                   //配置模型轮廓的颜色
                   silhouetteColor: Cesium.Color.WHITE,
                   //配置轮廓的大小
@@ -876,29 +877,36 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const settingDeal = (settingName: string, settingValue: boolean) => {
     switch(settingName){
       case "label":
-        //没做
+        satelliteListRef.current.forEach(satellite => {
+          let satelliteEntity = viewer.entities.getById(satellite[0]);
+          if(satelliteEntity.label == undefined){
+            satelliteEntity.label.text = satellite[0];
+            satelliteEntity.label.font = '14pt Source Han Sans CN';
+            satelliteEntity.label.fillColor = Cesium.Color.WHITE;
+          }else{
+            satelliteEntity.label.show = settingValue;
+          }
+        });
         break;
       case "icon":
-        if(settingValue == true){
-          console.log(viewer.entities);
-        }else{
-          console.log(viewer.entities);
-          
-        }
+        satelliteListRef.current.forEach(satellite => {
+          let satelliteEntity = viewer.entities.getById(satellite[0]);
+          satelliteEntity.billboard.show = settingValue;
+          satelliteEntity.model.show = !settingValue;
+        });
         break;
       case "model":
-        if(settingValue == true){
-
-        }else{
-
-        }
+        satelliteListRef.current.forEach(satellite => {
+          let satelliteEntity = viewer.entities.getById(satellite[0]);
+          satelliteEntity.model.show = settingValue;
+          satelliteEntity.billboard.show = !settingValue;
+        });
         break;
       case "track":
-        if(settingValue == true){
-
-        }else{
-
-        }
+        satelliteListRef.current.forEach(satellite => {
+          let satelliteEntity = viewer.entities.getById(satellite[0]);
+          satelliteEntity.path.show = settingValue;
+        });
         break;
       case "light":
         // 开启光照 & 亮度设置: 两种方式
@@ -943,6 +951,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [curSatellite]);
 
   useEffect(() => {
+    satelliteListRef.current = satelliteList;
     for(let i in satelliteList){
       if(satelliteList[i][8] == true){
         satelliteList[i][8] = false
@@ -970,15 +979,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             satelliteList[i][7].g / 255,
             satelliteList[i][7].b / 255,
           );
-
-        }
-
-        // 显示2D模型
-        if(satelliteList[i][1] == true){
-
-        }
-        // 显示3D模型
-        if(satelliteList[i][2] == true){
 
         }
         // 显示标注
