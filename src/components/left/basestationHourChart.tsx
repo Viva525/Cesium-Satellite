@@ -217,11 +217,11 @@ const BasestationHourChart: React.FC<BasestationHourChartProps> = (props) => {
             axisLabel: {
               show: true,
               color: "#ffffff",
-              fontSize: 12,
+              fontSize: 14,
               fontFamily: "SourceHanSansSC-Regular",
               fontWeight: "bold",
               // position: "top",
-              distance: -15,
+              distance: -20,
               formatter: function (v: string) {
                 switch (v + "") {
                   case "0":
@@ -389,7 +389,7 @@ const BasestationHourChart: React.FC<BasestationHourChartProps> = (props) => {
             name: "第一个圆环",
             type: "pie",
             clockWise: false,
-            radius: [20, 16],
+            radius: [40, 32],
             itemStyle: dataStyle,
             hoverAnimation: false,
             center: ["52%", "50%"],
@@ -402,28 +402,28 @@ const BasestationHourChart: React.FC<BasestationHourChartProps> = (props) => {
                       a: {
                         color: "#5FB878",
                         align: "center",
-                        fontSize: 12,
+                        fontSize: 16,
                         fontWeight: "bold",
                       },
                       b: {
                         color: "#fff",
                         align: "center",
-                        fontSize: 12,
+                        fontSize: 16,
                       },
                     },
                     formatter: function (params: { value: string }) {
                       return (
-                        "{b|运行}\n\n\n" +
+                        "{b|运行}\n\n\n\n" +
                         "{a|" +
                         params.value +
                         "次}" +
-                        "\n\n\n{b|2%}"
+                        "\n\n\n\n{b|2%}"
                       );
                     },
                     position: "center",
                     show: true,
                     textStyle: {
-                      fontSize: "12",
+                      fontSize: "16",
                       fontWeight: "normal",
                       color: "#fff",
                     },
@@ -455,7 +455,7 @@ const BasestationHourChart: React.FC<BasestationHourChartProps> = (props) => {
             name: "第二个圆环",
             type: "pie",
             clockWise: false,
-            radius: [20, 16],
+            radius: [40, 32],
             itemStyle: dataStyle,
             hoverAnimation: false,
             center: ["70%", "50%"],
@@ -468,28 +468,28 @@ const BasestationHourChart: React.FC<BasestationHourChartProps> = (props) => {
                       a: {
                         color: "#01AAED",
                         align: "center",
-                        fontSize: 12,
+                        fontSize: 16,
                         fontWeight: "bold",
                       },
                       b: {
                         color: "#fff",
                         align: "center",
-                        fontSize: 12,
+                        fontSize: 16,
                       },
                     },
                     formatter: function (params: { value: string }) {
                       return (
-                        "{b|计划}\n\n\n" +
+                        "{b|计划}\n\n\n\n" +
                         "{a|" +
                         params.value +
                         "次}" +
-                        "\n\n\n{b|2%}"
+                        "\n\n\n\n{b|2%}"
                       );
                     },
                     position: "center",
                     show: true,
                     textStyle: {
-                      fontSize: "12",
+                      fontSize: "16",
                       fontWeight: "normal",
                       color: "#fff",
                     },
@@ -521,7 +521,7 @@ const BasestationHourChart: React.FC<BasestationHourChartProps> = (props) => {
             name: "第三个圆环",
             type: "pie",
             clockWise: false,
-            radius: [20, 16],
+            radius: [40, 32],
             itemStyle: dataStyle,
             hoverAnimation: false,
             center: ["88%", "50%"],
@@ -534,28 +534,28 @@ const BasestationHourChart: React.FC<BasestationHourChartProps> = (props) => {
                       a: {
                         color: "#FF5722",
                         align: "center",
-                        fontSize: 12,
+                        fontSize: 16,
                         fontWeight: "bold",
                       },
                       b: {
                         color: "#fff",
                         align: "center",
-                        fontSize: 12,
+                        fontSize: 16,
                       },
                     },
                     formatter: function (params: { value: string }) {
                       return (
-                        "{b|停机}\n\n\n" +
+                        "{b|停机}\n\n\n\n" +
                         "{a|" +
                         params.value +
                         "次}" +
-                        "\n\n\n{b|2%}"
+                        "\n\n\n\n{b|2%}"
                       );
                     },
                     position: "center",
                     show: true,
                     textStyle: {
-                      fontSize: "12",
+                      fontSize: "16",
                       fontWeight: "normal",
                       color: "#fff",
                     },

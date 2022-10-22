@@ -2148,7 +2148,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 }
               />
             )}
-            <Box title="111" component={<BasestationBar></BasestationBar>} />
+            <Box title="周工作情况" component={<BasestationBar></BasestationBar>} />
           </div>
           <div className="right-wrap">
             <Box
@@ -2169,13 +2169,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               <></>
             ) : (
               <Box
-                title=""
+                title="稳定性"
                 component={
                   <BasestationChart
                     title={"稳定性"}
                     type={"Line"}
                     width={"100%"}
-                    height={20}
+                    height={24}
                     xData={groundStabilityState["DateTime"]}
                     yData={[groundStabilityState["AvgTime"]]}
                     legend={["AvgTime"]}
@@ -2193,7 +2193,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                     <BasestationChart
                       type={"Line"}
                       width={"100%"}
-                      height={15}
+                      height={24}
                       xData={groundReliabilityState["DateTime"]}
                       yData={[
                         groundReliabilityState["normal"],

@@ -129,9 +129,10 @@ const BasestationBar: React.FC<{}> = () => {
         ],
       };
       let option = {
-        background: "transparent",
+        background: "#000",
         legend: {
-          data: ["未开工", "未完成"],
+          selectedMode: false, //取消图例上的点击事件
+          data: ["已完成", "未完成"],
           icon: "rect",
           show: true,
           top: 15,
@@ -144,66 +145,12 @@ const BasestationBar: React.FC<{}> = () => {
         },
         //提示框
         tooltip: {
-          trigger: "axis",
-          axisPointer: {
-            type: "none",
-          },
-          formatter: function (
-            param: {
-              name: string;
-              seriesName: string;
-              value: number;
-            }[]
-          ) {
-            var resultTooltip =
-              "<div style='background:rgba(13,5,30,.3);border:1px solid rgba(255,255,255,.2);padding:5px 10px;border-radius:4px;'>" +
-              "<div style='text-align:center;'>" +
-              param[0].name +
-              "</div>" +
-              "<div style='padding-top:5px;'>" +
-              "<span style='display:inline-block;border-radius:4px;width:20px;height:10px;background-color:rgba(61,187,255,.3);border: 2px solid #3eb6f5;'></span>" +
-              "<span style=''> " +
-              param[0].seriesName +
-              ": </span>" +
-              "<span style=''>" +
-              param[0].value +
-              "</span><span>%</span>" +
-              "</div>" +
-              "<div style='padding-top:5px;'>" +
-              "<span style='display:inline-block;border-radius:4px;width:20px;height:10px;background-color:rgba(255,164,41,.3);border: 2px solid #ffc241;'></span>" +
-              "<span style=''> " +
-              param[1].seriesName +
-              ": </span>" +
-              "<span style=''>" +
-              param[1].value +
-              "</span><span>%</span>" +
-              "</div>" +
-              "<div style='padding-top:5px;'>" +
-              "<span style='display:inline-block;border-radius:4px;width:20px;height:10px;background-color:rgba(61,187,255,.16);'></span>" +
-              "<span style=''> " +
-              "已开工未完成" +
-              ": </span>" +
-              "<span style=''>" +
-              (100 - param[0].value) +
-              "</span><span>%</span>" +
-              "</div>" +
-              "<div style='padding-top:5px;'>" +
-              "<span style='display:inline-block;border-radius:4px;width:20px;height:10px;background-color:rgba(255,164,41,.16);'></span>" +
-              "<span style=''> " +
-              "已完成未合格" +
-              ": </span>" +
-              "<span style=''>" +
-              (100 - param[1].value) +
-              "</span><span>%</span>" +
-              "</div>" +
-              "</div>";
-            return resultTooltip;
-          },
+          trigger: "none"
         },
         grid: {
           top: "25%",
           left: "5%",
-          bottom: "10%",
+          bottom: "5%",
           right: "5%",
           containLabel: true,
         },
@@ -257,7 +204,7 @@ const BasestationBar: React.FC<{}> = () => {
             type: "value",
             axisLabel: {
               textStyle: {
-                color: "#000",
+                color: "#fff",
               },
             },
             splitLine: {
@@ -275,7 +222,7 @@ const BasestationBar: React.FC<{}> = () => {
         ],
         series: [
           {
-            name: "已开工已完成",
+            name: "已完成",
             type: "pictorialBar",
             symbolSize: [barWidth, 10],
             symbolOffset: ["-55%", -5],
@@ -286,7 +233,7 @@ const BasestationBar: React.FC<{}> = () => {
             data: newchartValue1,
           },
           {
-            name: "已完成已合格",
+            name: "未完成",
             type: "pictorialBar",
             symbolSize: [barWidth, 10],
             symbolOffset: ["55%", -5],
@@ -298,7 +245,7 @@ const BasestationBar: React.FC<{}> = () => {
           },
 
           {
-            name: "已开工已完成",
+            name: "已完成",
             type: "bar",
             barGap: "10%",
             barWidth: barWidth,
@@ -320,7 +267,7 @@ const BasestationBar: React.FC<{}> = () => {
             data: newchartValue1,
           },
           {
-            name: "已完成已合格",
+            name: "未完成",
             type: "bar",
             barGap: "10%",
             barWidth: barWidth,
@@ -343,11 +290,11 @@ const BasestationBar: React.FC<{}> = () => {
             data: newchartValue2,
           },
           {
-            name: "工程量",
+            name: "已完成",
             type: "bar",
             xAxisIndex: 1,
             barGap: "10%",
-            data: [100, 100, 100, 100, 100],
+            data: [100, 100, 100, 100, 100, 100, 100],
             zlevel: 1,
             barWidth: barWidth,
             itemStyle: {
@@ -357,11 +304,11 @@ const BasestationBar: React.FC<{}> = () => {
             },
           },
           {
-            name: "合格量",
+            name: "未完成",
             type: "bar",
             xAxisIndex: 1,
             barGap: "10%",
-            data: [100, 100, 100, 100, 100],
+            data: [100, 100, 100, 100, 100, 100, 100],
             zlevel: 1,
             barWidth: barWidth,
             itemStyle: {
@@ -371,7 +318,7 @@ const BasestationBar: React.FC<{}> = () => {
             },
           },
           {
-            name: "已开工已完成",
+            name: "已完成",
             type: "pictorialBar",
             symbolSize: [barWidth, 10],
             symbolOffset: ["-55%", 5],
@@ -381,7 +328,7 @@ const BasestationBar: React.FC<{}> = () => {
             data: dataBottom,
           },
           {
-            name: "已完成已合格",
+            name: "未完成",
             type: "pictorialBar",
             symbolSize: [barWidth, 10],
             symbolOffset: ["55%", 5],
@@ -393,7 +340,7 @@ const BasestationBar: React.FC<{}> = () => {
           // 头
 
           {
-            name: "已开工未完成",
+            name: "已完成",
             type: "effectScatter",
             rippleEffect: {
               period: 1,
@@ -417,7 +364,7 @@ const BasestationBar: React.FC<{}> = () => {
             data: data,
           },
           {
-            name: "已开工未完成",
+            name: "未完成",
             type: "effectScatter",
             rippleEffect: {
               period: 1,
@@ -448,7 +395,7 @@ const BasestationBar: React.FC<{}> = () => {
     }
   }, [init]);
 
-  return <div ref={chartRef} style={{ width: "100%", height: "20vh" }}></div>;
+  return <div ref={chartRef} style={{ width: "100%", height: "24vh" }}></div>;
 };
 
 export default BasestationBar;
