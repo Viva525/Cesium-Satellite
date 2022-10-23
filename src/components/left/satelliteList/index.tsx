@@ -3,12 +3,12 @@ import { Avatar, List, Checkbox } from 'antd';
 import './table.css'
 // import Item from 'antd/lib/list/Item';
 import React, { useEffect, useState } from 'react';
-import { StatelliteCardType } from "../../../types/type"
+import { StatelliteListType } from "../../../types/type"
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import StatelliteCard from './card';
 
 
-const SatelliteList: React.FC<StatelliteCardType> = (props) => {
+const SatelliteList: React.FC<StatelliteListType> = (props) => {
   const { satelliteList, setSatelliteList } = props
   const [nowSatellite, setNowSatellite] = useState<any[]>([])
   const [value, setValue] = useState("all");

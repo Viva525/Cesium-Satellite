@@ -728,7 +728,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
             let height = cartographic.height;
             //23 28
-            console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 23));
             // wgs84ToCartesign(lng, lat, height)
           }
         }
@@ -987,14 +986,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
         satelliteList[i][8] = false
         let pick = viewer.entities.getById(satelliteList[i][0]);
-        console.log(pick)
         let curradarScanner = viewer.entities.getById("radarScan_" + satelliteList[i][0]);
 
         // 显示2D模型
         pick.billboard.show = satelliteList[i][1]
         // 显示3D模型
         pick.model.show = satelliteList[i][2]
-        console.log(satelliteList[i][2])
         if (satelliteList[i][2]) {
           viewer.trackedEntity = pick
         }
@@ -1053,7 +1050,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
 
     return cartesian3;
   };
@@ -1636,7 +1632,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         hexagonList.push([i[0], i[1], i[2], i[3]])
       }
     }
-    console.log(hexagonList)
     for (let i of hexagonList) {
       addOneHexagon(i[1], i[2], radius, i[0] + i[3])
     }

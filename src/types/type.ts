@@ -49,6 +49,12 @@ export type StatelliteCardType = {
   statelliteType: string
   setNowSatellite : SetState<any[]>
 }
+
+export type UseMapProps = {
+  nowData: number
+  setUseRegionData: SetState<any[]>
+};
+
   /////////////////////////场景数据类型///////////////////////////////
 export type SceneDataType = {
   selectedSatelliteList: string[],
@@ -57,3 +63,4 @@ export type SceneDataType = {
   isEdit: boolean,
   sceneName: string
 }
+
