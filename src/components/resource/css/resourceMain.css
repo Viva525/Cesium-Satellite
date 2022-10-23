@@ -1,0 +1,113 @@
+#rs-container{
+    background-color: #22262f;
+    width: 100vw;
+    height:100vh;
+    padding: 0;
+    margin: 0;
+    display: block;
+}
+#charts{
+    display: flex;
+}
+
+#rs-time{
+    position: absolute;
+    right: 10px;
+    top: 0;
+    font-size: 28px;
+    color: #fcc91d;
+}
+
+body::-webkit-scrollbar{
+    display: none;
+}
+
+.rs-title{
+    height: 6vh;
+    width: 100vw;
+    color: rgba(13, 126, 222, 1);
+    z-index: 999;
+    padding-left: 1%;
+    line-height: 6vh;
+    font-weight: 600;
+    letter-spacing: 3px;
+    font-size: 40px;
+}
+
+.rs-left{
+    width: 49vw;
+    height: 94vh;
+    left: 10px;
+    position:absolute;
+}
+
+.rs-right{
+width: 49vw;
+height: 94vh;
+right: 10px;
+    position: absolute;
+}
+
+.chart-title{
+    color: aliceblue;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 3vh;
+    margin-left:15px;
+    height: 3vh;
+}
+
+.chart-container{
+    margin-bottom: 50px;
+}
+
+#earth-chart{
+    width: 100%;
+    height: 91vh;
+}
+
+#rs-chart1{
+    width: 100%;
+    height: 30vh;
+}
+
+#rs-chart2{
+    width: 100%;
+    height: 23vh;
+}
+
+#rs-chart3{
+    width: 100%;
+    height: 26vh;
+}
+
+#rs-chart4{
+    width: 100%;
+    height: 15vh;
+}
+
+#rs-chart5{
+    width: 100%;
+    height: 26vh;
+}
+
+#rs-chart6{
+    width: 100%;
+    height: 22vh;
+}
+
+hr.rsHr {
+    /*透明渐变水平线*/
+    
+    width: 100px;
+    margin: 0 auto;
+    border: 0;
+    height: 3px;
+    background-image: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.1),
+      rgba(50, 91, 228, 0.9),
+      rgba(0, 0, 0, 0)
+    );
+    margin: 0;
+  }
