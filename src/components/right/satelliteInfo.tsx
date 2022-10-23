@@ -1,12 +1,10 @@
 //@ts-nocheck
-import { Col, Dropdown, Menu, Row, Space, Typography } from "antd";
-import { DownOutlined, UserOutlined } from "@ant-design/icons";
-import { type } from "os";
+import { Dropdown, Menu } from "antd";
+import { DownOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 
 import "./satelliteInfo.css";
 import { BaseStation, SetState } from "../../types/type";
-import { ExecOptionsWithStringEncoding } from "child_process";
 
 type SatelliteInfoProp = {
   sateName: string;

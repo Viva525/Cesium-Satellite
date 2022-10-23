@@ -27,6 +27,7 @@ import PolarEarth from "../right/palarEarth";
 import SatelliteInfo from "../right/satelliteInfo";
 import BasestationChart from "../right/basestationChart";
 import BasestationBar from "../left/basestationBar";
+import BaseChart0 from "../right/baseChart0";
 import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
@@ -718,7 +719,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           setSatelliteList((ele) => [...ele, ...nowSatelliteList]);
           setHexagon(1.5);
         });
-      }, 2000);
+      }, 0);
 
       viewer.homeButton.viewModel.duration = 0;
       viewer.homeButton.viewModel.command.afterExecute.addEventListener(
@@ -1971,6 +1972,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   };
 
+  const showResourcePanel =()=>{
+    
+  }
+
   const showScenceEditPanel = () => {
     let temp: SceneDataType = {
       // selectedSatelliteList: selectedSatelliteList,
@@ -2123,7 +2128,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         >
           站网态势
         </button>
-        <button type="button" className="cesium-button">
+        <button type="button" className="cesium-button" onClick={showResourcePanel()}>
           资源态势
         </button>
         <button type="button" className="cesium-button">
@@ -2232,15 +2237,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               <Box
                 title="稳定性"
                 component={
-                  <BasestationChart
-                    title={"稳定性"}
-                    type={"Line"}
-                    width={"100%"}
-                    height={24}
-                    xData={groundStabilityState["DateTime"]}
-                    yData={[groundStabilityState["AvgTime"]]}
-                    legend={["AvgTime"]}
-                  />
+                  <BaseChart0 />
                 }
               />
             )}
