@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Button, Input, Modal, Table, Col, Row, Space, InputNumber, Select, Slider, Switch, Upload} from "antd";
+import {Button, Input, Modal, Col, Row} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
@@ -8,7 +8,7 @@ import type { TableRowSelection } from "antd/es/table/interface";
 import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
-import { UploadOutlined } from '@ant-design/icons';
+
 import {
   BaseStation,
   CesiumSettingType,
@@ -31,7 +31,8 @@ import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
 import $ from 'jquery';
-const {Option} = Select;
+import SettingPanel from "./settingPanel";
+
 //@ts-ignore
 let viewer: any;
 let linkToBaseStation: any = {};
@@ -760,7 +761,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
             let height = cartographic.height;
             //23 28
-            console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 23));
+            // console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 23));
             // wgs84ToCartesign(lng, lat, height)
           }
         }
@@ -1019,7 +1020,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
         satelliteList[i][8] = false;
         let pick = viewer.entities.getById(satelliteList[i][0]);
-        console.log(pick);
+        // console.log(pick);
         let curradarScanner = viewer.entities.getById(
           "radarScan_" + satelliteList[i][0]
         );
@@ -1028,7 +1029,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         pick.billboard.show = satelliteList[i][1];
         // 显示3D模型
         pick.model.show = satelliteList[i][2];
-        console.log(satelliteList[i][2]);
+        // console.log(satelliteList[i][2]);
         if (satelliteList[i][2]) {
           viewer.trackedEntity = pick;
         } else {
@@ -1082,7 +1083,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
+    // console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
 
     return cartesian3;
   };
@@ -1544,7 +1545,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         hexagonList.push([i[0], i[1], i[2], i[3]]);
       }
     }
-    console.log(hexagonList);
+    // console.log(hexagonList);
     for (let i of hexagonList) {
       addOneHexagon(i[1], i[2], radius, i[0] + i[3]);
     }
@@ -1589,7 +1590,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   useEffect(() => {
     if (init) {
-      console.log(weather);
+      // console.log(weather);
       snow && viewer.scene.postProcessStages.remove(snow); // 移除
       rain && viewer.scene.postProcessStages.remove(rain); // 移除
       fog && viewer.scene.postProcessStages.remove(fog); // 移除
@@ -2063,7 +2064,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [isShowBasestationNet]);
 
   useEffect(() => {
-    console.log(groundReliabilityState);
+    // console.log(groundReliabilityState);
   }, [groundReliabilityState]);
 
   useEffect(()=>{
@@ -2072,7 +2073,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     switch(situation.indexOf(true)){
       case 0:
         // 星座运行态势
-        console.log($(".cesium-button"));
+        // console.log($(".cesium-button"));
         break;
       case 1:
         // 网络态势
@@ -2094,47 +2095,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   return (
     <>
       <div id="title">星座运行态势感知平台</div>
-            <div id="toolbar">
-        {/* <button
-          type="button"
-          id="measureDistance"
-          onClick={() => {
-            setIsDrawLine(!isDrawLine);
-          }}
-          className="cesium-button"
-        >
-          MeasureDistance
-        </button>
-        <button
-          type="button"
-          id="measureArea"
-          onClick={() => {
-            setIsDrawPolygon(!isDrawPolygon);
-          }}
-          className="cesium-button"
-        >
-          MeasureArea
-        </button>
-        <button
-          type="button"
-          id="animation"
-          onClick={() => {
-            satelliteAnimate();
-          }}
-          className="cesium-button"
-        >
-          {`Animation：${satelliteStatus}`}
-        </button>
-        <button
-          type="button"
-          id="animation"
-          onClick={() => {
-            showSaveScencePanel();
-          }}
-          className="cesium-button"
-        >
-          Save Scence
-        </button> */}
+        <div id="toolbar">
         <button type="button" className="cesium-button">
           星座运行态势
         </button>
@@ -2180,19 +2141,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       ></div>
       {!isShowBasestationNet ? (
         <>
-          {/* <div className="left-wrap">
-            <Box
-              title="卫星列表"
-              component={
-                <SatelliteList
-                  satelliteList={satelliteList}
-                  setSatelliteList={setSatelliteList}
-                />
-              }
-            /> */}
-            {/* <Box title="卫星数量统计图" component={<SatelliteBar />} />
-            <Box title="卫星数量变化图" component={<SatelliteNumberChart />} /> */}
-          {/* </div> */}
+          <div className="left-wrap">
+            <Box title="卫星数量统计图" component={<SatelliteBar/>} />
+            <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
+          </div>
           <div className="right-wrap">
             <Box
               title="卫星信息"
@@ -2347,147 +2299,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             />
           </Col>
           <Col span={14}>
-            <header className="sceneEditTitle">场景配置</header>
-            <div className="scenceSetting">
-              <div>
-                <p style={{fontSize:"16px", color:"#017efc", borderBottom:"2px solid #017efc"}}>基本设置</p>
-                <ul className="settingList">
-                  <li>
-                    <header style={{marginRight:"20px",marginBottom:"20px", color:"#017efc"}}>画布设置</header>
-                    <label style={{marginRight:"20px"}}>画布大小</label> 
-                    <label style={{marginRight:"8px"}}>宽</label>
-                    <InputNumber style={{width:"4vw"}} size="small" min={1} max={100000} defaultValue={1920} controls={false}/>
-                    <label style={{marginRight:"8px",marginLeft:"1.6vw"}}>高</label>
-                    <InputNumber style={{width:"4vw"}} size="small" min={1} max={100000} controls={false} defaultValue={1080}/>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>画布位置</label> 
-                    <InputNumber style={{width:"5vw"}} size="small" min={1} max={100000} defaultValue={244} controls={false}/>
-                    <InputNumber style={{width:"5vw", marginLeft:"40px"}} size="small" min={1} max={100000} controls={false} defaultValue={180}/>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>页面缩放</label> 
-                    <Select defaultValue="等比例缩放" style={{ width: "11.6vw", color:"#fff", background:"#262c33"}} size="small" allowClear>
-                      <Option value="等比例缩放">等比例缩放</Option>
-                      <Option value="宽度缩放">宽度缩放</Option>
-                      <Option value="高度缩放">高度缩放</Option>
-                    </Select>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>背景颜色</label> 
-                    <Input style={{width:"11.6vw", background:"#262c33", color:"#fff"}} size="small" placeholder="请输入16进制颜色代码"/>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>透明度</label> 
-                    <Slider min={1} max={100} style={{width:"15vw"}} defaultValue={80}/>
-                  </li>
-                  <li>
-                    <header style={{marginRight:"20px",marginBottom:"20px", color:"#017efc"}}>卫星参数设置</header>
-                    <label style={{marginRight:"20px"}}>显示卫星图标</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                    <label style={{marginLeft:"20px", marginRight:"20px"}}>卫星图标上传</label>
-                    <Upload>
-                      <Button size="small" style={{background:"#262c33", color:"#fff"}} icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>显示卫星轨迹</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                    <label style={{marginLeft:"20px", marginRight:"20px"}}>卫星数据上传</label>
-                    <Upload>
-                      <Button size="small" style={{background:"#262c33", color:"#fff"}} icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>显示卫星名称</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                  </li>
-                </ul>
-                <p style={{fontSize:"16px", color:"#017efc", borderBottom:"2px solid #017efc"}}>系统设置</p>
-                <ul className="settingList">
-                  <li>
-                    <header style={{marginRight:"20px",marginBottom:"20px", color:"#017efc"}}>场景设置</header>
-                    <label style={{marginRight:"20px"}}>地球自转</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                    <label style={{marginLeft:"20px", marginRight:"10px"}}>自转速度</label> 
-                    <Slider min={1} max={50} style={{width:"10vw", float:"right", marginRight:"25%"}} defaultValue={20}/>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>显示光照</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                    <label style={{marginLeft:"20px", marginRight:"10px"}}>光照强度</label> 
-                    <Slider min={1} max={10} style={{width:"10vw", float:"right", marginRight:"25%"}} defaultValue={5}/>
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>显示太阳</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>显示星空</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                  </li>
-                  <li>
-                    <label style={{marginRight:"20px"}}>显示时间</label>
-                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-                  </li>
-                </ul>
-                <Button type="primary" style={{width:"8vw",marginLeft:"10vw", marginTop:"2vh"}} shape="round" size="large">保存场景</Button>
-              </div>
-              <Row></Row>
-            </div>
+            <SettingPanel setting={setting} setSetting={setSetting}/>
           </Col>
         </Row>
-        {/* {sceneList.map((scene: SceneDataType, index: number) => {
-          return (
-            <Row gutter={16} key={index} style={{ marginTop: "10px" }}>
-              <Col span={14}>
-                {scene.isEdit ? (
-                  <Input
-                    ref={inputRef}
-                    placeholder="please input scene name"
-                  ></Input>
-                ) : (
-                  <p
-                    className="loadingScene"
-                    onClick={() => {
-                      loadingScene(scene);
-                    }}
-                  >
-                    {scene.sceneName}
-                  </p>
-                )}
-              </Col>
-              <Col span={4} offset={1}>
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    let temp = sceneList;
-                    if (scene.isEdit === true) {
-                      temp[index]["sceneName"] = inputRef.current.input.value;
-                    }
-                    temp[index]["isEdit"] = !temp[index]["isEdit"];
-                    setScenList([...temp]);
-                  }}
-                >
-                  {scene.isEdit ? "Save Scene" : "Rename"}
-                </Button>
-              </Col>
-              <Col span={4} offset={1}>
-                <Button
-                  type="default"
-                  danger={true}
-                  onClick={() => {
-                    let temp = sceneList;
-                    temp.splice(index, 1);
-                    setScenList([...temp]);
-                  }}
-                >
-                  Delete
-                </Button>
-              </Col>
-            </Row>
-          );
-        })} */}
       </Modal>
       <div id="left-border-line"></div>
       <div id="right-border-line"></div>

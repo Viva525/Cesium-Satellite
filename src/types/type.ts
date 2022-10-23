@@ -50,6 +50,11 @@ export type StatelliteCardType = {
   setNowSatellite : SetState<any[]>
 }
 
+export type settingPanelProps = {
+  setting: SettingType,
+  setSetting: SetState<SettingType>
+}
+
   /////////////////////////场景数据类型///////////////////////////////
 export type SceneDataType = {
   selectedSatelliteList: string[],
