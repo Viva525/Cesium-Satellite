@@ -17,7 +17,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<CesiumComponent setDashboard={setDashboardInfo} />}
+            element={<CesiumComponent />}
           ></Route>
 
           <Route

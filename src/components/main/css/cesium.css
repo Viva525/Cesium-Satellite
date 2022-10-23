@@ -41,6 +41,22 @@
     z-index: 998;
 }
 
+.settingList{
+    list-style: none;
+    color: #fff;
+    font-size: 16px;
+}
+
+.settingList li{
+    margin-bottom: 10px;
+}
+
+.ant-input-number-handler-wrap, .ant-input-number-input-wrap{
+    background-color: #262c33 !important;
+    color: #fff;
+    border-color: #fff !important;
+}
+
 .settingPanel{
     width: 6vw;
     display: block;
@@ -79,6 +95,51 @@
     transition: visibility 0s 0.2s, opacity 0.2s ease-in, transform 0.2s ease-in;
 }
 
+.sceneEdit {
+    width: 50vw !important;
+}
+
+.sceneEditTitle{
+    color: #fff !important;
+    font-size: 18px !important;
+}
+
+.ant-modal-title {
+    color: #017efc !important;
+    font-size: 24px !important;
+}
+
+.ant-modal-header{
+    background-color: #2c333d !important;
+    border: none !important;
+}
+
+.ant-list{
+    max-height: 70vh !important;
+    overflow-y: scroll !important;
+}
+
+.ant-modal-content {
+    background-color: #21292f !important;
+}
+
+.ant-modal-footer{
+    border-top: 2px solid #2c333d !important;
+}
+
+.ant-list-item{
+    border-bottom: 2px solid #2c333d !important;
+}
+
+.scenceSetting{
+    padding-top: 1vh;
+}
+
+.checkItem{
+    margin-right: 16px;
+
+}
+
 #satelliteList {
     position: absolute;
     top: 2%;
@@ -88,6 +149,8 @@
     padding-left: 10px;
     z-index: 999;
 }
+
+
 
 #title {
     color: rgba(13, 126, 222, 1);
@@ -130,11 +193,12 @@
     position: absolute;
 }
 
+
 .bottom-wrap{
     width: 50vw;
-    height: 5vh;
+    height: 8vh;
     left: 25vw;
-    bottom: 15vh;
+    bottom: 3vh;
     position: absolute;
 }
 
@@ -174,6 +238,8 @@
     background-size: cover;
     background-repeat: no-repeat;
 }
+
+
 
 .baseStationIcon {
     width: 100%;

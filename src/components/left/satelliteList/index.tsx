@@ -30,6 +30,7 @@ const SatelliteList: React.FC<StatelliteListType> = (props) => {
     <Checkbox.Group options={plainOptions} defaultValue={plainOptions} onChange={onChange} style={{ "color": "rgb(44, 79, 172)" }} />
     <List
       itemLayout="horizontal"
+      className='satelliteList'
       dataSource={satelliteList}
       style={{
         height: 800,

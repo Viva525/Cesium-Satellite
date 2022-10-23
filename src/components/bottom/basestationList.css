@@ -1,0 +1,71 @@
+.base-list-title {
+  text-align: left;
+  color: #007acc;
+  font-size: 18px;
+  font-weight: bold;
+  height: 30%;
+  width: 100%;
+  letter-spacing: 3px;
+}
+
+hr.baseHr {
+  /*透明渐变水平线*/
+  width: 7%;
+  margin: 0 auto;
+  border: 0;
+  height: 3px;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.1),
+    rgba(29, 70, 205, 0.75),
+    rgba(0, 0, 0, 0)
+  );
+  margin: 0;
+}
+
+.single-basestation {
+  background-color: rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 80%;
+  cursor: pointer;
+  margin-top: 5px;
+  
+}
+ .col-up {
+  width: 100%;
+  height: 50%;
+  display: flex;
+}
+.basestation-title {
+    width: 50%;
+    font-size:16px;
+    color: #007acc;
+    text-align: left;
+    padding-left: 5px;
+  }
+
+  .basestation-icon {
+    width: 48%;
+    color: aquamarine;
+    text-align: right;
+    padding-right: 5px;
+  }
+
+  
+.col-bottom {
+  width: 100%;
+  height: 50%;
+  text-align: right;
+  display: flex;
+}
+
+.bar-container{
+    width: 70%;
+    height: 10%;
+    margin-top: 10px;
+    padding-left: 10px !important;
+}
+
+.ant-progress-text {
+    color: aquamarine !important;
+  }
