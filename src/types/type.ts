@@ -33,15 +33,15 @@ export type CesiumSettingType = {
 }
 export type SettingType = {
   mode?: number,
-  light: {val: boolean, name: string},
-  sun: {val: boolean, name: string},
-  star:{val: boolean, name: string},
-  time: {val: boolean, name: string},
-  rotate: {val: boolean, name: string}
-  label: {val: boolean, name: string},
-  icon: {val: boolean, name: string},
-  model:{val: boolean, name: string},
-  track:{val: boolean, name: string},
+  light?: {val: boolean, name: string},
+  sun?: {val: boolean, name: string},
+  star?:{val: boolean, name: string},
+  time?: {val: boolean, name: string},
+  rotate?: {val: boolean, name: string}
+  label?: {val: boolean, name: string},
+  icon?: {val: boolean, name: string},
+  model?:{val: boolean, name: string},
+  track?:{val: boolean, name: string},
 }
 
 export type StatelliteCardType = {
@@ -49,6 +49,7 @@ export type StatelliteCardType = {
   statelliteType: string
   setNowSatellite : SetState<any[]>
 }
+
   /////////////////////////场景数据类型///////////////////////////////
 export type SceneDataType = {
   selectedSatelliteList: string[],

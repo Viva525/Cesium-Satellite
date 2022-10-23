@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Button, Input, Modal, Table, Col, Row, Space } from "antd";
+import { Button, Input, Modal, Table, Col, Row, Space, InputNumber, Select, Slider, Switch, Upload} from "antd";
 import type { ColumnsType } from "antd/es/table";
 import type { TableRowSelection } from "antd/es/table/interface";
 //@ts-ignore
@@ -8,6 +8,7 @@ import type { TableRowSelection } from "antd/es/table/interface";
 import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
+import { UploadOutlined } from '@ant-design/icons';
 import {
   BaseStation,
   CesiumSettingType,
@@ -27,7 +28,7 @@ import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
 import $ from 'jquery';
-
+const {Option} = Select;
 //@ts-ignore
 let viewer: any;
 let linkToBaseStation: any = {};
@@ -117,6 +118,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       3287654.154921683
     ),
   };
+  // 监听态势情景变化
+  const [situation, setSituation] = useState<Array<boolean>>([true, false, false, false, false]);
   const [isShowNet, setIsShowNet] = useState<Boolean>(false);
   const [isShowBasestationNet, setIsShowBasestationNet] =
     useState<boolean>(false);
@@ -128,7 +131,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [setting, setSetting] = useState<SettingType>({
     label: { val: false, name: "卫星标注" },
     icon: { val: true, name: "卫星图标" },
-    model: { val: false, name: "卫星模型" },
     track: { val: false, name: "卫星轨迹" },
     light: { val: false, name: "显示光照" },
     sun: { val: true, name: "显示太阳" },
@@ -2025,9 +2027,110 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     console.log(groundReliabilityState);
   }, [groundReliabilityState]);
 
+  useEffect(()=>{
+    // 移除选中样式
+    $(".cesium-button").removeClass("cesium-btn-selected");
+    switch(situation.indexOf(true)){
+      case 0:
+        // 星座运行态势
+        console.log($(".cesium-button"));
+        break;
+      case 1:
+        // 网络态势
+
+        break;
+      case 2:
+        // 站网态势
+
+        break;
+      case 3:
+        // 资源态势
+        break;
+      case 4:
+        // 业务态势
+        break;
+    }
+  },[situation])
+
   return (
     <>
       <div id="title">星座运行态势感知平台</div>
+            <div id="toolbar">
+        {/* <button
+          type="button"
+          id="measureDistance"
+          onClick={() => {
+            setIsDrawLine(!isDrawLine);
+          }}
+          className="cesium-button"
+        >
+          MeasureDistance
+        </button>
+        <button
+          type="button"
+          id="measureArea"
+          onClick={() => {
+            setIsDrawPolygon(!isDrawPolygon);
+          }}
+          className="cesium-button"
+        >
+          MeasureArea
+        </button>
+        <button
+          type="button"
+          id="animation"
+          onClick={() => {
+            satelliteAnimate();
+          }}
+          className="cesium-button"
+        >
+          {`Animation：${satelliteStatus}`}
+        </button>
+        <button
+          type="button"
+          id="animation"
+          onClick={() => {
+            showSaveScencePanel();
+          }}
+          className="cesium-button"
+        >
+          Save Scence
+        </button> */}
+        <button type="button" className="cesium-button">
+          星座运行态势
+        </button>
+        <button
+          type="button"
+          className="cesium-button"
+          id="net-situation-btn"
+          onClick={() => {
+            setIsShowNet(!isShowNet);
+          }}
+        >
+          网络态势
+        </button>
+        <button
+          type="button"
+          className="cesium-button"
+          id="basestation-net-situation"
+          onClick={() => {
+            setIsShowBasestationNet(!isShowBasestationNet);
+          }}
+        >
+          站网态势
+        </button>
+        <button type="button" className="cesium-button">
+          资源态势
+        </button>
+        <button type="button" className="cesium-button">
+          业务态势
+        </button>
+        <button 
+        type="button"
+        className="cesium-button" style={{float:"right",marginRight:"1.5vw"}} onClick={()=>{showScenceEditPanel()}}>
+          场景编辑
+        </button>
+      </div>
       <div
         id="cesiumContainer"
         style={{
@@ -2038,7 +2141,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       ></div>
       {!isShowBasestationNet ? (
         <>
-          <div className="left-wrap">
+          {/* <div className="left-wrap">
             <Box
               title="卫星列表"
               component={
@@ -2047,10 +2150,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   setSatelliteList={setSatelliteList}
                 />
               }
-            />
+            /> */}
             {/* <Box title="卫星数量统计图" component={<SatelliteBar />} />
             <Box title="卫星数量变化图" component={<SatelliteNumberChart />} /> */}
-          </div>
+          {/* </div> */}
           <div className="right-wrap">
             <Box
               title="卫星信息"
@@ -2082,16 +2185,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       ) : (
         <>
           <div className="left-wrap">
-            <Box
-              title="地面基站信息列表"
-              component={
-                <BaseStationInfo
-                  baseStationList={baseStationList}
-                  setBaseStation={setCurBaseStation}
-                  setDashboard={setDashboard}
-                />
-              }
-            />
             {groundBusinessState === null ? (
               <></>
             ) : (
@@ -2177,82 +2270,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           </div>
         </>
       )}
-      <div id="toolbar">
-        {/* <button
-          type="button"
-          id="measureDistance"
-          onClick={() => {
-            setIsDrawLine(!isDrawLine);
-          }}
-          className="cesium-button"
-        >
-          MeasureDistance
-        </button>
-        <button
-          type="button"
-          id="measureArea"
-          onClick={() => {
-            setIsDrawPolygon(!isDrawPolygon);
-          }}
-          className="cesium-button"
-        >
-          MeasureArea
-        </button>
-        <button
-          type="button"
-          id="animation"
-          onClick={() => {
-            satelliteAnimate();
-          }}
-          className="cesium-button"
-        >
-          {`Animation：${satelliteStatus}`}
-        </button>
-        <button
-          type="button"
-          id="animation"
-          onClick={() => {
-            showSaveScencePanel();
-          }}
-          className="cesium-button"
-        >
-          Save Scence
-        </button> */}
-        <button type="button" className="cesium-button">
-          星座运行态势
-        </button>
-        <button
-          type="button"
-          className="cesium-button"
-          id="net-situation-btn"
-          onClick={() => {
-            setIsShowNet(!isShowNet);
-          }}
-        >
-          网络态势
-        </button>
-        <button
-          type="button"
-          className="cesium-button"
-          id="basestation-net-situation"
-          onClick={() => {
-            setIsShowBasestationNet(!isShowBasestationNet);
-          }}
-        >
-          站网态势
-        </button>
-        <button type="button" className="cesium-button">
-          资源态势
-        </button>
-        <button type="button" className="cesium-button">
-          业务态势
-        </button>
-        <button 
-        type="button"
-        className="cesium-button" style={{float:"right",marginRight:"1.5vw"}} onClick={()=>{showScenceEditPanel()}}>
-          场景编辑
-        </button>
-      </div>
       <Modal
         transitionName=""
         title="场景编辑"
@@ -2273,20 +2290,88 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             <header className="sceneEditTitle">场景配置</header>
             <div className="scenceSetting">
               <div>
-                <p style={{fontSize:"16px", color:"#017efc", borderBottom:"2px solid #017efc"}}>设置</p>
-                <ul id="settingList">
-                  {
-                    Object.keys(setting).map((key)=>{
-                      let checked = setting[key]["val"];
-                      if(checked){
-                        return (<li><label ><input name={key} checked className="checkItem" type="checkbox" value={setting[key]["val"]}/>&nbsp;&nbsp;{setting[key]["name"]}</label></li>)
-                      }else{
-                        return (<li><label ><input name={key} className="checkItem" type="checkbox" value={setting[key]["val"]}/>&nbsp;&nbsp;{setting[key]["name"]}</label></li>)
-                      }       
-                    })
-                    
-                  }
+                <p style={{fontSize:"16px", color:"#017efc", borderBottom:"2px solid #017efc"}}>基本设置</p>
+                <ul className="settingList">
+                  <li>
+                    <header style={{marginRight:"20px",marginBottom:"20px", color:"#017efc"}}>画布设置</header>
+                    <label style={{marginRight:"20px"}}>画布大小</label> 
+                    <label style={{marginRight:"8px"}}>宽</label>
+                    <InputNumber style={{width:"4vw"}} size="small" min={1} max={100000} defaultValue={1920} controls={false}/>
+                    <label style={{marginRight:"8px",marginLeft:"1.6vw"}}>高</label>
+                    <InputNumber style={{width:"4vw"}} size="small" min={1} max={100000} controls={false} defaultValue={1080}/>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>画布位置</label> 
+                    <InputNumber style={{width:"5vw"}} size="small" min={1} max={100000} defaultValue={244} controls={false}/>
+                    <InputNumber style={{width:"5vw", marginLeft:"40px"}} size="small" min={1} max={100000} controls={false} defaultValue={180}/>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>页面缩放</label> 
+                    <Select defaultValue="等比例缩放" style={{ width: "11.6vw", color:"#fff", background:"#262c33"}} size="small" allowClear>
+                      <Option value="等比例缩放">等比例缩放</Option>
+                      <Option value="宽度缩放">宽度缩放</Option>
+                      <Option value="高度缩放">高度缩放</Option>
+                    </Select>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>背景颜色</label> 
+                    <Input style={{width:"11.6vw", background:"#262c33", color:"#fff"}} size="small" placeholder="请输入16进制颜色代码"/>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>透明度</label> 
+                    <Slider min={1} max={100} style={{width:"15vw"}} defaultValue={80}/>
+                  </li>
+                  <li>
+                    <header style={{marginRight:"20px",marginBottom:"20px", color:"#017efc"}}>卫星参数设置</header>
+                    <label style={{marginRight:"20px"}}>显示卫星图标</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                    <label style={{marginLeft:"20px", marginRight:"20px"}}>卫星图标上传</label>
+                    <Upload>
+                      <Button size="small" style={{background:"#262c33", color:"#fff"}} icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>显示卫星轨迹</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                    <label style={{marginLeft:"20px", marginRight:"20px"}}>卫星数据上传</label>
+                    <Upload>
+                      <Button size="small" style={{background:"#262c33", color:"#fff"}} icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>显示卫星名称</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                  </li>
                 </ul>
+                <p style={{fontSize:"16px", color:"#017efc", borderBottom:"2px solid #017efc"}}>系统设置</p>
+                <ul className="settingList">
+                  <li>
+                    <header style={{marginRight:"20px",marginBottom:"20px", color:"#017efc"}}>场景设置</header>
+                    <label style={{marginRight:"20px"}}>地球自转</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                    <label style={{marginLeft:"20px", marginRight:"10px"}}>自转速度</label> 
+                    <Slider min={1} max={50} style={{width:"10vw", float:"right", marginRight:"25%"}} defaultValue={20}/>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>显示光照</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                    <label style={{marginLeft:"20px", marginRight:"10px"}}>光照强度</label> 
+                    <Slider min={1} max={10} style={{width:"10vw", float:"right", marginRight:"25%"}} defaultValue={5}/>
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>显示太阳</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>显示星空</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                  </li>
+                  <li>
+                    <label style={{marginRight:"20px"}}>显示时间</label>
+                    <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+                  </li>
+                </ul>
+                <Button type="primary" style={{width:"8vw",marginLeft:"10vw", marginTop:"2vh"}} shape="round" size="large">保存场景</Button>
               </div>
               <Row>
 
