@@ -5,6 +5,7 @@ import SatelliteList from "./components/left/satelliteList/index";
 import { BrowserRouter, HashRouter, Link, Route, Routes } from "react-router-dom";
 import { Dashboard } from "./types/type";
 import "antd/dist/antd.min.css";
+import Yewutaishi from "./components/yewutaishi/yewutaishi";
 
 function App() {
   const [dashboardInfo, setDashboardInfo] = useState<Dashboard | undefined>(
@@ -22,6 +23,10 @@ function App() {
           <Route
             path="/satelliteDashboard/:type/:id"
             element={<SatelliteDashboard />}
+          ></Route>
+          <Route
+            path="/123"
+            element={<Yewutaishi />}
           ></Route>
         </Routes>
       </BrowserRouter>

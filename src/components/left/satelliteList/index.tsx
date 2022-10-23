@@ -3,7 +3,7 @@ import { Avatar, List, Checkbox } from 'antd';
 import './table.css'
 // import Item from 'antd/lib/list/Item';
 import React, { useEffect, useState } from 'react';
-import { StatelliteCardType } from "../../../types/type"
+import { StatelliteListType } from "../../../types/type"
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import StatelliteCard from './card';
 

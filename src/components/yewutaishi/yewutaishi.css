@@ -1,0 +1,51 @@
+.allBack{
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(26, 35, 35);
+  overflow: hidden;
+}
+
+.title{
+  height: 10vh;
+  width: 100vw;
+}
+.content{
+  height: 90vh;
+  width: 100vw;
+}
+.Left{
+  height: 90vh;
+  width: 20vw;
+  float: left;
+}
+.useTime{
+  height: 29vh;
+  width: 20vw;
+  margin-top: 10px;
+}
+
+.useMap{
+  height: 90vh;
+  width: 59vw;
+  float: left;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.right{
+  height: 90vh;
+  width: 19vw;
+  float: left;
+  margin-left: 10px;
+}
+.useRank{
+  height: 45vh;
+  width: 20vw;
+  float: left;
+  margin-top: 10px;
+}
+.useRegionMAp{
+  height: 45vh;
+  width: 20vw;
+  float: left;
+  margin-top: 10px;
+} 
