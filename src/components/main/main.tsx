@@ -1,22 +1,20 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import {Button, Input, Modal, Col, Row} from "antd";
-import type { ColumnsType } from "antd/es/table";
-import type { TableRowSelection } from "antd/es/table/interface";
+import {Modal, Select} from "antd";
 //@ts-ignore
 // import * as Cesium from 'cesium/Cesium';
-import SatelliteList from "../left/satelliteList";
 import "antd/dist/antd.css";
 import "./css/cesium.css";
-
 import {
   BaseStation,
-  CesiumSettingType,
   PolarEarthProps,
   SceneDataType,
+  SceneType,
   SettingType,
+  situationType,
 } from "../../types/type";
 import BaseStationInfo from "./baseStationInfo";
+
 import Box from "./box";
 import HeightChart from "../right/heightChart";
 import SatelliteBar from "../left/satelliteBar";
@@ -27,11 +25,13 @@ import PolarEarth from "../right/palarEarth";
 import SatelliteInfo from "../right/satelliteInfo";
 import BasestationChart from "../right/basestationChart";
 import BasestationBar from "../left/basestationBar";
+import SatelliteInfoList from "./satelliteInfoList";
 import "./LineFlowMaterialProperty";
 import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
 import $ from 'jquery';
 import SettingPanel from "./settingPanel";
+const { Option } = Select;
 
 //@ts-ignore
 let viewer: any;
@@ -60,6 +60,7 @@ let polarTimeId: any;
 let clicked = false;
 let timerOpen, timerClose;
 let hexagon: any[] = [];
+let isLoad: boolean = false
 const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const { setDashboard } = props;
   const [init, setInit] = useState<boolean>(false);
@@ -124,7 +125,14 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     ),
   };
   // 监听态势情景变化
-  const [situation, setSituation] = useState<Array<boolean>>([true, false, false, false, false]);
+  const [situation, setSituation] = useState<situationType>({
+    satellite: true,
+    communicate: false,
+    basestation: false,
+    resource: false,
+    business: false,
+    current: ""
+  });
   const [isShowNet, setIsShowNet] = useState<Boolean>(false);
   const [isShowBasestationNet, setIsShowBasestationNet] =
     useState<boolean>(false);
@@ -145,7 +153,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   });
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   // 场景列表数据
-  const [sceneList, setScenList] = useState<SceneDataType[]>([]);
+  const [sceneList, setScenList] = useState<SceneType[]>([]);
   const inputRef = useRef();
   useEffect(() => {
     setInit(true);
@@ -762,7 +770,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             let lat = Cesium.Math.toDegrees(cartographic.latitude);
             let height = cartographic.height;
             //23 28
-            // console.log(Cesium.Cartesian3.fromDegrees(lng, lat, 23));
             // wgs84ToCartesign(lng, lat, height)
           }
         }
@@ -924,6 +931,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         });
         break;
       case "icon":
+        console.log(satelliteListRef.current);
+        
         satelliteListRef.current.forEach((satellite) => {
           let satelliteEntity = viewer.entities.getById(satellite[0]);
           satelliteEntity.billboard.show = settingValue;
@@ -988,6 +997,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [curSatellite]);
 
   useEffect(() => {
+    
+    satelliteListRef.current = satelliteList;
     clearInterval(polarTimeId);
     polarTimeId = setInterval(() => {
       let t = [];
@@ -1004,7 +1015,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }, 1000);
 
     for (let i in satelliteList) {
-      if (satelliteList[i][8].toString() == "true") {
+      if (satelliteList[i][8].toString() == "true" || isLoad) {
         setCurSatellite(satelliteList[i][0].split("/")[1]);
         // 如果当前选择了该卫星则继续
         if (satelliteList[i][3] || satelliteList[i][4] || satelliteList[i][5]) {
@@ -1021,7 +1032,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
         satelliteList[i][8] = false;
         let pick = viewer.entities.getById(satelliteList[i][0]);
-        // console.log(pick);
         let curradarScanner = viewer.entities.getById(
           "radarScan_" + satelliteList[i][0]
         );
@@ -1030,7 +1040,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         pick.billboard.show = satelliteList[i][1];
         // 显示3D模型
         pick.model.show = satelliteList[i][2];
-        // console.log(satelliteList[i][2]);
         if (satelliteList[i][2]) {
           viewer.trackedEntity = pick;
         } else {
@@ -1058,6 +1067,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         }
       }
     }
+    isLoad = false
   }, [satelliteList]);
 
   const earthRotate = useCallback(() => {
@@ -1073,7 +1083,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     let cartographic = Cesium.Cartographic.fromCartesian(coor);
     let x = Cesium.Math.toDegrees(cartographic.longitude);
     let y = Cesium.Math.toDegrees(cartographic.latitude);
-    // console.log(x, y);
 
     if (type === 0) return `(经度 :${x.toFixed(2)}, 纬度 : ${y.toFixed(2)})`;
     else if (type === 1) return [x as number, y as number];
@@ -1084,7 +1093,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     var ellipsoid = viewer.scene.globe.ellipsoid;
     var cartographic = Cesium.Cartographic.fromDegrees(lng, lat, alt);
     var cartesian3 = ellipsoid.cartographicToCartesian(cartographic);
-    // console.log([cartesian3.x, cartesian3.y, cartesian3.z]);
 
     return cartesian3;
   };
@@ -1546,7 +1554,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         hexagonList.push([i[0], i[1], i[2], i[3]]);
       }
     }
-    // console.log(hexagonList);
     for (let i of hexagonList) {
       addOneHexagon(i[1], i[2], radius, i[0] + i[3]);
     }
@@ -1746,8 +1753,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
 
   const addWeather =(weatherKey, strong)=>{
-    console.log('更改天气');
-    
       // 移除上一个地点的天气
       snow && viewer.scene.postProcessStages.remove(snow); // 移除
       rain && viewer.scene.postProcessStages.remove(rain); // 移除
@@ -1972,27 +1977,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   };
 
   const showScenceEditPanel = () => {
-    let temp: SceneDataType = {
-      // selectedSatelliteList: selectedSatelliteList,
-      curBaseStation: curBaseStation,
-      cesiumSetting: {
-        mode: viewer.scene.mode,
-      },
-      isEdit: true,
-      sceneName: "",
-    };
-    setScenList((prev: SceneDataType[]) => {
-      return [...prev, temp];
-    });
     setIsModalOpen(true);
   };
 
+  useEffect(()=>{
+    settingDeal(setting.currEdit?.name, setting.currEdit?.val);
+  }, [setting])
+
   const closeSceneEditPanel = () => {
     setIsModalOpen(false);
-    // 检查最后一项是否为空 为空则移除
-    if (sceneList[sceneList.length - 1].sceneName == "") {
-      sceneList.pop();
-    }
   };
 
   const changeSceneMode = (mode: number) => {
@@ -2007,10 +2000,19 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     viewer.camera.flyHome(0);
   };
 
-  const loadingScene = (scene: SceneDataType) => {
-    // setSelectedSatelliteList([...scene.selectedSatelliteList]);
-    setCurBaseStation(scene.curBaseStation);
-    changeSceneMode(scene.cesiumSetting.mode);
+  const loadingScene = (sceneName) => {
+    console.log(sceneList);
+    
+    sceneList.forEach((scene)=>{
+      if(scene.sceneName == sceneName){
+        isLoad = true
+        setSatelliteList([...scene.satelliteList]);
+        Object.keys(scene.setting).forEach((key)=>{  
+          settingDeal(key, scene.setting[key].val);
+        })
+      }
+      return;
+    })
   };
 
   useEffect(() => {
@@ -2068,32 +2070,31 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }, [isShowBasestationNet]);
 
   useEffect(() => {
-    // console.log(groundReliabilityState);
   }, [groundReliabilityState]);
 
   useEffect(()=>{
-    // 移除选中样式
-    $(".cesium-button").removeClass("cesium-btn-selected");
-    switch(situation.indexOf(true)){
-      case 0:
-        // 星座运行态势
-        // console.log($(".cesium-button"));
-        break;
-      case 1:
-        // 网络态势
+    
+    // switch(situation.indexOf(true)){
+    //   case 0:
+    //     // 星座运行态势
+    //     console.log($(".cesium-button"));
+        
+    //     break;
+    //   case 1:
+    //     // 网络态势
 
-        break;
-      case 2:
-        // 站网态势
+    //     break;
+    //   case 2:
+    //     // 站网态势
 
-        break;
-      case 3:
-        // 资源态势
-        break;
-      case 4:
-        // 业务态势
-        break;
-    }
+    //     break;
+    //   case 3:
+    //     // 资源态势
+    //     break;
+    //   case 4:
+    //     // 业务态势
+    //     break;
+    // }
   },[situation])
 
   return (
@@ -2129,6 +2130,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         <button type="button" className="cesium-button">
           业务态势
         </button>
+        <Select defaultValue={"初始场景"}  style={{ width: 120, marginLeft:"18px",color:"#fff" }} onSelect={(val)=>{
+          loadingScene(val);
+        }} allowClear>
+          {
+            sceneList.map((scene, idx)=>{
+              return (<Option key={idx} value={scene.sceneName}>{scene.sceneName}</Option>)
+            })
+          }
+        </Select>
         <button 
         type="button"
         className="cesium-button" style={{float:"right",marginRight:"1.5vw"}} onClick={()=>{showScenceEditPanel()}}>
@@ -2148,6 +2158,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           <div className="left-wrap">
             <Box title="卫星数量统计图" component={<SatelliteBar/>} />
             <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
+            <Box title="卫星信息列表" component={<SatelliteInfoList satelliteList={satelliteListRef.current}/>}/>
           </div>
           <div className="right-wrap">
             <Box
@@ -2179,6 +2190,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         </>
       ) : (
         <>
+          <div className="leftMask"></div>
+          <div className="rightMask"></div>
           <div className="left-wrap">
             <Box
               title="平均在网时长"
@@ -2296,18 +2309,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         onOk={closeSceneEditPanel}
         onCancel={closeSceneEditPanel}
       >
-        <Row gutter={12}>
-          <Col span={10}>
-            <header className="sceneEditTitle">卫星加载</header>
-            <SatelliteList
-              satelliteList={satelliteList}
-              setSatelliteList={setSatelliteList}
-            />
-          </Col>
-          <Col span={14}>
-            <SettingPanel setting={setting} setSetting={setSetting}/>
-          </Col>
-        </Row>
+        <SettingPanel setSetting={setSetting} setting={setting} satelliteList={satelliteListRef.current} setSatelliteList={setSatelliteList} setScanes={setScenList}/>
       </Modal>
       <div id="left-border-line"></div>
       <div id="right-border-line"></div>

@@ -30,7 +30,7 @@ const SatelliteNumberChart: React.FC<{}> = () => {
           let burn = data1.map((ele: { burn: number }) => ele.burn).reverse();
 
           let option = {
-            backgroundColor: "rgba(255,255,255, 0.05)",
+            backgroundColor: "rgba(255,255,255, 0)",
             tooltip: {
               trigger: "axis",
               backgroundColor: "transparent",

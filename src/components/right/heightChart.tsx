@@ -95,7 +95,7 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
       <style>
         {`
             #satellite{
-                height: 15vh;
+                height: 30vh;
                 width:99%;
                 background-image: url("../assets/rightCon01.png");
                 background-size: cover;

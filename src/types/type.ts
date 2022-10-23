@@ -43,6 +43,7 @@ export type SettingType = {
   icon?: {val: boolean, name: string},
   model?:{val: boolean, name: string},
   track?:{val: boolean, name: string},
+  currEdit?:{val:boolean, name:string}
 }
 
 export type StatelliteCardType = {
@@ -53,14 +54,24 @@ export type StatelliteCardType = {
 
 export type settingPanelProps = {
   setting: SettingType,
-  setSetting: SetState<SettingType>
+  setSetting: SetState<SettingType>,
+  satelliteList: any,
+  setSatelliteList: SetState<any>,
+  setScanes: SetState<SceneType[]>
+}
+
+export type situationType = {
+  satellite: boolean,
+  communicate: boolean,
+  basestation: boolean,
+  resource: boolean,
+  business: boolean,
+  current: string
 }
 
   /////////////////////////场景数据类型///////////////////////////////
-export type SceneDataType = {
-  selectedSatelliteList: string[],
-  curBaseStation: BaseStation,
-  cesiumSetting: CesiumSettingType,
-  isEdit: boolean,
+export type SceneType = {
+  satelliteList: string[],
+  setting: SettingType,
   sceneName: string
 }

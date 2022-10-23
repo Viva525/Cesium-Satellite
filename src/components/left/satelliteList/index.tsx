@@ -8,7 +8,7 @@ import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import StatelliteCard from './card';
 
 
-const SatelliteList: React.FC<StatelliteCardType> = (props) => {
+const SatelliteList: React.FC<satelliteListType> = (props) => {
   const { satelliteList, setSatelliteList } = props
   const [nowSatellite, setNowSatellite] = useState<any[]>([])
   const [value, setValue] = useState("all");
