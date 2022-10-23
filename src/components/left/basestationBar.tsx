@@ -129,7 +129,7 @@ const BasestationBar: React.FC<{}> = () => {
         ],
       };
       let option = {
-        background: "#000",
+        background: "#0000",
         legend: {
           selectedMode: false, //取消图例上的点击事件
           data: ["已完成", "未完成"],
@@ -138,7 +138,7 @@ const BasestationBar: React.FC<{}> = () => {
           top: 15,
           right: 10,
           textStyle: {
-            color: "#000",
+            color: "#fff",
             fontWeight: "normal",
             fontSize: 12,
           },

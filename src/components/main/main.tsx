@@ -877,42 +877,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }, 2000);
         }
       );
-      // // 添加设置按钮
-      // let cesiumViewerToolbar = document.getElementsByClassName("cesium-viewer-toolbar");
-      // if(cesiumViewerToolbar[0] != null){
-      //   let settingButton = document.createElement('button');
-      //   settingButton.className = "cesium-button cesium-toolbar-button";
-
-      //   const settingPanelStr = '<div id="settingPanel" class="settingPanel fade" style="max-height: 1164px;"><ul id="settingList"></ul></div>';
-      //   settingButton.innerHTML = '<svg t="1666321531272" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1392" width="30" height="30"><path d="M940 596l-76-57.6c0.8-8 1.6-16.8 1.6-26.4s-0.8-18.4-1.6-26.4l76-57.6c20.8-16 26.4-44 12.8-68l-84.8-143.2c-9.6-16.8-28-27.2-47.2-27.2-6.4 0-12 0.8-18.4 3.2L712 228c-15.2-10.4-31.2-19.2-47.2-26.4l-13.6-92c-4-26.4-26.4-45.6-53.6-45.6H426.4c-27.2 0-49.6 19.2-53.6 44.8L360 201.6c-16 7.2-31.2 16-47.2 26.4l-90.4-35.2c-6.4-2.4-12.8-3.2-19.2-3.2-19.2 0-37.6 9.6-46.4 26.4L71.2 360c-13.6 22.4-8 52 12.8 68l76 57.6c-0.8 9.6-1.6 18.4-1.6 26.4s0 16.8 1.6 26.4l-76 57.6c-20.8 16-26.4 44-12.8 68l84.8 143.2c9.6 16.8 28 27.2 47.2 27.2 6.4 0 12-0.8 18.4-3.2L312 796c15.2 10.4 31.2 19.2 47.2 26.4l13.6 92c3.2 25.6 26.4 45.6 53.6 45.6h171.2c27.2 0 49.6-19.2 53.6-44.8l13.6-92.8c16-7.2 31.2-16 47.2-26.4l90.4 35.2c6.4 2.4 12.8 3.2 19.2 3.2 19.2 0 37.6-9.6 46.4-26.4l85.6-144.8c12.8-23.2 7.2-51.2-13.6-67.2zM704 512c0 105.6-86.4 192-192 192S320 617.6 320 512s86.4-192 192-192 192 86.4 192 192z" p-id="1393"></path></svg>';
-      //   cesiumViewerToolbar[0].appendChild(settingButton);
-      //   cesiumViewerToolbar[0].insertAdjacentHTML('afterend',settingPanelStr);
-      //   let settingDom = document.getElementById("settingPanel");
-      //   let isSetting = false;
-      //   settingButton.onclick = () => {
-      //     if(isSetting === true){
-      //       settingDom?.classList.add("fade");
-      //     }else{
-      //       settingDom?.classList.remove("fade");
-      //     }
-      //     isSetting = !isSetting
-      //   }
-
-      //   let checkBoxStr = "";
-      //   let settingList = document.getElementById("settingList");
-      //   Object.keys(setting).forEach((key)=>{
-      //     checkBoxStr += `<li><label><input name=${key} ${setting[key]["val"]==true?'checked':''} class="checkItem" type="checkbox" value="${setting[key]["val"]}"/>&nbsp;&nbsp;&nbsp;${setting[key]["name"]}</label></li>`;
-      //   });
-      //   settingList.innerHTML = checkBoxStr;
-      //   $(".checkItem").click(function(e){
-      //     let checkName = e.target.name;
-      //     let checkVal = $(this)[0].checked;
-      //     setSetting((prev: SettingType)=>{
-      //       return {...prev, ...{[checkName]:{val:checkVal, name:prev[checkName]["name"]}}};
-      //     });
-      //     settingDeal(checkName, checkVal);
-      //   })
-      // }
+        $(".cesium-button").click(function(){
+          console.log($(this));
+          $(".cesium-button").removeClass("cesium-btn-selected");
+          $(this).addClass("cesium-btn-selected");
+        })
     }
   }, [init]);
 
@@ -2017,30 +1986,21 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   useEffect(() => {
     if (init) {
-      if (isShowNet) {
+      if (situation.communicate) {
         for (let i of netCollection) {
-          document
-            .getElementById("net-situation-btn")
-            ?.classList.add("cesium-btn-selected");
           viewer.entities.getById(i).polyline.show = true;
         }
       } else {
         for (let i of netCollection) {
-          document
-            .getElementById("net-situation-btn")
-            ?.classList.remove("cesium-btn-selected");
           viewer.entities.getById(i).polyline.show = false;
         }
       }
     }
-  }, [isShowNet]);
+  }, [situation.communicate]);
 
   useEffect(() => {
     if (init) {
-      if (isShowBasestationNet) {
-        document
-          .getElementById("basestation-net-situation")
-          ?.classList.add("cesium-btn-selected");
+      if (situation.basestation) {
         // 获取基站的数据
         fetch("./data/groundData/groundBusiness.json")
           .then((res) => res.json())
@@ -2059,49 +2019,26 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           });
         setCurBaseStation(baseStationList[0]);
       } else {
-        document
-          .getElementById("basestation-net-situation")
-          ?.classList.remove("cesium-btn-selected");
         viewer.camera.flyHome(0);
         setCurBaseStation(null);
         setIsRotate(true);
       }
     }
-  }, [isShowBasestationNet]);
-
-  useEffect(() => {
-  }, [groundReliabilityState]);
-
-  useEffect(()=>{
-    
-    // switch(situation.indexOf(true)){
-    //   case 0:
-    //     // 星座运行态势
-    //     console.log($(".cesium-button"));
-        
-    //     break;
-    //   case 1:
-    //     // 网络态势
-
-    //     break;
-    //   case 2:
-    //     // 站网态势
-
-    //     break;
-    //   case 3:
-    //     // 资源态势
-    //     break;
-    //   case 4:
-    //     // 业务态势
-    //     break;
-    // }
-  },[situation])
+  }, [situation.basestation]);
 
   return (
     <>
       <div id="title">星座运行态势感知平台</div>
         <div id="toolbar">
-        <button type="button" className="cesium-button">
+        <button type="button" className="cesium-button" onClick={()=>{
+          setSituation({
+            satellite: true,
+            communicate: false,
+            basestation: false,
+            resource: false,
+            business: false
+          })
+        }}>
           星座运行态势
         </button>
         <button
@@ -2109,7 +2046,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           className="cesium-button"
           id="net-situation-btn"
           onClick={() => {
-            setIsShowNet(!isShowNet);
+            setSituation({
+              satellite: false,
+              communicate: true,
+              basestation: false,
+              resource: false,
+              business: false
+            })
           }}
         >
           网络态势
@@ -2119,7 +2062,13 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           className="cesium-button"
           id="basestation-net-situation"
           onClick={() => {
-            setIsShowBasestationNet(!isShowBasestationNet);
+            setSituation({
+              satellite: false,
+              communicate: false,
+              basestation: true,
+              resource: false,
+              business: false
+            })
           }}
         >
           站网态势
@@ -2153,8 +2102,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           background: "#000",
         }}
       ></div>
-      {!isShowBasestationNet ? (
-        <>
+      {
+        (situation.satellite||situation.communicate) && (<>
           <div className="left-wrap">
             <Box title="卫星数量统计图" component={<SatelliteBar/>} />
             <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
@@ -2187,9 +2136,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               }
             />
           </div>
-        </>
-      ) : (
-        <>
+        </>)
+      }
+      {
+        situation.basestation && (<>
           <div className="leftMask"></div>
           <div className="rightMask"></div>
           <div className="left-wrap">
@@ -2299,8 +2249,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               setBaseStation={setCurBaseStation}
             />
           </div>
-        </>
-      )}
+        </>)
+      }
+
       <Modal
         transitionName=""
         title="场景编辑"
