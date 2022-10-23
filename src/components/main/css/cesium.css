@@ -41,10 +41,20 @@
     z-index: 998;
 }
 
-#settingList{
+.settingList{
     list-style: none;
     color: #fff;
     font-size: 16px;
+}
+
+.settingList li{
+    margin-bottom: 10px;
+}
+
+.ant-input-number-handler-wrap, .ant-input-number-input-wrap{
+    background-color: #262c33 !important;
+    color: #fff;
+    border-color: #fff !important;
 }
 
 .settingPanel{
@@ -139,6 +149,8 @@
     padding-left: 10px;
     z-index: 999;
 }
+
+
 
 #title {
     color: rgba(13, 126, 222, 1);
