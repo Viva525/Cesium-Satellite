@@ -23,7 +23,6 @@ const SatelliteInfo: React.FC<SatelliteInfoProp> = (props) => {
   var { sateName, launch, status, activity, type, curBaseStation, setCurBaseStation, weatherIcon, setWeatherIcon } =
     props;
   const [bgImg, setBgImg] = useState<string>("");
-  console.log(curBaseStation);
   
 
   useEffect(() => {

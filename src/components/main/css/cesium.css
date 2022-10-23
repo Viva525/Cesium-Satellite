@@ -26,6 +26,19 @@
     box-shadow:none;
 }
 
+.ant-table, .ant-table-cell, .ant-select-selector, .ant-pagination-item-link{
+    color: #fff !important;
+}
+
+.ant-table-tbody > tr > td {
+    background: rgba(255,255,255,0) !important;
+  }
+
+  .ant-table-thead > tr > th{
+    background: rgba(255,255,255,0) !important;
+}
+
+
 .cesium-btn-selected{
     background: #4488bb !important;
 }
@@ -172,6 +185,10 @@
     background-image: url("../assets/title_con.png");
 }
 
+.cesium-viewer-animationContainer, .cesium-viewer-timelineContainer{
+    z-index: 999;
+}
+
 .left-wrap{
     width: 22vw;
     height: 90vh;
@@ -181,6 +198,25 @@
     padding-left: 1.5vw;
     position: absolute;
     z-index: 999;
+    /* background: linear-gradient(to right,#000,#0000); */
+}
+
+.leftMask{
+    position: absolute;
+    left: 0;
+    top:0;
+    width: 30vw;
+    height: 100vh;
+    background: linear-gradient(to right, #000,#0000);
+}
+
+.rightMask{
+    position: absolute;
+    right: 0;
+    top:0;
+    width: 45vw;
+    height: 100vh;
+    background: linear-gradient(to left, #000,#0000);
 }
 
 .right-wrap{

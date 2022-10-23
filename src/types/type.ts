@@ -2,27 +2,27 @@ import { Dispatch, SetStateAction } from "react";
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 export type DataType = {
-    key: React.Key;
-  }
-  
+  key: React.Key;
+}
+
 export type satelliteListType = {
-    statelliteList: string[]
-    setSatelliteList: SetState<any[]>
-  }
+  statelliteList: string[]
+  setSatelliteList: SetState<any[]>
+}
 export type BaseStation = {
-    name: string,
-    desc?: string,
-    pos: number[],
-    state?: string,
-    weatherKey?:string;
-    strong?:number;
+  name: string,
+  desc?: string,
+  pos: number[],
+  state?: string,
+  weatherKey?: string;
+  strong?: number;
 }
 export type Dashboard = {
-    type: "satellite"|"baseStation"|undefined;
-    id: string|undefined;
-  };
-  
-export type CesiumComponentType ={
+  type: "satellite" | "baseStation" | undefined;
+  id: string | undefined;
+};
+
+export type CesiumComponentType = {
 }
 
 export type PolarEarthProps = {
@@ -43,20 +43,42 @@ export type SettingType = {
   icon?: {val: boolean, name: string},
   model?:{val: boolean, name: string},
   track?:{val: boolean, name: string},
+  currEdit?:{val:boolean, name:string}
 }
 
 export type StatelliteCardType = {
   nowStatelliteName: any[]
   statelliteType: string
-  setNowSatellite : SetState<any[]>
+  setNowSatellite: SetState<any[]>
 }
 
 export type settingPanelProps = {
   setting: SettingType,
-  setSetting: SetState<SettingType>
+  setSetting: SetState<SettingType>,
+  satelliteList: any,
+  setSatelliteList: SetState<any>,
+  setScanes: SetState<SceneType[]>
+}
+
+export type situationType = {
+  satellite: boolean,
+  communicate: boolean,
+  basestation: boolean,
+  resource: boolean,
+  business: boolean,
+  current: string
 }
 
   /////////////////////////场景数据类型///////////////////////////////
+export type SceneType = {
+  satelliteList: string[],
+  setting: SettingType,
+}
+export type UseMapProps = {
+  nowData: number,
+  setUseRegionData: SetState<any[]>
+}
+/////////////////////////场景数据类型///////////////////////////////
 export type SceneDataType = {
   selectedSatelliteList: string[],
   curBaseStation: BaseStation,
@@ -64,3 +86,4 @@ export type SceneDataType = {
   isEdit: boolean,
   sceneName: string
 }
+

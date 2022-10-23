@@ -6,9 +6,8 @@ import './table.css'
 // import Item from 'antd/lib/list/Item';
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import ColorSelect, { SetState } from './color';
-import { DataType, satelliteListType } from "../../../types/type"
+import { DataType} from "../../../types/type"
 import StatelliteCard from './card';
-
 
 const SatelliteList: React.FC<{satelliteListType}> = (props) => {
   const { satelliteList, selectedSatelliteList, setSelectSatelliteList, setSelectedSatelliteList } = props
