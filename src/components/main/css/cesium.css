@@ -193,11 +193,12 @@
     position: absolute;
 }
 
+
 .bottom-wrap{
     width: 50vw;
-    height: 5vh;
+    height: 8vh;
     left: 25vw;
-    bottom: 15vh;
+    bottom: 3vh;
     position: absolute;
 }
 
@@ -237,6 +238,8 @@
     background-size: cover;
     background-repeat: no-repeat;
 }
+
+
 
 .baseStationIcon {
     width: 100%;
