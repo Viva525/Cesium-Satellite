@@ -13,7 +13,9 @@ export type BaseStation = {
     name: string,
     desc?: string,
     pos: number[],
-    state?: string
+    state?: string,
+    weatherKey?:string;
+    strong?:number;
 }
 export type Dashboard = {
     type: "satellite"|"baseStation"|undefined;
@@ -21,7 +23,6 @@ export type Dashboard = {
   };
   
 export type CesiumComponentType ={
-    setDashboard: SetState<Dashboard|undefined>
 }
 
 export type PolarEarthProps = {

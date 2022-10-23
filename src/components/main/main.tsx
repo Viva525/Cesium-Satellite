@@ -86,6 +86,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     null
   );
   const curBaseStationRef = useRef(curBaseStation);
+  const [weatherIcon, setWeatherIcon] = useState<string>("0")
   const [polarPosition, setPolarPosition] = useState<PolarEarthProps>(null);
   const [satelliteStatus, setSatelliteStatus] = useState<string>("关");
   const buildList = [
@@ -127,8 +128,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   const [isShowNet, setIsShowNet] = useState<Boolean>(false);
   const [isShowBasestationNet, setIsShowBasestationNet] =
     useState<boolean>(false);
-  const [weather, setWeather] = useState<Object>({ type: "", strong: 0 });
-  const [weatherKey, setWeatherKey] = useState<string>("0");
   const [groundBusinessState, setGroundBusiniessState] = useState<any>(null);
   const [groundReliabilityState, setGroundReliabilityState] =
     useState<any>(null);
@@ -647,6 +646,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 desc: "baseStation",
                 pos: position,
                 state: "working",
+                weatherKey: '0',
+                strong: 0.3
               });
               ele.model = undefined;
               ele.billboard = {
@@ -1589,132 +1590,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   }
 
   useEffect(() => {
-    if (init) {
-      // console.log(weather);
-      snow && viewer.scene.postProcessStages.remove(snow); // 移除
-      rain && viewer.scene.postProcessStages.remove(rain); // 移除
-      fog && viewer.scene.postProcessStages.remove(fog); // 移除
-      if (weather["type"] === "snow") {
-        //定义下雪场景 着色器
-        function FS_Snow() {
-          return `uniform sampler2D colorTexture;\n\
-              varying vec2 v_textureCoordinates;\n\
-            \n\
-              float snow(vec2 uv,float scale)\n\
-              {\n\
-                  float time = czm_frameNumber / 60.0;\n\
-                  float w=smoothstep(1.,0.,-uv.y*(scale/10.));if(w<.1)return 0.;\n\
-                  uv+=time/scale;uv.y+=time*2./scale;uv.x+=sin(uv.y+time*.5)/scale;\n\
-                  uv*=scale;vec2 s=floor(uv),f=fract(uv),p;float k=3.,d;\n\
-                  p=.5+.35*sin(11.*fract(sin((s+p+scale)*mat2(7,3,6,5))*5.))-f;d=length(p);k=min(d,k);\n\
-                  k=smoothstep(0.,k,sin(f.x+f.y)*0.01);\n\
-                  return k*w;\n\
-              }\n\
-            \n\
-              void main(void){\n\
-                  vec2 resolution = czm_viewport.zw;\n\
-                  vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
-                  vec3 finalColor=vec3(0);\n\
-                  float c = 0.0;\n\
-                  c+=snow(uv,30.)*.0;\n\
-                  c+=snow(uv,20.)*.0;\n\
-                  c+=snow(uv,15.)*.0;\n\
-                  c+=snow(uv,10.);\n\
-                  c+=snow(uv,8.);\n\
-              c+=snow(uv,6.);\n\
-                  c+=snow(uv,5.);\n\
-                  finalColor=(vec3(c)); \n\
-                  gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), ${weather["strong"]}); \n\
-            \n\
-              }\n\
-            `;
-        }
-        let fs_snow = FS_Snow();
-        snow = new Cesium.PostProcessStage({
-          name: "czm_snow",
-          fragmentShader: fs_snow,
-        });
-        stages.add(snow);
-        viewer.scene.skyAtmosphere.hueShift = -0.8;
-        viewer.scene.skyAtmosphere.saturationShift = -0.7;
-        viewer.scene.skyAtmosphere.brightnessShift = -0.33;
-        viewer.scene.fog.density = 0.001;
-        viewer.scene.fog.minimumBrightness = 0.8;
-      } else if (weather["type"] === "rain") {
-        // 定义下雨场景 着色器
-        function FS_Rain() {
-          return `uniform sampler2D colorTexture;\n\
-              varying vec2 v_textureCoordinates;\n\
-          \n\
-              float hash(float x){\n\
-                  return fract(sin(x*133.3)*13.13);\n\
-          }\n\
-          \n\
-          void main(void){\n\
-          \n\
-              float time = czm_frameNumber / 60.0;\n\
-          vec2 resolution = czm_viewport.zw;\n\
-          \n\
-          vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
-          vec3 c=vec3(.6,.7,.8);\n\
-          \n\
-          float a=-.4;\n\
-          float si=sin(a),co=cos(a);\n\
-          uv*=mat2(co,-si,si,co);\n\
-          uv*=length(uv+vec2(0,4.9))*.3+1.;\n\
-          \n\
-          float v=1.-sin(hash(floor(uv.x*100.))*2.);\n\
-          float b=clamp(abs(sin(20.*time*v+uv.y*(5./(2.+v))))-.95,0.,1.)*20.;\n\
-          c*=v*b; \n\
-          \n\
-          gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), ${weather["strong"]});  \n\
-          }\n\
-  `;
-        }
-        let fs_rain = FS_Rain();
-        rain = new Cesium.PostProcessStage({
-          name: "czm_rain",
-          fragmentShader: fs_rain,
-        });
-        stages.add(rain);
-        viewer.scene.skyAtmosphere.hueShift = -0.8;
-        viewer.scene.skyAtmosphere.saturationShift = -0.7;
-        viewer.scene.skyAtmosphere.brightnessShift = -0.33;
-        viewer.scene.fog.density = 0.001;
-        viewer.scene.fog.minimumBrightness = 0.8;
-      } else if (weather["type"] === "fog") {
-        function FS_Fog() {
-          return (
-            "  uniform sampler2D colorTexture;\n" +
-            "  uniform sampler2D depthTexture;\n" +
-            "  varying vec2 v_textureCoordinates;\n" +
-            "  void main(void)\n" +
-            "  {\n" +
-            "      vec4 origcolor=texture2D(colorTexture, v_textureCoordinates);\n" +
-            "      vec4 fogcolor=vec4(0.8,0.8,0.8,0.1);\n" +
-            "\n" +
-            "      float depth = czm_readDepth(depthTexture, v_textureCoordinates);\n" +
-            "      vec4 depthcolor=texture2D(depthTexture, v_textureCoordinates);\n" +
-            "\n" +
-            "      float f=(depthcolor.r-0.40)/0.2;\n" +
-            "      if(f<0.0) f=0.0;\n" +
-            `      else if(f>1.0) f=${weather["strong"]};\n` +
-            "      gl_FragColor = mix(origcolor,fogcolor,f);\n" +
-            "   }"
-          );
-        }
-        let fs_fog = FS_Fog();
-        fog = new Cesium.PostProcessStage({
-          name: "self",
-          //sampleMode:PostProcessStageSampleMode.LINEAR,
-          fragmentShader: fs_fog,
-        });
-        stages.add(fog);
-      }
-    }
-  }, [weather]);
-
-  useEffect(() => {
     if (nowPicksatellite) {
       if (nowPicksatellite[1] && nowPicksatellite[2]) {
         viewer.clock.onTick.addEventListener(nowSatellitePostion, false);
@@ -1738,9 +1613,6 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         buildList.forEach((buildName) => {
           viewer.entities.removeById(buildName);
         });
-        snow && viewer.scene.postProcessStages.remove(snow); // 移除
-        rain && viewer.scene.postProcessStages.remove(rain); // 移除
-        fog && viewer.scene.postProcessStages.remove(fog); // 移除
         viewer.camera.flyHome(0);
         return;
       }
@@ -1866,25 +1738,157 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         ),
         new Cesium.Cartesian3(0.0, -180.0, 50.0)
       );
-
       // 生成雨雪天气
-      let randomNumber = Math.floor(Math.random() * 10);
-      if (randomNumber >= 8) {
-        setWeather({ type: "fog", strong: 0.8 });
-        setWeatherKey("5");
-      } else if (randomNumber >= 5) {
-        setWeather({ type: "snow", strong: 0.3 });
-        setWeatherKey("3");
-      } else if (randomNumber >= 3) {
-        setWeather({ type: "rain", strong: 0.3 });
-        setWeatherKey("1");
-      } else {
-        setWeather({ type: "", strong: 0.3 });
-        setWeatherKey("0");
-      }
+      addWeather(curBaseStation.weatherKey, curBaseStation.strong)
+      setWeatherIcon(curBaseStation.weatherKey)
     }
     curBaseStationRef.current = curBaseStation;
   }, [curBaseStation?.pos[0], curBaseStation?.pos[1]]);
+
+  const addWeather =(weatherKey, strong)=>{
+    console.log('更改天气');
+    
+      // 移除上一个地点的天气
+      snow && viewer.scene.postProcessStages.remove(snow); // 移除
+      rain && viewer.scene.postProcessStages.remove(rain); // 移除
+      fog && viewer.scene.postProcessStages.remove(fog); // 移除
+    
+    if (weatherKey === "3" | weatherKey === "4") {
+      //定义下雪场景 着色器
+      function FS_Snow() {
+        return `uniform sampler2D colorTexture;\n\
+            varying vec2 v_textureCoordinates;\n\
+          \n\
+            float snow(vec2 uv,float scale)\n\
+            {\n\
+                float time = czm_frameNumber / 60.0;\n\
+                float w=smoothstep(1.,0.,-uv.y*(scale/10.));if(w<.1)return 0.;\n\
+                uv+=time/scale;uv.y+=time*2./scale;uv.x+=sin(uv.y+time*.5)/scale;\n\
+                uv*=scale;vec2 s=floor(uv),f=fract(uv),p;float k=3.,d;\n\
+                p=.5+.35*sin(11.*fract(sin((s+p+scale)*mat2(7,3,6,5))*5.))-f;d=length(p);k=min(d,k);\n\
+                k=smoothstep(0.,k,sin(f.x+f.y)*0.01);\n\
+                return k*w;\n\
+            }\n\
+          \n\
+            void main(void){\n\
+                vec2 resolution = czm_viewport.zw;\n\
+                vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+                vec3 finalColor=vec3(0);\n\
+                float c = 0.0;\n\
+                c+=snow(uv,30.)*.0;\n\
+                c+=snow(uv,20.)*.0;\n\
+                c+=snow(uv,15.)*.0;\n\
+                c+=snow(uv,10.);\n\
+                c+=snow(uv,8.);\n\
+            c+=snow(uv,6.);\n\
+                c+=snow(uv,5.);\n\
+                finalColor=(vec3(c)); \n\
+                gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(finalColor,1), ${strong}); \n\
+          \n\
+            }\n\
+          `;
+      }
+      let fs_snow = FS_Snow();
+      snow = new Cesium.PostProcessStage({
+        name: "czm_snow",
+        fragmentShader: fs_snow,
+      });
+      stages.add(snow);
+      viewer.scene.skyAtmosphere.hueShift = -0.8;
+      viewer.scene.skyAtmosphere.saturationShift = -0.7;
+      viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+      viewer.scene.fog.density = 0.001;
+      viewer.scene.fog.minimumBrightness = 0.8;
+    } else if (weatherKey === "1" | weatherKey === "2") {
+      // 定义下雨场景 着色器
+      function FS_Rain() {
+        return `uniform sampler2D colorTexture;\n\
+            varying vec2 v_textureCoordinates;\n\
+        \n\
+            float hash(float x){\n\
+                return fract(sin(x*133.3)*13.13);\n\
+        }\n\
+        \n\
+        void main(void){\n\
+        \n\
+            float time = czm_frameNumber / 60.0;\n\
+        vec2 resolution = czm_viewport.zw;\n\
+        \n\
+        vec2 uv=(gl_FragCoord.xy*2.-resolution.xy)/min(resolution.x,resolution.y);\n\
+        vec3 c=vec3(.6,.7,.8);\n\
+        \n\
+        float a=-.4;\n\
+        float si=sin(a),co=cos(a);\n\
+        uv*=mat2(co,-si,si,co);\n\
+        uv*=length(uv+vec2(0,4.9))*.3+1.;\n\
+        \n\
+        float v=1.-sin(hash(floor(uv.x*100.))*2.);\n\
+        float b=clamp(abs(sin(20.*time*v+uv.y*(5./(2.+v))))-.95,0.,1.)*20.;\n\
+        c*=v*b; \n\
+        \n\
+        gl_FragColor = mix(texture2D(colorTexture, v_textureCoordinates), vec4(c,1), ${strong});  \n\
+        }\n\
+`;
+      }
+      let fs_rain = FS_Rain();
+      rain = new Cesium.PostProcessStage({
+        name: "czm_rain",
+        fragmentShader: fs_rain,
+      });
+      stages.add(rain);
+      viewer.scene.skyAtmosphere.hueShift = -0.8;
+      viewer.scene.skyAtmosphere.saturationShift = -0.7;
+      viewer.scene.skyAtmosphere.brightnessShift = -0.33;
+      viewer.scene.fog.density = 0.001;
+      viewer.scene.fog.minimumBrightness = 0.8;
+    } else if (weatherKey === "5") {
+      function FS_Fog() {
+        return (
+          "  uniform sampler2D colorTexture;\n" +
+          "  uniform sampler2D depthTexture;\n" +
+          "  varying vec2 v_textureCoordinates;\n" +
+          "  void main(void)\n" +
+          "  {\n" +
+          "      vec4 origcolor=texture2D(colorTexture, v_textureCoordinates);\n" +
+          "      vec4 fogcolor=vec4(0.8,0.8,0.8,0.1);\n" +
+          "\n" +
+          "      float depth = czm_readDepth(depthTexture, v_textureCoordinates);\n" +
+          "      vec4 depthcolor=texture2D(depthTexture, v_textureCoordinates);\n" +
+          "\n" +
+          "      float f=(depthcolor.r-0.40)/0.2;\n" +
+          "      if(f<0.0) f=0.0;\n" +
+          `      else if(f>1.0) f=${strong};\n` +
+          "      gl_FragColor = mix(origcolor,fogcolor,f);\n" +
+          "   }"
+        );
+      }
+      let fs_fog = FS_Fog();
+      fog = new Cesium.PostProcessStage({
+        name: "self",
+        fragmentShader: fs_fog,
+      });
+      stages.add(fog);
+    }
+  }
+
+  useEffect(() => {
+      let baseList = []
+      
+      if(curBaseStation === null){
+        addWeather({weatherKey: '0', strong: 0.3})
+        return
+      }
+      for(let i of baseStationList){
+        if(i['name'].includes(curBaseStation.name)){
+          i['weatherKey'] = curBaseStation?.weatherKey
+          i['strong'] = curBaseStation?.strong
+        }
+        baseList.push(i)
+      }
+      setBaseStationList(baseList)
+      addWeather(curBaseStation.weatherKey, curBaseStation.strong)
+    
+  }, [curBaseStation?.weatherKey]);
 
   const getModelMatrix = (pointA, pointB) => {
     //向量AB
@@ -2150,7 +2154,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               title="卫星信息"
               component={
                 <SatelliteInfo
-                  sateName={curSatellite}
+                  sateName={'curSatellite'}
                   launch={"2021-08"}
                   status={"service"}
                   activity={"stable"}
@@ -2215,8 +2219,10 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                   status={"service"}
                   activity={"stable"}
                   type={"basestation"}
-                  setWeather={setWeather}
-                  weatherKey={weatherKey}
+                  curBaseStation={curBaseStation}
+                  setCurBaseStation={setCurBaseStation}
+                  weatherIcon={weatherIcon}
+                  setWeatherIcon={setWeatherIcon}
                 />
               }
             />
