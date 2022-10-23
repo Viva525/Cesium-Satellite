@@ -39,7 +39,7 @@ const BasestationList: React.FC<BaseStationInfoProp> = (props) => {
               return;
             }
             return (
-              <Col className="single-basestation" span={4} 
+              <Col className="single-basestation" span={4}
               onClick={() => {
                 setBaseStation(ele);
               }}>
