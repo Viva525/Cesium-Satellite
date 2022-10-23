@@ -2154,7 +2154,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               title="卫星信息"
               component={
                 <SatelliteInfo
-                  sateName={'curSatellite'}
+                  sateName={curSatellite}
                   launch={"2021-08"}
                   status={"service"}
                   activity={"stable"}
