@@ -280,7 +280,7 @@ const RsChart1: React.FC<any>=() =>{
                         offset: serieslabobj[0] ? serieslabobj[0] : [-64, 0],
                         borderWidth: 1,
                         borderColor: serieslabobj[2] ? serieslabobj[2] : '#1F2C83',
-                        distance: serieslabobj[3] ? serieslabobj[3] : -280,
+                        distance: serieslabobj[3] ? serieslabobj[3] : -235,
                         color: seriesobj[i][7][2] ? seriesobj[i][7][2] : '#9FB9E3',
                         fontSize: serieslabobj[4] ? serieslabobj[4] : 13,
                         formatter: seriesobj[i][7][1],

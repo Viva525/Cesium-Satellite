@@ -69,13 +69,13 @@ const RsChart5: React.FC<any> = () => {
         left: "2%",
         right: "2%",
         bottom: "2%",
-        top: "10%",
+        top: "15%",
         containLabel: true,
       },
       legend: {
         data: legend_data,
-        right: 100,
-        top: 0,
+        right: 80,
+        top: 5,
         textStyle: {
           color: "#fff",
         },

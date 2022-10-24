@@ -34,6 +34,7 @@ import $ from 'jquery';
 import SettingPanel from "./settingPanel";
 import ResourcePanel from "../resource/resourceMain";
 import Yewurtaishi from "../yewutaishi/yewutaishi"
+import SatelliteWorkTime from "../right/satelliteWorkTime";
 const { Option } = Select;
 
 //@ts-ignore
@@ -2044,7 +2045,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   return (
     <>
-      <div id="title">星座运行态势感知平台</div>
+      <div id="title"><span style={{color:"#fff"}}>星座运行</span>态势感知平台</div>
         <div id="toolbar">
         <button type="button" className="cesium-button" onClick={()=>{
           setSituation({
@@ -2167,6 +2168,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 />
               }
             />
+            <Box 
+            title="卫星载荷时长图"
+            component={<SatelliteWorkTime/>}
+            />
+
           </div>
         </>)
       }

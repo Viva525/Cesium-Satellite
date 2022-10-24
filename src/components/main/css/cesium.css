@@ -26,8 +26,12 @@
     box-shadow:none;
 }
 
-.ant-table, .ant-table-cell, .ant-select-selector, .ant-pagination-item-link{
+.ant-table, .ant-select-selector, .ant-pagination-item-link{
     color: #fff !important;
+}
+
+.ant-table-cell{
+    color: #017efc !important;
 }
 
 .ant-table-tbody > tr > td {
@@ -38,6 +42,9 @@
     background: rgba(255,255,255,0) !important;
 }
 
+.ant-table-tbody>tr>td{
+    border-bottom:1px solid #0080ff44 !important;
+}
 
 .cesium-btn-selected{
     background: #4488bb !important;
@@ -50,7 +57,7 @@
     top: 5px;
     position: absolute;
     padding-top: 5px;
-    padding-left: 20vw;
+    padding-left: 37vw;
     z-index: 998;
 }
 
@@ -151,6 +158,14 @@
 .checkItem{
     margin-right: 16px;
 
+}
+
+.ant-table-tbody>tr{
+    height: 3.3vh !important;
+}
+
+.ant-pagination{
+    display: none !important;
 }
 
 #satelliteList {
