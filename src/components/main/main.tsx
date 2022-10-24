@@ -2045,7 +2045,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
 
   return (
     <>
-      <div id="title">星座运行态势感知平台</div>
+      <div id="title"><span style={{color:"#fff"}}>星座运行</span>态势感知平台</div>
         <div id="toolbar">
         <button type="button" className="cesium-button" onClick={()=>{
           setSituation({

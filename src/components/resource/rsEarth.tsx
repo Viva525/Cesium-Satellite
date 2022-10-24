@@ -477,19 +477,19 @@ const RsEarth: React.FC<any> = () => {
       [
         { name: "CHONGQING" },
         {
-          name: "CHONGQING",
+          name: "BEIJING",
           value: {
-            tradingCountry: "重庆"
+            tradingCountry: "北京"
           },
         },
       ],
       [
         { name: "BEIJING" },
         {
-          name: "BEIJING",
+          name: "SHANGHAI",
           // 这里为自定义数据，tooltip会用到
           value: {
-            tradingCountry: "北京"
+            tradingCountry: "上海"
           },
         },
       ],
@@ -541,9 +541,9 @@ const RsEarth: React.FC<any> = () => {
       [
         { name: "SHANGHAI" },
         {
-          name: "SHANGHAI",
+          name: "CHONGQING",
           value: {
-            tradingCountry: "上海"
+            tradingCountry: "重庆"
           },
         },
       ],
@@ -564,7 +564,7 @@ const RsEarth: React.FC<any> = () => {
             trailLength: 0, // 特效尾迹长度。取从 0 到 1 的值，数值越大尾迹越长
             symbol: 'arrow', // 特效图形标记
             // symbolSize: 15
-            symbolSize: [50,20,0,0,30,40,50]
+            symbolSize: [8,20,0,0,30,40,50]
           },
           // 线条样式
           lineStyle: {
