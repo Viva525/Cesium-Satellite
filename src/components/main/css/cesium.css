@@ -153,6 +153,14 @@
 
 }
 
+.ant-table-tbody>tr{
+    height: 3.3vh !important;
+}
+
+.ant-pagination{
+    display: none !important;
+}
+
 #satelliteList {
     position: absolute;
     top: 2%;

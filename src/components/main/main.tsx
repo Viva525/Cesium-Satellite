@@ -34,6 +34,7 @@ import $ from 'jquery';
 import SettingPanel from "./settingPanel";
 import ResourcePanel from "../resource/resourceMain";
 import Yewurtaishi from "../yewutaishi/yewutaishi"
+import SatelliteWorkTime from "../right/satelliteWorkTime";
 const { Option } = Select;
 
 //@ts-ignore
@@ -2167,6 +2168,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 />
               }
             />
+            <Box 
+            title="卫星载荷时长图"
+            component={<SatelliteWorkTime/>}
+            />
+
           </div>
         </>)
       }

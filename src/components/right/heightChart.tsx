@@ -21,9 +21,9 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
       let option = {
         grid: {
           left: "11%",
-          top: "22%",
+          top: "10%",
           right: "2%",
-          bottom: "15%",
+          bottom: "20%",
         },
         xAxis: {
           type: "category",
@@ -95,11 +95,8 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
       <style>
         {`
             #satellite{
-                height: 30vh;
+                height: 18vh;
                 width:99%;
-                background-image: url("../assets/rightCon01.png");
-                background-size: cover;
-                background-repeat: no-repeat;
             }
             `}
       </style>
