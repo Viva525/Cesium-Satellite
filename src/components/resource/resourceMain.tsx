@@ -21,8 +21,8 @@ const ResourcePanel: React.FC<any> = () => {
   return (
     <div id="rs-container">
       <div className="rs-title">
-        资源态势管理平台
-        <div id="rs-time">{curTime}</div>
+
+        <div id="rs-time"></div>
       </div>
       <div id="charts">
         <div className="rs-left">

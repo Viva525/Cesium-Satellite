@@ -20,11 +20,6 @@ function App() {
             path="/"
             element={<CesiumComponent />}
           ></Route>
-
-          <Route
-            path="/1"
-            element={<ResourcePanel />}
-          ></Route>
           <Route
             path="/satelliteDashboard/:type/:id"
             element={<SatelliteDashboard />}
