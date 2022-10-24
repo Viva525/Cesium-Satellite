@@ -13,9 +13,9 @@ const RsEarth: React.FC<any> = () => {
     // 为防止各个国家写法不兼容，从而采用国家地区编码的方式编写数据。
     // 国家地理坐标点，取国家中间位置而非国家首都
     const geoCoordMap = {
-      CHONGQING:[29.35, 106.33],
-      BEIJING:[39.56, 116.20],
-      SHANGHAI:[120.52, 122.12],
+      CHONGQING:[106.33, 29.35],
+      BEIJING:[116.20, 39.56],
+      SHANGHAI:[122.12, 120.52],
       SETTLE:[47.37, 122.19],
       AND: [1.601554, 42.546245],
       ARE: [53.847818, 23.424076],
@@ -614,7 +614,9 @@ const RsEarth: React.FC<any> = () => {
             period: 6, // 特效动画时间
             trailLength: 0, // 特效尾迹长度。取从 0 到 1 的值，数值越大尾迹越长
             symbol: 'arrow', // 特效图形标记
-            symbolSize: 15, // 特效图标大小
+            symbolSize: (params)=>{
+              return 15
+            }, // 特效图标大小
           },
           // 线条样式
           lineStyle: {
