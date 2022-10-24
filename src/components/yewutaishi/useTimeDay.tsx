@@ -12,19 +12,23 @@ const UseTimeDay: React.FC<UseTimeProps> = (props) => {
   useEffect(() => {
     if (nowData) {
       function getVirtulData() {
-        let year = '2022';
-        var date = +echarts.number.parseDate(year + '-10-01');
-        var end = +echarts.number.parseDate(+year + 2 + '-10-01');
-        var dayTime = 3600 * 24 * 1000;
-        var data = [];
-        for (var time = date; time < end; time += dayTime) {
+        let date = +echarts.number.parseDate(2022 + '-10-01');
+        let end = +echarts.number.parseDate( 2022 + '-12-31');
+        let dayTime = 3600 * 24 * 1000;
+        let data = [];
+        for (let time = date; time < end; time += dayTime) {
           data.push([
             echarts.format.formatTime('yyyy-MM-dd', time),
-            Math.floor(Math.random() * 1000)
+            Math.floor(Math.random() * 10000)
           ]);
         }
         return data;
       }
+      const data = getVirtulData();
+      const topData = data
+      .sort(function (a:any, b:any) {
+        return b[1] - a[1];
+      }).slice(0, 10)
       let myChart = echarts.getInstanceByDom(
         chartRef.current as unknown as HTMLDivElement
       );
@@ -33,34 +37,74 @@ const UseTimeDay: React.FC<UseTimeProps> = (props) => {
       }
 
       let option = {
-        backgroundColor:"rgba(0,0,0,0)",
-        tooltip: {},
-        visualMap: {
-          min: 0,
-          max: 1000,
-          calculable: true,
-          type: 'continuous',
-          orient: 'horizontal',
-          left: 'center',
-          color: ['rgba(13, 126, 222, 0.5)', 'rgba(18, 30, 55, 0.5)']
+        backgroundColor: "rgba(0,0,0,0)",  
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          top: '30',
+          left: '100',
+          data: ['日使用次数', '使用前十'],
+          textStyle: {
+            color: '#fff'
+          }
         },
         calendar: {
           left: 30,
           right: 30,
-          top: 30,
+          top: 100,
           bottom: 60,
-          cellSize: ['auto'],
           range: ['2022-10', '2022-12-31'],
-          itemStyle: {
-            borderWidth: 0.5
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#000',
+              width: 4,
+              type: 'solid'
+            }
           },
-          yearLabel: { show: false }
+          yearLabel: {
+            formatter: '{start}  1st',
+            color: '#fff'
+          },
+          itemStyle: {
+            color: '#323c48',
+            borderWidth: 1,
+            borderColor: '#111'
+          }
         },
-        series: {
-          type: 'heatmap',
+        series: [{
+          name: '日使用次数',
+          type: 'scatter',
           coordinateSystem: 'calendar',
-          data: getVirtulData()
-        }
+          data: data,
+          symbolSize: function (val:any) {
+            return val[1] / 500;
+          },
+          itemStyle: {
+            color: '#ddb926'
+          }
+        },
+        {
+          name: '使用前十',
+          type: 'effectScatter',
+          coordinateSystem: 'calendar',
+          data: topData,
+          symbolSize: function (val:any) {
+            return val[1] / 500;
+          },
+          showEffectOn: 'render',
+          rippleEffect: {
+            brushType: 'stroke'
+          },
+          itemStyle: {
+            color: '#f4e925',
+            shadowBlur: 10,
+            shadowColor: '#333'
+          },
+          zlevel: 1
+        },]
+
       };
       myChart.setOption(option, true);
       myChart.resize();
@@ -74,7 +118,7 @@ const UseTimeDay: React.FC<UseTimeProps> = (props) => {
       <style>
         {`
             #useTimeDay{
-                height: 25vh;
+                height: 27vh;
                 width:99%;
                 background-size: cover;
                 background-repeat: no-repeat;
