@@ -13,9 +13,11 @@ const RsEarth: React.FC<any> = () => {
     // 为防止各个国家写法不兼容，从而采用国家地区编码的方式编写数据。
     // 国家地理坐标点，取国家中间位置而非国家首都
     const geoCoordMap = {
+      Seattle: [-122.20, 47.36],
+      Los: [-118.22, 34.05],
       CHONGQING:[106.33, 29.35],
       BEIJING:[116.20, 39.56],
-      SHANGHAI:[122.12, 120.52],
+      SHANGHAI:[121.12, 31.40],
       SETTLE:[47.37, 122.19],
       AND: [1.601554, 42.546245],
       ARE: [53.847818, 23.424076],
@@ -477,23 +479,7 @@ const RsEarth: React.FC<any> = () => {
         {
           name: "CHONGQING",
           value: {
-            tradingCountry: "重庆",
-            total: "1200万美元",
-            tradingNum: "5",
-            table: [
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "乘用车",
-                mode: "进口",
-                money: "90",
-              },
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "发动机",
-                mode: "出口",
-                money: "60",
-              },
-            ],
+            tradingCountry: "重庆"
           },
         },
       ],
@@ -503,23 +489,7 @@ const RsEarth: React.FC<any> = () => {
           name: "BEIJING",
           // 这里为自定义数据，tooltip会用到
           value: {
-            tradingCountry: "北京",
-            total: "200万美元",
-            tradingNum: "18",
-            table: [
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "乘用车",
-                mode: "进口",
-                money: "34",
-              },
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "发动机",
-                mode: "出口",
-                money: "40",
-              },
-            ],
+            tradingCountry: "北京"
           },
         },
       ],
@@ -528,23 +498,7 @@ const RsEarth: React.FC<any> = () => {
         {
           name: "BGD",
           value: {
-            tradingCountry: "法国",
-            total: "1200万美元",
-            tradingNum: "5",
-            table: [
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "乘用车",
-                mode: "进口",
-                money: "90",
-              },
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "发动机",
-                mode: "出口",
-                money: "60",
-              },
-            ],
+            tradingCountry: "孟加拉"
           },
         },
       ],
@@ -553,23 +507,7 @@ const RsEarth: React.FC<any> = () => {
         {
           name: "URY",
           value: {
-            tradingCountry: "法国",
-            total: "1200万美元",
-            tradingNum: "5",
-            table: [
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "乘用车",
-                mode: "进口",
-                money: "90",
-              },
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "发动机",
-                mode: "出口",
-                money: "60",
-              },
-            ],
+            tradingCountry: "阿根廷"
           },
         },
       ],
@@ -578,23 +516,34 @@ const RsEarth: React.FC<any> = () => {
         {
           name: "FRA",
           value: {
-            tradingCountry: "法国",
-            total: "1200万美元",
-            tradingNum: "5",
-            table: [
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "乘用车",
-                mode: "进口",
-                money: "90",
-              },
-              {
-                tradeEnterprises: "内蒙古xx有限公司",
-                shopping: "发动机",
-                mode: "出口",
-                money: "60",
-              },
-            ],
+            tradingCountry: "法国"
+          },
+        },
+      ],
+      [
+        { name: "Los" },
+        {
+          name: "Los",
+          value: {
+            tradingCountry: "洛杉矶"
+          },
+        },
+      ],
+      [
+        { name: "Seattle" },
+        {
+          name: "Seattle",
+          value: {
+            tradingCountry: "西雅图"
+          },
+        },
+      ],
+      [
+        { name: "SHANGHAI" },
+        {
+          name: "SHANGHAI",
+          value: {
+            tradingCountry: "上海"
           },
         },
       ],
@@ -614,9 +563,8 @@ const RsEarth: React.FC<any> = () => {
             period: 6, // 特效动画时间
             trailLength: 0, // 特效尾迹长度。取从 0 到 1 的值，数值越大尾迹越长
             symbol: 'arrow', // 特效图形标记
-            symbolSize: (params)=>{
-              return 15
-            }, // 特效图标大小
+            // symbolSize: 15
+            symbolSize: [50,20,0,0,30,40,50]
           },
           // 线条样式
           lineStyle: {
@@ -698,70 +646,7 @@ const RsEarth: React.FC<any> = () => {
 
       series: series,
       tooltip: {
-        show: true,
-        trigger: "item",
-        triggerOn: "click", // 提示框触发的条件
-        enterable: false, // 鼠标是否可进入提示框浮层中，默认为false，如需详情内交互，如添加链接，按钮，可设置为 true
-        backgroundColor: "rgba(0,0,0,0.8)",
-        borderColor: "rgba(0,0,0,0.2)",
-        textStyle: {
-          color: "#fff",
-        },
-        formatter: function (params) {
-          let res = "";
-          if (typeof params.data.name !== "undefined") {
-            if (params.data.name == "CHN") {
-              res += "中国";
-            } else {
-              res +=
-                "<div style='font-size: 18px;line-height: 18px'>基本信息</div>";
-              res +=
-                "<div style='display: flex; flex-direction: column;justify-content:flex-start;align-items: center;'>" +
-                "<div style='display: flex; width: 400px; justify-content: space-between; font-size: 14px;'>" +
-                "<div>对外贸易方向: " +
-                params.data.datas.tradingCountry +
-                "</div>" +
-                "<div>外贸总金额: " +
-                params.data.datas.total +
-                "</div>" +
-                "<div>外贸次数: " +
-                params.data.datas.tradingNum +
-                "次</div>" +
-                "</div>";
-              res += "<div style='margin-top: 20px;'>";
-              res +=
-                "<table style='width:400px;font-weight:bold;' border='1' cellspacing='0' cellpadding='5'>" +
-                "<tbody style='height:14px;font-size: 14px;'>" +
-                "<tr style='border-bottom:1px solid #FFF;'><th style='text-align:center;color:#00D5EE;'>外贸企业</th>" +
-                "<th style='text-align:center;color:#00D5EE;'>外贸商品</th>" +
-                "<th style='text-align:center;color:#00D5EE;'>交易方式</th>" +
-                "<th style='text-align:center;color:#00D5EE;'>交易金额(万美元)</th></tr>";
-              for (let i = 0; i < params.data.datas.table.length; i++) {
-                let tData = params.data.datas.table[i];
-                res += "<tr>";
-                res +=
-                  "<td style='text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'>" +
-                  tData.tradeEnterprises +
-                  "</td>" +
-                  "<td style='text-align:center;'>" +
-                  tData.shopping +
-                  "</td>" +
-                  "<td style='text-align:center;'>" +
-                  tData.mode +
-                  "</td>" +
-                  "<td style='text-align:center;'>" +
-                  tData.money +
-                  "</td>";
-                res += "</tr>";
-              }
-              res += "</tbody>";
-              res += "</table>";
-              res += "</div>";
-              res += "</div>";
-            }
-          }
-          return res;
-        },
+        trigger: "none"
       },
     };
 

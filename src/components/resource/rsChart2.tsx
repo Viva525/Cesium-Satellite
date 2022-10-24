@@ -83,7 +83,7 @@ const RsChart2: React.FC<any>=() =>{
                 name: '',
                 type: 'pie',
                 clockWise: false,
-                radius: ["70%", "80%"],
+                radius: ["60%", "70%"],
                 hoverAnimation: false,
                 center: ['50%', '50%'],
                 itemStyle: {
@@ -164,8 +164,8 @@ const RsChart2: React.FC<any>=() =>{
                         z: 3,
                         style: {
                             image: img,
-                            width: 200,
-                            height: 200,
+                            width: 180,
+                            height: 180,
                         },
                         left: 'center',
                         top: 'center',

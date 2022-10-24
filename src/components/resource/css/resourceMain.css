@@ -35,16 +35,16 @@ body::-webkit-scrollbar{
 }
 
 .rs-left{
-    width: 49vw;
+    width: 59vw;
     height: 94vh;
-    left: 10px;
+    left: 22px;
     position:absolute;
 }
 
 .rs-right{
-width: 49vw;
+width: 39vw;
 height: 94vh;
-right: 10px;
+right: 22px;
     position: absolute;
 }
 
