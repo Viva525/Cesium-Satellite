@@ -32,6 +32,8 @@ import "./Spriteline1MaterialProperty";
 import { CesiumComponentType } from "../../types/type";
 import $ from 'jquery';
 import SettingPanel from "./settingPanel";
+import ResourcePanel from "../resource/resourceMain";
+import Yewurtaishi from "../yewutaishi/yewutaishi"
 const { Option } = Select;
 
 //@ts-ignore
@@ -2031,6 +2033,15 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
     }
   }, [situation.basestation]);
 
+  useEffect(()=>{
+    if(situation.resource || situation.business){
+      $("#cesiumContainer").hide();
+    }else{
+      $("#cesiumContainer").show();
+    }
+
+  },[situation])
+
   return (
     <>
       <div id="title">星座运行态势感知平台</div>
@@ -2078,10 +2089,26 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
         >
           站网态势
         </button>
-        <button type="button" className="cesium-button" onClick={showResourcePanel()}>
+        <button type="button" className="cesium-button" onClick={() => {
+            setSituation({
+              satellite: false,
+              communicate: false,
+              basestation: false,
+              resource: true,
+              business: false
+            })
+          }}>
           资源态势
         </button>
-        <button type="button" className="cesium-button">
+        <button type="button" className="cesium-button" onClick={() => {
+            setSituation({
+              satellite: false,
+              communicate: false,
+              basestation: false,
+              resource: false,
+              business: true
+            })
+          }}>
           业务态势
         </button>
         <Select defaultValue={"初始场景"}  style={{ width: 120, marginLeft:"18px",color:"#fff" }} onSelect={(val)=>{
@@ -2248,7 +2275,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           </div>
         </>)
       }
-
+      {
+        situation.resource &&(<ResourcePanel/>)
+      }
+      {
+        situation.business &&(<Yewurtaishi/>)
+      }
       <Modal
         transitionName=""
         title="场景编辑"
