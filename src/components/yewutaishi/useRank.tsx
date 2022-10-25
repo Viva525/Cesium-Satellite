@@ -54,8 +54,8 @@ const UseRank: React.FC<UseTimeProps> = (props) => {
         grid: {
           top: 10,
           bottom: 30,
-          left: 150,
-          right: 40
+          left: 100,
+          right: 50
         },
         xAxis: {
           max: 'dataMax',

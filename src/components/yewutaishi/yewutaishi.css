@@ -20,7 +20,7 @@
 }
 .useTime{
   height: 31vh;
-  width: 23vw;
+  width: 100%;
   margin-top: 10px;
 }
 
@@ -37,19 +37,14 @@
 }
 .useRank{
   height: 47vh;
-  width: 23vw;
+  width: 100%;
   float: left;
   margin-top: 10px;
 }
-.useRegionMAp{
+
+.useRegionMap{
   height: 31vh;
-  width: 23vw;
-  float: left;
-  margin-top: 10px;
-} 
-.useRegionMAp{
-  height: 31vh;
-  width: 23vw;
+  width: 100%;
   float: left;
   margin-top: 10px;
 } 

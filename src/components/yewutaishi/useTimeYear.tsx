@@ -78,18 +78,9 @@ const UseTimeYear: React.FC<UseTimeProps> = (props) => {
       };
       let option = {
         backgroundColor: "transparent",
-        grid: [{
-          left: "5%",
-          right: "55%",
-
-        }, {
-          left: "55%",
-          right: "95%",
-        },
-        ],
         polar: {
           radius: [20, '70%'],
-          center: ['28%', '50%'],
+          center: ['35%', '50%'],
         },
         legend: {
           type: "plain",
@@ -110,10 +101,14 @@ const UseTimeYear: React.FC<UseTimeProps> = (props) => {
             { text: '2024', max: 26000 },
             { text: '2025', max: 26000 },
           ],
-          center: ['75%', '50%'],
-          radius: "50%",
+
+          center: ['80%', '50%'],
+          radius: "40%",
           name: {
             color: '#fff'
+          },
+          axisName:{
+            show:false
           },
           splitNumber: 8,
           axisLine: {
@@ -121,10 +116,6 @@ const UseTimeYear: React.FC<UseTimeProps> = (props) => {
               color: color.linearYtoG,
               opacity: .6
             }
-          },
-
-          axisLabel: {
-            margin: -50,
           },
           splitLine: {
             lineStyle: {

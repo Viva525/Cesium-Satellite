@@ -494,33 +494,6 @@ const RsEarth: React.FC<any> = () => {
         },
       ],
       [
-        { name: "CHN" },
-        {
-          name: "BGD",
-          value: {
-            tradingCountry: "孟加拉"
-          },
-        },
-      ],
-      [
-        { name: "CHN" },
-        {
-          name: "URY",
-          value: {
-            tradingCountry: "阿根廷"
-          },
-        },
-      ],
-      [
-        { name: "WSM" },
-        {
-          name: "FRA",
-          value: {
-            tradingCountry: "法国"
-          },
-        },
-      ],
-      [
         { name: "Los" },
         {
           name: "Los",
@@ -553,28 +526,28 @@ const RsEarth: React.FC<any> = () => {
 
     datas.forEach((item, i) => {
       series.push(
-        {
-          name: item[0],
-          type: "lines",
-          zlevel: 1,
-          // 飞行线特效
-          effect: {
-            show: true, // 是否显示
-            period: 6, // 特效动画时间
-            trailLength: 0, // 特效尾迹长度。取从 0 到 1 的值，数值越大尾迹越长
-            symbol: 'arrow', // 特效图形标记
-            // symbolSize: 15
-            symbolSize: [8,20,0,0,30,40,50]
-          },
-          // 线条样式
-          lineStyle: {
-            curveness: -0.2, // 飞线弧度
-            type: "solid", // 飞线类型
-            color: "rgb(255,236,61)", // 飞线颜色
-            width: 2, // 飞线宽度
-          },
-          data: convertData(item[1]),
-        },
+        // {
+        //   name: item[0],
+        //   type: "lines",
+        //   zlevel: 1,
+        //   // 飞行线特效
+        //   effect: {
+        //     show: true, // 是否显示
+        //     period: 6, // 特效动画时间
+        //     trailLength: 0, // 特效尾迹长度。取从 0 到 1 的值，数值越大尾迹越长
+        //     symbol: 'arrow', // 特效图形标记
+        //     // symbolSize: 15
+        //     symbolSize: [8,20,0,0,30,40,50]
+        //   },
+        //   // 线条样式
+        //   lineStyle: {
+        //     curveness: -0.2, // 飞线弧度
+        //     type: "solid", // 飞线类型
+        //     color: "rgb(255,236,61)", // 飞线颜色
+        //     width: 2, // 飞线宽度
+        //   },
+        //   data: convertData(item[1]),
+        // },
         {
           type: "effectScatter", // 带有涟漪特效动画的散点（气泡）图
           coordinateSystem: "geo",
@@ -588,7 +561,7 @@ const RsEarth: React.FC<any> = () => {
             brushType: "stroke",
           },
           itemStyle: {
-            color: "rgb(62,212,255)",
+            color: "rgb(255,236,61)",
           },
           label: {
             show: true,
@@ -616,7 +589,7 @@ const RsEarth: React.FC<any> = () => {
       geo: {
         map: "world", // 地图类型
         roam: true, // 是否开启缩放
-        zoom: 2, // 初始缩放大小
+        zoom: 1.5, // 初始缩放大小
         // center:[],
         center: [11.3316626, 19.5845024], // 地图中心点
         scaleLimit: {

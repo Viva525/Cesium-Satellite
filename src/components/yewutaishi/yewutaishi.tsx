@@ -58,7 +58,7 @@ const Yewurtaishi: React.FC<{}> = () => {
               }
             />
           </div>
-          <div className='useRegionMAp'>
+          <div className='useRegionMap'>
             <Box
               title="时间分布"
               component={
