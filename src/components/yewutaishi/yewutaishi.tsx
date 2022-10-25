@@ -14,6 +14,8 @@ const Yewurtaishi: React.FC<{}> = () => {
     <div className='allBack'>
       <div className='title'>业务态势</div>
       <div className="content">
+      <div className='business-mask-left'></div>
+      <div className='business-mask-right'></div>
         <div className='Left'>
           <div className='useTime'>
             <Box

@@ -384,7 +384,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       };
       setTimeout(() => {
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/star-beidou-gps-2.czml"
+          "./data/500+.czml"
         );
         let nowSatelliteList: string[] = [];
         let baseStationTemp: BaseStation[] = [];
@@ -427,6 +427,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             if (ele.label != undefined) {
               ele.label.show = false;
             }
+
 
             if (ele.path != undefined) {
               ele.path.show = false; // 设置路径不可看
@@ -495,6 +496,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               // 绘制雷达扫描
               let lineFlowPosition = [];
               let radarId = "radarScan_" + ele.id;
+              if(ele.position == undefined) return;
               let postionValues = [...ele.position._property._values];
               let cartographic = Cesium.Cartographic.fromCartesian(
                 new Cesium.Cartesian3(

@@ -10,17 +10,17 @@ const RsChart4: React.FC<any>=() =>{
         let myChart = echarts.init(chartRef.current as unknown as HTMLDivElement)
         let pieData = [{
           'name': '星链',
-          'value': 80
+          'value': 50
       }
       , {
           'name': 'GPS',
-          'value': 50
+          'value': 32
       }, {
           'name': '北斗',
-          'value': 40
+          'value': 35
       }, {
           'name': '基站',
-          'value': 15
+          'value': 5
       }
       ]
      

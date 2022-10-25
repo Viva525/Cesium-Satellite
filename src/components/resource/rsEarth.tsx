@@ -520,6 +520,13 @@ const RsEarth: React.FC<any> = () => {
           },
         },
       ],
+      [{name:"Australia"},
+      {
+        name: "Australia",
+        value: {
+          tradingCountry: "澳大利亚"
+        },
+      }]
     ];
 
     let datas = [["Peking", toData]];

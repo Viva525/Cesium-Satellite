@@ -48,3 +48,23 @@
   float: left;
   margin-top: 10px;
 } 
+
+.business-mask-left{
+  width: 3vw;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 20%;
+  background: linear-gradient(to right, #000, #0000);
+  z-index: 999;
+}
+
+.business-mask-right{
+  width: 3vw;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 20.5%;
+  background: linear-gradient(to left, #000, #0000);
+  z-index: 999;
+}
