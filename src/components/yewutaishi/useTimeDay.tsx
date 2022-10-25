@@ -82,7 +82,7 @@ const UseTimeDay: React.FC<UseTimeProps> = (props) => {
             return val[1] / 500;
           },
           itemStyle: {
-            color: '#ddb926'
+            color: 'rgb(0, 212, 255)'
           }
         },
         {
@@ -98,7 +98,7 @@ const UseTimeDay: React.FC<UseTimeProps> = (props) => {
             brushType: 'stroke'
           },
           itemStyle: {
-            color: '#f4e925',
+            color: 'rgb(58, 120, 111)',
             shadowBlur: 10,
             shadowColor: '#333'
           },

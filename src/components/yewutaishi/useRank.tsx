@@ -21,25 +21,25 @@ const UseRank: React.FC<UseTimeProps> = (props) => {
       const updateFrequency = 2000;
       const dimension = 0;
       const countryColors = {
-        'Australia': 'rgb(0, 212, 255)',
+        'Australia': 'rgba(0, 212, 255, 0.6)',
         'Canada': 'rgb(79, 112, 225)',
         'China': 'rgb(58, 120, 111)',
-        'Cuba': 'rgb(117, 216, 116)',
+        'Cuba': 'rgba(117, 216, 116, 0.7)',
         'Finland': 'rgb(59, 201, 161)',
         'France': 'rgb(64, 141, 233)',
-        'Germany': 'rgb(0, 212, 255)',
+        'Germany': 'rgba(0, 212, 255, 0.6)',
         'Iceland': 'rgb(79, 112, 225)',
         'India': 'rgb(58, 120, 111)',
-        'Japan': 'rgb(117, 216, 116)',
+        'Japan': 'rgba(117, 216, 116, 0.7)',
         'North Korea': 'rgb(59, 201, 161)',
         'South Korea': 'rgb(64, 141, 233)',
-        'New Zealand': 'rgb(0, 212, 255)',
+        'New Zealand': 'rgba(0, 212, 255, 0.6)',
         'Norway': 'rgb(79, 112, 225)',
         'Poland': 'rgb(58, 120, 111)',
-        'Russia': 'rgb(117, 216, 116)',
+        'Russia': 'rgba(117, 216, 116, 0.7)',
         'Turkey': 'rgb(59, 201, 161)',
         'United Kingdom': 'rgb(64, 141, 233)',
-        'United States': 'rgb(0, 212, 255)'
+        'United States': 'rgba(0, 212, 255, 0.6)'
       };
       const years: any[] = [];
       for (let i = 0; i < rankData.length; ++i) {
@@ -147,7 +147,7 @@ const UseRank: React.FC<UseTimeProps> = (props) => {
         });
         //@ts-ignore
         option.series[0].data = source;
-        option.graphic.elements[0].style.text = year;
+        option.graphic.elements[0].style.text = '';
         //@ts-ignore
         myChart.setOption(option, true);
       }

@@ -472,7 +472,7 @@ const UseMap: React.FC<UseMapProps> = (props) => {
           type: 'continuous',
           orient: 'horizontal',
           left: 'center',
-          color: ['rgb(73, 124, 228)', 'rgb(248, 164, 42)', '#75d874'],
+          color: ['rgb(73, 124, 228)', 'rgb(59, 201, 161)', '#75d874'],
           show: false
         },
         geo: {
