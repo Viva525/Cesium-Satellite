@@ -1,51 +1,58 @@
 .allBack{
   height: 100vh;
   width: 100vw;
-  background-color: rgb(26, 35, 35);
+  background-color: rgb(0,0,0);
   overflow: hidden;
 }
 
 .title{
-  height: 10vh;
+  height: 6vh;
   width: 100vw;
 }
 .content{
-  height: 90vh;
+  height: 94vh;
   width: 100vw;
 }
 .Left{
-  height: 90vh;
-  width: 20vw;
+  height: 94vh;
+  width: 23vw;
   float: left;
+  margin-left: 20px;
 }
 .useTime{
-  height: 29vh;
-  width: 20vw;
+  height: 31vh;
+  width: 23vw;
   margin-top: 10px;
 }
 
 .useMap{
   height: 90vh;
-  width: 59vw;
+  width: 50vw;
   float: left;
   margin-top: 10px;
   margin-left: 10px;
 }
 .right{
-  height: 90vh;
-  width: 19vw;
+  height: 94vh;
+  width: 23vw;
   float: left;
   margin-left: 10px;
 }
 .useRank{
-  height: 45vh;
-  width: 20vw;
+  height: 47vh;
+  width: 23vw;
   float: left;
   margin-top: 10px;
 }
 .useRegionMAp{
-  height: 45vh;
-  width: 20vw;
+  height: 31vh;
+  width: 23vw;
+  float: left;
+  margin-top: 10px;
+} 
+.useRegionMAp{
+  height: 31vh;
+  width: 23vw;
   float: left;
   margin-top: 10px;
 } 

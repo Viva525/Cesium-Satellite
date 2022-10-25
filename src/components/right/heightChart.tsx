@@ -20,8 +20,8 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
       }
       let option = {
         grid: {
-          left: "11%",
-          top: "10%",
+          left: "7%",
+          top: "18%",
           right: "2%",
           bottom: "20%",
         },
@@ -95,7 +95,7 @@ const HeightChart: React.FC<HeightChartProps> = (props) => {
       <style>
         {`
             #satellite{
-                height: 18vh;
+                height: 17vh;
                 width:99%;
             }
             `}

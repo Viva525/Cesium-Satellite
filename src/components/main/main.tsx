@@ -2009,6 +2009,9 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   useEffect(() => {
     if (init) {
       if (situation.basestation) {
+        for (let i of netCollection) {
+          viewer.entities.getById(i).polyline.show = true;
+        }
         // 获取基站的数据
         fetch("./data/groundData/groundBusiness.json")
           .then((res) => res.json())
@@ -2112,6 +2115,12 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
           }}>
           业务态势
         </button>
+        <button type="button" className="cesium-button" >
+          干扰态势
+        </button>
+        <button type="button" className="cesium-button" >
+          空间天气态势
+        </button>
         <Select defaultValue={"初始场景"}  style={{ width: 120, marginLeft:"18px",color:"#fff" }} onSelect={(val)=>{
           loadingScene(val);
         }} allowClear>
@@ -2121,11 +2130,11 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             })
           }
         </Select>
-        <button 
+        <div
         type="button"
-        className="cesium-button" style={{float:"right",marginRight:"1.5vw"}} onClick={()=>{showScenceEditPanel()}}>
-          场景编辑
-        </button>
+        className="cesium-button-edit" style={{ width:"32px", height:"32px"}} onClick={()=>{showScenceEditPanel()}}>
+          <div className="editButton"></div>
+        </div>
       </div>
       <div
         id="cesiumContainer"
@@ -2297,8 +2306,8 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       >
         <SettingPanel setSetting={setSetting} setting={setting} satelliteList={satelliteListRef.current} setSatelliteList={setSatelliteList} setScanes={setScenList}/>
       </Modal>
-      <div id="left-border-line"></div>
-      <div id="right-border-line"></div>
+      {/* <div id="left-border-line"></div>
+      <div id="right-border-line"></div> */}
     </>
   );
 };

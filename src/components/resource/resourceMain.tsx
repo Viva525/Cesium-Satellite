@@ -20,8 +20,8 @@ const ResourcePanel: React.FC<any> = () => {
 
   return (
     <div id="rs-container">
+      <div className="map-mask"></div>
       <div className="rs-title">
-
         <div id="rs-time"></div>
       </div>
       <div id="charts">

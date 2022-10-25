@@ -43,12 +43,12 @@ const StatelliteCard: React.FC<StatelliteCardType> = (props) => {
     if (satelliteState.length > 0) {
       let titleId = document.getElementById(satelliteState[0]);
       //@ts-ignore
-      titleId.style.color = satelliteState[3] || satelliteState[4] || satelliteState[5] ? "rgb(255,0,0)" : "rgb(44, 79, 172)"
+      titleId.style.color = satelliteState[3] || satelliteState[4] || satelliteState[5] ? "rgb(255,0,0)" : "#fff"
 
       for (let i in stateList) {
         let buttonId = document.getElementById(satelliteState[0] + stateList[i]);
         //@ts-ignore
-        buttonId.style.color = satelliteState[parseInt(i) + 1] ? "rgb(255,255,255)" : "rgb(44, 79, 172)"
+        buttonId.style.color = satelliteState[parseInt(i) + 1] ? "rgb(255,0,0)" : "#fff"
       }
     }
   }, [satelliteState])

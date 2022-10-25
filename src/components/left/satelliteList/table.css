@@ -92,11 +92,11 @@ tbody td {
     background-color: rgba(0, 0, 0, 0);
     width: 50px;
     border: 0ch;
-    color: rgb(44, 79, 172);
+    color: #fff;
 }
 .ant-checkbox-group-item{
-    width: 100px;
-    color: rgb(44, 79, 172) !important
+    width: 80px;
+    color: #fff !important
 }
 
 ::-webkit-scrollbar {

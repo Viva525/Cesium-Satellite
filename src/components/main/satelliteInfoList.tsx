@@ -96,7 +96,7 @@ const SatelliteInfoList: React.FC<sateLLiteInfoList> = (props) => {
         {
             title:"Satellite",
             dataIndex: "satellite",
-            key: "satellite"
+            key: "satellite",
         },
         {
             title:"Az",

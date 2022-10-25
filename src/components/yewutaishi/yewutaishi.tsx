@@ -60,7 +60,7 @@ const Yewurtaishi: React.FC<{}> = () => {
           </div>
           <div className='useRegionMAp'>
             <Box
-              title="地区占比"
+              title="时间分布"
               component={
                 <UseMapClass nowData={1} />
               }

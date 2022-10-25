@@ -27,20 +27,16 @@ const SatelliteList: React.FC<satelliteListType> = (props) => {
     setSatelliteList([...nowSatelliteList])
   }, [nowSatellite])
   return <>
-    <Checkbox.Group options={plainOptions} defaultValue={plainOptions} onChange={onChange} style={{ "color": "rgb(44, 79, 172)" }} />
+    <Checkbox.Group options={plainOptions} defaultValue={plainOptions} onChange={onChange} style={{ "color": "#fff" }} />
     <List
       itemLayout="horizontal"
-      className='satelliteList'
       dataSource={satelliteList}
-      style={{
-        height: 800,
-        overflowY: "scroll"
-      }}
+      size="large"
       renderItem={item => {
         for(let i of value){
           if (item[0].indexOf(i) >= 0) {
             return (
-              <List.Item style={{ 'height': "80px" }}>
+              <List.Item style={{ 'height': "90px" }}>
                 <List.Item.Meta
                   avatar={<Avatar src="./images/statellite.png" />}
                   description={<StatelliteCard

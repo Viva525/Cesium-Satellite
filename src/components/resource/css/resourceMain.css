@@ -111,3 +111,13 @@ hr.rsHr {
     );
     margin: 0;
   }
+
+  .map-mask{
+    height: 100%;
+    width: 1.5vw;
+    background: linear-gradient(to left, #202634, #0000);
+    position: absolute;
+    top: 0;
+    left: 58.4%;
+    z-index: 2;
+  }

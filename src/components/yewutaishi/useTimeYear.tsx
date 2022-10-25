@@ -17,11 +17,84 @@ const UseTimeYear: React.FC<UseTimeProps> = (props) => {
       if (myChart == null) {
         myChart = echarts.init(chartRef.current as unknown as HTMLDivElement, 'dark');
       }
-
+      // 颜色设置
+      var color = {
+        linearYtoG: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 1,
+          colorStops: [{
+            offset: 0,
+            color: '#f5b44d'
+          }, {
+            offset: 1,
+            color: '#28f8de'
+          }]
+        },
+        linearGtoB: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 0,
+          colorStops: [{
+            offset: 0,
+            color: '#43dfa2'
+          }, {
+            offset: 1,
+            color: '#28f8de'
+          }]
+        },
+        linearBtoG: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 1,
+          y2: 0,
+          colorStops: [{
+            offset: 0,
+            color: '#1c98e8'
+          }, {
+            offset: 1,
+            color: '#28f8de'
+          }]
+        },
+        areaBtoG: {
+          type: 'linear',
+          x: 0,
+          y: 0,
+          x2: 0,
+          y2: 1,
+          colorStops: [{
+            offset: 0,
+            color: 'rgba(35,184,210,.2)'
+          }, {
+            offset: 1,
+            color: 'rgba(35,184,210,0)'
+          }]
+        }
+      };
       let option = {
-        backgroundColor:"transparent",
+        backgroundColor: "transparent",
+        grid: [{
+          left: "5%",
+          right: "55%",
+
+        }, {
+          left: "55%",
+          right: "95%",
+        },
+        ],
         polar: {
-          radius: [30, '80%']
+          radius: [20, '70%'],
+          center: ['28%', '50%'],
+        },
+        legend: {
+          type: "plain",
+          data: ["折线图", "雷达图"],
+          left: "5%",
         },
         angleAxis: {
           startAngle: 75
@@ -30,23 +103,109 @@ const UseTimeYear: React.FC<UseTimeProps> = (props) => {
           type: 'category',
           data: ['2022', '2023', '2024', '2025']
         },
-        tooltip: {},
-        series: {
-          type: 'bar',
-          data: [17851, 16812, 19634, 25135],
-          itemStyle: {        
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(13, 126, 222)' },
-            { offset: 1, color: 'rgba(18, 30, 55)' }
-          ])
+        radar: {
+          indicator: [
+            { text: '2022', max: 26000 },
+            { text: '2023', max: 26000 },
+            { text: '2024', max: 26000 },
+            { text: '2025', max: 26000 },
+          ],
+          center: ['75%', '50%'],
+          radius: "50%",
+          name: {
+            color: '#fff'
           },
-          coordinateSystem: 'polar',
-          label: {
-            show: true,
-            position: 'middle',
-            formatter: '{b}: {c}'
+          splitNumber: 8,
+          axisLine: {
+            lineStyle: {
+              color: color.linearYtoG,
+              opacity: .6
+            }
+          },
+
+          axisLabel: {
+            margin: -50,
+          },
+          splitLine: {
+            lineStyle: {
+              color: color.linearYtoG,
+              opacity: .6
+            }
+          },
+
+          splitArea: {
+            areaStyle: {
+              color: '#fff',
+              opacity: .1,
+              shadowBlur: 25,
+              shadowColor: '#000',
+              shadowOffsetX: 0,
+              shadowOffsetY: 5,
+            }
+          },
+        },
+        tooltip: {},
+        series: [
+          {
+            type: 'bar',
+            name: "折线图",
+            data: [17851, 16812, 19634, 25135],
+            itemStyle: {
+              color: new echarts.graphic.LinearGradient(
+                0, 0, 0, 1,
+                [{
+                  offset: 0,
+                  color: '#0ff'
+                },
+                {
+                  offset: 1,
+                  color: '#5467df'
+                }
+                ]
+              ),
+            },
+            coordinateSystem: 'polar',
+            label: {
+              show: true,
+              position: 'middle',
+              formatter: '{b}: {c}'
+            }
+          },
+          {
+            type: 'radar',
+            data: [{
+              value: [17851, 16812, 19634, 25135],
+              name: "雷达图",
+              itemStyle: {
+                normal: {
+                  color: '#43dfa2',
+                }
+              },
+              lineStyle: {
+                normal: {
+                  opacity: 0,
+                }
+              },
+              areaStyle: {
+                normal: {
+                  color: color.linearGtoB,
+                  shadowBlur: 15,
+                  shadowColor: 'rgba(0,0,0,.2)',
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 5,
+                  opacity: .8
+                }
+              },
+
+              label: {
+                show: true,
+                formatter: function (params: any) {
+                  return params.value;
+                }
+              },
+            },]
           }
-        }
+        ]
       };
       myChart.setOption(option, true);
       myChart.resize();
@@ -60,7 +219,7 @@ const UseTimeYear: React.FC<UseTimeProps> = (props) => {
       <style>
         {`
             #useTimeYear{
-                height: 25vh;
+                height: 27vh;
                 width:99%;
                 background-size: cover;
                 background-repeat: no-repeat;

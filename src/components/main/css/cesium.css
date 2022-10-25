@@ -1,5 +1,5 @@
 .cesium-button {
-    background: #303336;
+    /* background: #303336;
     border: 1px solid #444;
     color: #edffff;
     fill: #edffff;
@@ -13,7 +13,15 @@
     -ms-user-select: none;
     user-select: none;
     outline:0 none !important;
-    z-index:999;
+    z-index:999; */
+    /* padding: 1em; */
+    border: 0;
+    padding: 0;
+    border-radius: 0.5em;
+    /* font-size: 0.8rem; */
+    color: white !important;
+    background-image: linear-gradient(to bottom, #57b, #148) !important;
+    box-shadow: 0.1em 0.1em 0.5em #124 !important; 
 }
 .cesium-button:focus,
 .cesium-button:active:focus,
@@ -21,9 +29,41 @@
 .cesium-button.focus,
 .cesium-button:active.focus,
 .cesium-button.active.focus{
-    outline: none;
+    /* outline: none;
     border-color: transparent;
-    box-shadow:none;
+    box-shadow:none; */
+    box-shadow: inset 0 0 0.5em #124, inset 0 0.5em 1em rgba(0,0,0,0.4);
+}
+
+
+.cesium-button-edit{
+    border: 0;
+    padding: 0;
+    border-radius: 0.5em;
+    /* font-size: 0.8rem; */
+    color: white !important;
+    background-image: linear-gradient(to bottom, #57b, #148) !important;
+    box-shadow: 0.1em 0.1em 0.5em #124 !important; 
+    float: right;
+    margin-right: 3.6vw;
+    margin-top: 0.3vh;
+    cursor: pointer;
+}
+
+.ant-table-tbody > tr > td {
+    text-align: center !important;
+}
+
+.ant-table-cell:nth-child(1){
+    text-align: left !important;
+}
+
+.editButton{
+    background-image: url("../assets//resources/edit.png");
+    background-position: center;
+    height: 32px;
+    width: 32px;
+    margin-right: 8px;
 }
 
 .ant-table, .ant-select-selector, .ant-pagination-item-link{
@@ -57,7 +97,7 @@
     top: 5px;
     position: absolute;
     padding-top: 5px;
-    padding-left: 37vw;
+    padding-left: 34vw;
     z-index: 998;
 }
 
@@ -135,8 +175,10 @@
 }
 
 .ant-list{
-    max-height: 70vh !important;
+    max-height: 100vh !important;
+    padding-top: 1vh !important; 
     overflow-y: scroll !important;
+    color: #fff !important;
 }
 
 .ant-modal-content {
@@ -149,6 +191,7 @@
 
 .ant-list-item{
     border-bottom: 2px solid #2c333d !important;
+    padding: 0!important;
 }
 
 .scenceSetting{
@@ -168,17 +211,19 @@
     display: none !important;
 }
 
-#satelliteList {
-    position: absolute;
-    top: 2%;
-    width: 14vw;
-    height: 70vh;
-    padding-top: 5vh;
+.satelliteList{
+    position: absolute !important;
+    float: left;
+    top: 5vh;
+    left: 2.7vw;
+    width: 12vw;
+    height: 95%;
+    padding-top: 0vh;
     padding-left: 10px;
+    background: #353536;
+    color: #fff !important;
     z-index: 999;
 }
-
-
 
 #title {
     color: rgba(13, 126, 222, 1);
@@ -403,4 +448,59 @@ p {
 
 .loadingScene:hover {
     color:#08acbd;
+}
+
+#top-edit{
+    width: 100vw;
+    height: 5vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    background: url("../assets//snap/header.png");
+    background-size: contain;
+    z-index: 999;
+}
+
+#left-edit{
+    width: 380px;
+    height: 1379px;
+    position: absolute;
+    left: 0;
+    top:5vh;
+    background: url("../assets/snap/left.png");
+    background-size: contain;
+    z-index: 999;
+}
+
+#bottom-edit{
+    width: 1880px;
+    height: 300px;
+    position: absolute;
+    left: 382px;
+    bottom:0px;
+    background: url("../assets/snap/bottom.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 999;
+    background-position: center;
+}
+
+#right-edit{
+    width: 300px;
+    height: 1379px;
+    position: absolute;
+    right: 0px;
+    bottom:0px;
+    background: url("../assets/snap/right.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    /* z-index: 999; */
+}
+
+#show-light{
+    position: absolute;
+    top: 57.1vh;
+    right: 1.9vw;
+    z-index: 999;
 }

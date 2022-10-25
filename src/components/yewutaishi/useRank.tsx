@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as echarts from "echarts";
+import rankData from "../../../public/data/rankData.json"
 
 type UseTimeProps = {
   nowData: any[];
@@ -11,90 +12,145 @@ const UseRank: React.FC<UseTimeProps> = (props) => {
   const chartRef = useRef(null);
   useEffect(() => {
     if (nowData.length > 0) {
-
       let myChart = echarts.getInstanceByDom(
         chartRef.current as unknown as HTMLDivElement
       );
       if (myChart == null) {
         myChart = echarts.init(chartRef.current as unknown as HTMLDivElement, 'dark');
       }
-      let useData = []
-      for(let i of nowData){
-        useData.push([i.value, i.name, i.value])
+      const updateFrequency = 2000;
+      const dimension = 0;
+      const countryColors = {
+        'Australia': 'rgb(0, 212, 255)',
+        'Canada': 'rgb(79, 112, 225)',
+        'China': 'rgb(58, 120, 111)',
+        'Cuba': 'rgb(117, 216, 116)',
+        'Finland': 'rgb(59, 201, 161)',
+        'France': 'rgb(64, 141, 233)',
+        'Germany': 'rgb(0, 212, 255)',
+        'Iceland': 'rgb(79, 112, 225)',
+        'India': 'rgb(58, 120, 111)',
+        'Japan': 'rgb(117, 216, 116)',
+        'North Korea': 'rgb(59, 201, 161)',
+        'South Korea': 'rgb(64, 141, 233)',
+        'New Zealand': 'rgb(0, 212, 255)',
+        'Norway': 'rgb(79, 112, 225)',
+        'Poland': 'rgb(58, 120, 111)',
+        'Russia': 'rgb(117, 216, 116)',
+        'Turkey': 'rgb(59, 201, 161)',
+        'United Kingdom': 'rgb(64, 141, 233)',
+        'United States': 'rgb(0, 212, 255)'
+      };
+      const years: any[] = [];
+      for (let i = 0; i < rankData.length; ++i) {
+        if (years.length === 0 || years[years.length - 1] !== rankData[i][4]) {
+          years.push(rankData[i][4]);
+        }
       }
+      let startIndex = 10;
+      let startYear = years[startIndex];
       let option = {
-        backgroundColor:"rgba(0,0,0,0)",
-
-        tooltip: {},
+        backgroundColor: "rgba(0,0,0,0)",
         grid: {
-          left: "20%",
-          top: "5%",
-          right: "20%",
-          bottom: "5%",
+          top: 10,
+          bottom: 30,
+          left: 150,
+          right: 40
         },
         xAxis: {
-          type: "value",
-          name: "data",
-          position: "left",
-          nameTextStyle: {
-            color: "rgba(13, 126, 222, 1)",
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              type: 'dashed',
-              color: "rgba(13, 126, 222, 1)"
-            }
-          },
+          max: 'dataMax',
           axisLabel: {
-            color: "rgba(13, 126, 222, 1)",
-          },
-          boundaryGap: [0, '100%'],
-          min:0,
-          max:25
+            formatter: function (n: any) {
+              return Math.round(n) + '';
+            }
+          }
+        },
+        dataset: {
+          source: rankData.slice(1).filter(function (d) {
+            return d[4] === startYear;
+          })
         },
         yAxis: {
-          type: "category",
-          name: "country",
-        },
-        dataZoom: [
-          {
-            type: 'slider',
+          type: 'category',
+          inverse: true,
+          max: 10,
+          axisLabel: {
             show: true,
-            yAxisIndex: [0],
-            right: '5%',
-            bottom: '15%',
-            top: '10%',
-            start: 5,
-            end: 30
+            fontSize: 12,
+            rich: {
+              flag: {
+                fontSize: 25,
+                padding: 5
+              }
+            }
           },
-        ],
-        visualMap: {
-          orient: 'horizontal',
-          left: 'center',
-          min: 0,
-          max: 20,
-          // Map the score column to color
-          dimension: 0,
-          inRange: {
-            color: ['rgba(13, 126, 222, 1)', 'rgba(63,218,255,1)']
-          },
-          show:false
+          animationDuration: 300,
+          animationDurationUpdate: 300
         },
-
-        series: {
-          type: 'bar',
-          data: useData,
-          itemStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgba(13, 126, 222)' },
-              { offset: 1, color: 'rgba(18, 30, 55)' }
-            ])
-          },
+        series: [
+          {
+            realtimeSort: true,
+            seriesLayoutBy: 'column',
+            type: 'bar',
+            itemStyle: {
+              color: function (param: any) {
+                //@ts-ignore
+                return countryColors[param.value[3]] || '#5470c6';
+              }
+            },
+            encode: {
+              x: dimension,
+              y: 3
+            },
+            label: {
+              show: true,
+              precision: 1,
+              position: 'right',
+              valueAnimation: true,
+              fontFamily: 'monospace'
+            }
+          }
+        ],
+        // Disable init animation.
+        animationDuration: 0,
+        animationDurationUpdate: updateFrequency,
+        animationEasing: 'linear',
+        animationEasingUpdate: 'linear',
+        graphic: {
+          elements: [
+            {
+              type: 'text',
+              right: 160,
+              bottom: 60,
+              style: {
+                text: startYear,
+                font: 'bolder 80px monospace',
+                fill: 'rgba(200, 200, 200, 0.25)'
+              },
+              z: 100
+            }
+          ]
         }
       };
+      //@ts-ignore
       myChart.setOption(option, true);
-      myChart.resize();
+      for (let i = startIndex; i < years.length - 1; ++i) {
+        (function (i) {
+          setTimeout(function () {
+            updateYear(years[i + 1]);
+          }, (i - startIndex) * updateFrequency);
+        })(i);
+      }
+      function updateYear(year: any) {
+        let source = rankData.slice(1).filter(function (d) {
+          return d[4] === year;
+        });
+        //@ts-ignore
+        option.series[0].data = source;
+        option.graphic.elements[0].style.text = year;
+        //@ts-ignore
+        myChart.setOption(option, true);
+      }
     }
 
   }, [nowData])
@@ -105,7 +161,7 @@ const UseRank: React.FC<UseTimeProps> = (props) => {
       <style>
         {`
             #useRank{
-                height: 42vh;
+                height: 44vh;
                 width:99%;
                 background-size: cover;
                 background-repeat: no-repeat;
