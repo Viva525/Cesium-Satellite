@@ -460,7 +460,6 @@ const UseMap: React.FC<UseMapProps> = (props) => {
       setUseRegionData(useData)
 
       let option = {
-
         backgroundColor: "rgba(0,0,0,0)",
         tooltip: {
           trigger: 'item',
@@ -496,7 +495,9 @@ const UseMap: React.FC<UseMapProps> = (props) => {
             // borderWidth: 2,
             show: true
           },
-
+          label: {
+            color: "#fff"
+          }
         },
         series: {
           name: '地区使用数量',
@@ -512,7 +513,7 @@ const UseMap: React.FC<UseMapProps> = (props) => {
           },
           
           symbolSize: (param: any) => { 
-            return param[2] / 10
+            return param[2]*1.5 / 10
           },
           hoverAnimation: true, // 是否显示鼠标悬浮动画
           label: {
@@ -520,6 +521,7 @@ const UseMap: React.FC<UseMapProps> = (props) => {
             formatter: function (val: any) {
               return val.value[2]
             },
+            color:"#fff",
           },
           // 鼠标悬浮上去的样式
           emphasis: {
