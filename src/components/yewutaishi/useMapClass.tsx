@@ -45,7 +45,7 @@ const UseMapClass: React.FC<UseTimeProps> = (props) => {
           text: day
         });
         singleAxis.push({
-          left: 150,
+          left: 120,
           type: 'category',
           boundaryGap: false,
           data: hours,
