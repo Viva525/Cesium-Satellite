@@ -1556,17 +1556,25 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             lat - (radius / 2) * Math.sqrt(3),
             lng + radius / 2,
             lat - (radius / 2) * Math.sqrt(3),
+            lng + radius,
+            lat,
           ])
         ),
-        outline: true,
-        outlineColor: new Cesium.Color(210 / 255, 51 / 255, 90 / 255, 1),
-        outlineWidth: 4,
+        height: 1,
+        outline: false,
         fill: false,
         material: Cesium.Color.fromCssColorString(
           "rgba(5, 39, 175, 0.3)"
-        ).withAlpha(0.1),
+        ).withAlpha(1),
       },
     });
+    let nowHexagon = viewer.entities.getById(`ShowRange_${id}`);
+    nowHexagon.polyline = {
+      positions: nowHexagon.polygon.hierarchy._value.positions,
+      width: 1.5,
+      material: new Cesium.Color(210 / 255, 51 / 255, 90 / 255, 1)
+  }
+
   }
 
   useEffect(() => {
