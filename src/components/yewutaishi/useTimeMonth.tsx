@@ -131,11 +131,11 @@ const UseTimeMonth: React.FC<UseTimeProps> = (props) => {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                   {
                     offset: 0,
-                    color: "#fccb05",
+                    color: 'rgb(0, 212, 255)',
                   },
                   {
                     offset: 1,
-                    color: "#f5804d",
+                    color: 'rgb(79, 112, 225)',
                   },
                 ]),
                 barBorderRadius: 12,
@@ -187,11 +187,11 @@ const UseTimeMonth: React.FC<UseTimeProps> = (props) => {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                   {
                     offset: 0,
-                    color: "#fccb05",
+                    color: 'rgb(0, 212, 255)',
                   },
                   {
                     offset: 1,
-                    color: "#f5804d",
+                    color: 'rgb(79, 112, 225)',
                   },
                 ]),
                 barBorderRadius: 11,

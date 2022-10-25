@@ -15,9 +15,8 @@
 }
 .Left{
   height: 94vh;
-  width: 23vw;
+  width: 20vw;
   float: left;
-  margin-left: 20px;
 }
 .useTime{
   height: 31vh;
@@ -27,16 +26,14 @@
 
 .useMap{
   height: 90vh;
-  width: 50vw;
+  width: 60vw;
   float: left;
   margin-top: 10px;
-  margin-left: 10px;
 }
 .right{
   height: 94vh;
-  width: 23vw;
+  width: 20vw;
   float: left;
-  margin-left: 10px;
 }
 .useRank{
   height: 47vh;
