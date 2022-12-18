@@ -48,6 +48,7 @@
     margin-right: 3.6vw;
     margin-top: 0.3vh;
     cursor: pointer;
+    z-index: 999;
 }
 
 .ant-table-tbody > tr > td {
@@ -495,7 +496,7 @@ p {
     background: url("../assets/snap/right.png");
     background-size: contain;
     background-repeat: no-repeat;
-    /* z-index: 999; */
+    z-index: 995;
 }
 
 #show-light{
@@ -503,4 +504,12 @@ p {
     top: 57.1vh;
     right: 1.9vw;
     z-index: 999;
+}
+
+#imageWrapper{
+    background: url("../assets/huojian/huojian5.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
 }

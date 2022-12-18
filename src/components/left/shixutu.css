@@ -1,0 +1,58 @@
+.lineWrapper {
+    padding-top: 2vh;
+    position: relative;
+}
+
+.line {
+    width: 0.5vw;
+    height: 80vh;
+    background: rgb(28, 84, 204);
+    left: 10%;
+    position: absolute;
+}
+
+.msg {
+    padding-left: 2vw;
+}
+
+.circle {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background-color: rgb(99, 139, 226);
+    border-radius: 50%;
+    margin-left: -0.3vw;
+}
+
+.text {
+    color: #fff;
+    font-size: 18px;
+    margin-left: 2vw;
+}
+
+.time {
+    color: #fff;
+    font-size: 14px;
+    margin-left: 2vw;
+}
+
+.nowTime {
+    color: rgb(228, 124, 124);
+    font-size: 14px;
+    margin-left: 2vw;
+}
+
+.nowText {
+    color: rgb(231, 131, 131);
+    font-size: 18px;
+    margin-left: 2vw;
+}
+
+.nowCircle {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    background-color: rgb(231, 131, 131);
+    border-radius: 50%;
+    margin-left: -0.3vw;
+}

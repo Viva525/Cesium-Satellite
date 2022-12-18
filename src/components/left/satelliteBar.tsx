@@ -19,7 +19,7 @@ const SatelliteBar: React.FC<{}> = () => {
       }
 
       var myColor = ["rgba(210, 51, 90, 0)"];
-      var dataLine = [35, 32, 50];
+      var dataLine = [35, 32, 1238];
       var positionLeft = 10,
         max = 100 + positionLeft;
 
@@ -32,14 +32,14 @@ const SatelliteBar: React.FC<{}> = () => {
         backgroundColor: "rgba(255,255,255,0)",
         grid: [
           {
-            left: "10%",
+            left: "15%",
             top: "8%",
-            right: "5%",
+            right: "0%",
             bottom: "0",
             containLabel: true,
           },
           {
-            left: "20%",
+            left: "25%",
             top: "8%",
             right: "5%",
             bottom: "0",
@@ -57,7 +57,7 @@ const SatelliteBar: React.FC<{}> = () => {
             axisLine: "none",
             axisLabel: {
               inside: true,
-              margin:20,
+              margin: 0,
               align: "right",
             // padding:[0, 40, 0, 0]
               textStyle: {
@@ -160,7 +160,7 @@ const SatelliteBar: React.FC<{}> = () => {
             type: "bar",
             yAxisIndex: 2,
             barGap: "-100%",
-            data: [100, 100, 100],
+            data: [1238, 1238, 1238],
             barWidth: 30,
             label: {
               normal: {

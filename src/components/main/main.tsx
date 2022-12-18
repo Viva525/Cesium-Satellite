@@ -35,6 +35,8 @@ import SettingPanel from "./settingPanel";
 import ResourcePanel from "../resource/resourceMain";
 import Yewurtaishi from "../yewutaishi/yewutaishi"
 import SatelliteWorkTime from "../right/satelliteWorkTime";
+import Shixutu from "../left/shixutu";
+import { url } from "inspector";
 const { Option } = Select;
 
 //@ts-ignore
@@ -248,7 +250,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       // // 添加高德影像图
       const imageryLayers = viewer.imageryLayers;
       //  // 显示帧率
-      // viewer.scene.debugShowFramesPerSecond = true;
+      viewer.scene.debugShowFramesPerSecond = false;
 
       // 添加地形数据
       // viewer.terrainProvider = Cesium.createWorldTerrain();
@@ -384,7 +386,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       };
       setTimeout(() => {
         let dronePromise = Cesium.CzmlDataSource.load(
-          "./data/500+.czml"
+          "./data/star-beidou-gps-2.czml"
         );
         let nowSatelliteList: string[] = [];
         let baseStationTemp: BaseStation[] = [];
@@ -625,7 +627,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
                 // 将点换成模型 0
                 ele.model = {
                   // 引入模型
-                  uri: "./satellite-model/wx.gltf",
+                  uri: "./satellite-model/chaifen.glb",
                   // 配置模型大小的最小值
                   minimumPixelSize: 50,
                   //配置模型大小的最大值
@@ -1558,25 +1560,17 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
             lat - (radius / 2) * Math.sqrt(3),
             lng + radius / 2,
             lat - (radius / 2) * Math.sqrt(3),
-            lng + radius,
-            lat,
           ])
         ),
-        height: 1,
-        outline: false,
+        outline: true,
+        outlineColor: new Cesium.Color(210 / 255, 51 / 255, 90 / 255, 1),
+        outlineWidth: 4,
         fill: false,
         material: Cesium.Color.fromCssColorString(
           "rgba(5, 39, 175, 0.3)"
-        ).withAlpha(1),
+        ).withAlpha(0.1),
       },
     });
-    let nowHexagon = viewer.entities.getById(`ShowRange_${id}`);
-    nowHexagon.polyline = {
-      positions: nowHexagon.polygon.hierarchy._value.positions,
-      width: 1.5,
-      material: new Cesium.Color(210 / 255, 51 / 255, 90 / 255, 1)
-  }
-
   }
 
   useEffect(() => {
@@ -2149,17 +2143,19 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
       <div
         id="cesiumContainer"
         style={{
-          height: "100%",
-          width: "100%",
+          height: "0%",
+          width: "0%",
           background: "#000",
         }}
       ></div>
+      <div id="imageWrapper"></div>
       {
         (situation.satellite||situation.communicate) && (<>
           <div className="left-wrap">
-            <Box title="卫星数量统计图" component={<SatelliteBar/>} />
+            {/* <Box title="卫星数量统计图" component={<SatelliteBar/>} />
             <Box title="卫星数量变化图" component={<SatelliteNumberChart />} />
-            <Box title="卫星信息列表" component={<SatelliteInfoList satelliteList={satelliteListRef.current}/>}/>
+            <Box title="卫星信息列表" component={<SatelliteInfoList satelliteList={satelliteListRef.current}/>}/> */}
+            <Box title="时序图" component={<Shixutu/>}></Box>
           </div>
           <div className="right-wrap">
             <Box
@@ -2179,7 +2175,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               component={<PolarEarth position={polarPosition}></PolarEarth>}
             ></Box>
             <Box
-              title="卫星实时高度图"
+              title="火箭实时高度图"
               component={
                 <HeightChart
                   satellitePostionData={satellitePostionData}
@@ -2188,7 +2184,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
               }
             />
             <Box 
-            title="卫星载荷时长图"
+            title="火箭载荷时长图"
             component={<SatelliteWorkTime/>}
             />
 
