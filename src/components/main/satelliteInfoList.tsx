@@ -1,5 +1,4 @@
 import { Table } from 'antd';
-import { type } from 'os';
 import React, { useEffect, useState } from 'react';
 
 type sateLLiteInfoList = {
@@ -162,8 +161,8 @@ const SatelliteInfoList: React.FC<sateLLiteInfoList> = (props) => {
     },[init]);
 
     return (
-        <div style={{width:'100%', height:'100%'}}>
-            <Table columns={columns} dataSource={data}></Table>
+        <div style={{width:'100%', height:'350px', overflow:"hidden"}}>
+            <Table columns={columns} dataSource={data} ></Table>
        </div>);
 };
 

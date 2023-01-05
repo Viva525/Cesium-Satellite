@@ -45,8 +45,8 @@
     background-image: linear-gradient(to bottom, #57b, #148) !important;
     box-shadow: 0.1em 0.1em 0.5em #124 !important; 
     float: right;
-    margin-right: 3.6vw;
-    margin-top: 0.3vh;
+    margin-right: 3.3vw;
+    margin-top: 0.1vh;
     cursor: pointer;
     z-index: 999;
 }
@@ -64,7 +64,6 @@
     background-position: center;
     height: 32px;
     width: 32px;
-    margin-right: 8px;
 }
 
 .ant-table, .ant-select-selector, .ant-pagination-item-link{
@@ -183,6 +182,7 @@
 }
 
 .ant-modal-content {
+    margin-top: -10% !important;
     background-color: #21292f !important;
 }
 
@@ -512,4 +512,8 @@ p {
     background-size: cover;
     width: 100%;
     height: 100%;
+}
+
+.ant-table-wrapper {
+    max-height: 100% !important;
 }
