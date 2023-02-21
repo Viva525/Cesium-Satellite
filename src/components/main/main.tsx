@@ -78,7 +78,7 @@ const CesiumComponent: React.FC<CesiumComponentType> = (props) => {
   // 卫星列表
   const [satelliteList, setSatelliteList] = useState<string[]>([]);
   const satelliteListRef = useRef(satelliteList);
-  const [satelliteColor, setSatelliteColor] = useState({});
+  const [satelliteColor, setSatelliteColor] = useState({}); 
   const [start, setStart] = useState(
     Cesium.JulianDate.fromIso8601("2022-09-06T04:00:00Z")
   );
